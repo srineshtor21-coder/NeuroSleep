@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Research Library | NeuroSleep</title>
+  <meta name="description" content="Comprehensive peer-reviewed research on sleep neuroscience, Alzheimer's disease, and cognitive performance."/>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .page-hero { padding: 140px 2rem 5rem; text-align: center; position: relative; overflow: hidden; }
+    .page-hero::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at 50% 0%, rgba(0,194,179,0.12) 0%, transparent 60%); pointer-events:none; }
+    .research-article { margin-bottom: 1.5rem; }
+    .research-article h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .research-article p { font-size: 0.9rem; color: var(--white-dim); line-height: 1.7; }
+    .citation-box { background: rgba(0,194,179,0.05); border-left: 3px solid var(--teal); border-radius: 0 8px 8px 0; padding: 0.8rem 1.2rem; margin-top: 1rem; font-size: 0.82rem; color: var(--grey); font-style: italic; }
+    .study-card { padding: 1.5rem; }
+    .study-meta { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+    .key-finding { background: rgba(0,194,179,0.06); border: 1px solid rgba(0,194,179,0.15); border-radius: 8px; padding: 0.7rem 1rem; margin-top: 0.8rem; font-size: 0.85rem; color: var(--cyan); }
+    .key-finding::before { content: '&#128161; Key Finding: '; font-weight: 700; }
+    .timeline { position: relative; padding-left: 2rem; }
+    .timeline::before { content:''; position:absolute; left:8px; top:0; bottom:0; width:2px; background: linear-gradient(to bottom, var(--teal), transparent); }
+    .timeline-item { position: relative; margin-bottom: 2rem; }
+    .timeline-item::before { content:''; position:absolute; left:-1.65rem; top:4px; width:12px; height:12px; border-radius:50%; background:var(--teal); border:2px solid var(--navy); }
+    .timeline-year { font-family: var(--font-head); font-size: 0.75rem; font-weight: 700; color: var(--teal); letter-spacing: 0.08em; margin-bottom: 0.3rem; }
+    .sidebar-toc { position: sticky; top: 88px; }
+    .toc-item { display: block; padding: 0.4rem 0.8rem; border-radius: 6px; color: var(--grey); text-decoration: none; font-size: 0.85rem; transition: var(--transition); margin-bottom: 0.2rem; }
+    .toc-item:hover { color: var(--teal); background: var(--teal-glow); }
+    .two-col-research { display: grid; grid-template-columns: 240px 1fr; gap: 3rem; align-items: start; }
+    @media(max-width:900px){ .two-col-research { grid-template-columns: 1fr; } .sidebar-toc { position: static; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="../index.html" class="nav-logo">
+    <svg viewBox="0 0 40 40" fill="none" width="38" height="38">
+      <circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/>
+      <path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="20" cy="20" r="2" fill="#00c2b3"/>
+    </svg>
+    <span class="nav-logo-text">Neuro<span>Sleep</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="research.html" class="active">Research</a></li>
+    <li><a href="tracker.html">Sleep Tracker</a></li>
+    <li><a href="cognitive.html">Cognitive Tests</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="risk.html">Risk Calculator</a></li>
+    <li><a href="risk.html" class="nav-cta">Get Started</a></li>
+  </ul>
+  <button class="nav-hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-hero">
+  <div class="section-label" style="justify-content:center;">Academic Research</div>
+  <h1>Research <span class="text-teal">Library</span></h1>
+  <p class="text-dim mt-2" style="max-width:600px;margin:1rem auto 0;font-size:1.05rem;">Peer-reviewed neuroscience research on sleep, Alzheimer's disease, cognitive decline, and the modifiable risk factors that NeuroSleep is designed to study.</p>
+  <div style="display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap;margin-top:1.5rem;">
+    <span class="badge badge-teal">22 Studies Referenced</span>
+    <span class="badge badge-purple">Alzheimer's Pathology</span>
+    <span class="badge badge-orange">Sleep Neuroscience</span>
+    <span class="badge badge-green">Cognitive Assessment</span>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<section>
+  <div class="container">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="alzheimers">Alzheimer's Disease</button>
+      <button class="tab-btn" data-tab="sleep">Sleep Neuroscience</button>
+      <button class="tab-btn" data-tab="circadian">Circadian Biology</button>
+      <button class="tab-btn" data-tab="cognitive">Cognitive Assessment</button>
+      <button class="tab-btn" data-tab="methodology">Methodology</button>
+      <button class="tab-btn" data-tab="citations">Full Citations</button>
+    </div>
+
+    <!-- ALZHEIMER'S -->
+    <div class="tab-panel active" data-panel="alzheimers" id="alzheimers">
+      <div class="two-col-research">
+        <div>
+          <div class="card sidebar-toc" style="padding:1.2rem;">
+            <h4 style="font-size:0.8rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--grey);margin-bottom:1rem;">Contents</h4>
+            <a class="toc-item" href="#ad-overview">Overview</a>
+            <a class="toc-item" href="#ad-pathology">Pathology</a>
+            <a class="toc-item" href="#ad-amyloid">Amyloid-Beta</a>
+            <a class="toc-item" href="#ad-tau">Tau Protein</a>
+            <a class="toc-item" href="#ad-glymphatic">Glymphatic System</a>
+            <a class="toc-item" href="#ad-prevention">Prevention Strategies</a>
+            <a class="toc-item" href="#ad-sleep-link">Sleep Connection</a>
+          </div>
+        </div>
+        <div>
+          <div class="card reveal mb-3" id="ad-overview">
+            <span class="badge badge-teal mb-2">Overview</span>
+            <h3 class="mb-2">What is Alzheimer's Disease?</h3>
+            <p class="text-dim">Alzheimer's disease (AD) is the most common form of dementia, accounting for 60-80% of all dementia cases. It is a progressive, irreversible neurodegenerative disorder that destroys memory and other important mental functions by damaging and killing brain cells. As of 2024, more than 55 million people worldwide are living with Alzheimer's disease or another form of dementia, and this number is projected to triple by 2050 in the absence of significant preventive interventions.</p>
+            <p class="text-dim mt-2">The disease advances through recognized stages: preclinical Alzheimer's (where changes occur in the brain years before symptoms appear), mild cognitive impairment (MCI) due to Alzheimer's, and Alzheimer's dementia. Understanding the early biological changes that drive this progression is central to developing effective prevention strategies, which is a core focus of the NeuroSleep research platform.</p>
+            <div class="key-finding" style="margin-top:1rem;">Alzheimer's disease pathology begins 15-20 years before any noticeable cognitive symptoms, underscoring the importance of early behavioral intervention.</div>
+          </div>
+
+          <div class="card reveal mb-3" id="ad-pathology">
+            <span class="badge badge-orange mb-2">Pathology</span>
+            <h3 class="mb-2">Disease Mechanisms and Neuropathology</h3>
+            <p class="text-dim">The neuropathological hallmarks of Alzheimer's disease are:</p>
+            <div style="margin: 1rem 0; display:flex; flex-direction:column; gap:0.8rem;">
+              <div style="background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.15);border-radius:10px;padding:1rem;">
+                <strong style="color:var(--accent-orange);">Amyloid Plaques</strong>
+                <p class="text-dim mt-1" style="font-size:0.88rem;">Dense deposits of amyloid-beta protein fragments that accumulate in the spaces between nerve cells. These plaques disrupt synaptic signaling and trigger neuroinflammatory responses that damage surrounding neurons.</p>
+              </div>
+              <div style="background:rgba(155,93,229,0.06);border:1px solid rgba(155,93,229,0.15);border-radius:10px;padding:1rem;">
+                <strong style="color:var(--accent-purple);">Neurofibrillary Tangles</strong>
+                <p class="text-dim mt-1" style="font-size:0.88rem;">Twisted fibers of tau protein that build up inside neurons. Normally, tau helps stabilize microtubules essential for nutrient transport within cells. When tau becomes abnormally phosphorylated, it detaches from microtubules and forms tangles that block intracellular transport.</p>
+              </div>
+              <div style="background:rgba(0,194,179,0.06);border:1px solid rgba(0,194,179,0.15);border-radius:10px;padding:1rem;">
+                <strong style="color:var(--teal);">Neuroinflammation</strong>
+                <p class="text-dim mt-1" style="font-size:0.88rem;">Chronic activation of microglia (the brain's immune cells) in response to amyloid and tau accumulation creates a sustained inflammatory state that accelerates neuronal death throughout the cortex and hippocampus.</p>
+              </div>
+            </div>
+            <div class="citation-box">National Institute on Aging. (2023). Alzheimer's Disease Fact Sheet. NIH Publication.</div>
+          </div>
+
+          <div class="card reveal mb-3" id="ad-amyloid">
+            <span class="badge badge-teal mb-2">Amyloid-Beta</span>
+            <h3 class="mb-2">The Amyloid-Beta Cascade Hypothesis</h3>
+            <p class="text-dim">Amyloid-beta (A-beta) is produced by the cleavage of amyloid precursor protein (APP) by beta and gamma secretases. In healthy individuals, A-beta is continuously produced and cleared. The balance between production and clearance determines whether plaques accumulate. Sleep plays a critical and direct role in this clearance process.</p>
+            <p class="text-dim mt-2">During wakefulness, A-beta concentrations in cerebrospinal fluid (CSF) rise steadily. Research by Xie et al. (2013) published in Science demonstrated that during natural sleep, CSF flow through the interstitial space of the brain increases dramatically via the glymphatic system, flushing out accumulated A-beta with striking efficiency. Their measurements showed a 60% reduction in the size of the interstitial space during wakefulness compared to sleep, facilitating this enhanced clearance.</p>
+            <p class="text-dim mt-2">A landmark 2017 study by Lucey et al. at Washington University found that even a single night of sleep deprivation led to a measurable 25-30% increase in CSF A-beta levels in healthy middle-aged adults, demonstrating how quickly sleep disruption can tip the balance toward accumulation.</p>
+            <div class="key-finding">A single night of sleep deprivation increases cerebrospinal fluid amyloid-beta levels by 25-30%, demonstrating the immediate consequences of poor sleep on Alzheimer's-related pathology.</div>
+            <div class="citation-box">Xie, L., et al. (2013). Sleep drives metabolite clearance from the adult brain. Science, 342(6156), 373-377. | Lucey, B.P., et al. (2017). Effect of sleep on overnight cerebrospinal fluid amyloid levels in healthy middle age adults. JAMA Neurology.</div>
+          </div>
+
+          <div class="card reveal mb-3" id="ad-tau">
+            <span class="badge badge-purple mb-2">Tau Protein</span>
+            <h3 class="mb-2">Tau Accumulation and Sleep Disruption</h3>
+            <p class="text-dim">Tau protein pathology, while traditionally viewed as secondary to amyloid deposition, is now recognized as the primary driver of neuronal death and cognitive symptoms in Alzheimer's disease. Tau spreads through neural circuits in a characteristic spatiotemporal pattern, beginning in the entorhinal cortex (a region critical for memory) before propagating throughout the hippocampus and neocortex.</p>
+            <p class="text-dim mt-2">Research published in Science in 2019 by Holth et al. demonstrated that sleep deprivation dramatically accelerates tau spread in mouse models. Importantly, the effect appeared to be mediated by neuronal activity: wakefulness promotes neural firing, which drives tau release into the interstitial fluid, and without adequate sleep to clear it, tau accumulates and aggregates. Their study found a 50% increase in interstitial tau after just one day of sleep deprivation.</p>
+            <p class="text-dim mt-2">Human studies using CSF measurements confirm similar findings. Lucey et al. (2021) showed that greater sleep disturbance was associated with higher CSF tau levels, and that the relationship was strongest for those with amyloid already present, suggesting tau accumulation accelerates once the amyloid cascade has begun.</p>
+            <div class="citation-box">Holth, J.K., et al. (2019). The sleep-wake cycle regulates brain interstitial fluid tau in mice and CSF tau in humans. Science, 363(6429), 880-884.</div>
+          </div>
+
+          <div class="card reveal mb-3" id="ad-glymphatic">
+            <span class="badge badge-teal mb-2">Glymphatic System</span>
+            <h3 class="mb-2">The Glymphatic System: Brain's Waste Clearance</h3>
+            <p class="text-dim">The glymphatic system, first described by Dr. Maiken Nedergaard's laboratory at the University of Rochester in 2013, is a network of perivascular channels that use cerebrospinal fluid (CSF) to flush out metabolic waste from the brain. It is named after its dependence on glial cells (particularly astrocytes expressing aquaporin-4 water channels) and its functional similarity to the peripheral lymphatic system.</p>
+            <p class="text-dim mt-2">The system is dramatically more active during sleep than during wakefulness. During non-REM slow-wave sleep specifically, CSF pulse waves driven by arterial pulsation increase by approximately 95% compared to wakefulness. This surge in CSF flow facilitates the removal of not only A-beta but also other potentially toxic metabolites, tau, inflammatory cytokines, and metabolic byproducts that accumulate during the day.</p>
+            <p class="text-dim mt-2">The position in which one sleeps may also matter: studies in rodents suggest that the lateral (side-sleeping) position is more efficient at clearing waste than supine (back) or prone (stomach) positions, though more human research is needed to confirm this finding.</p>
+            <div style="margin: 1.5rem 0; height: 180px; position: relative;">
+              <canvas id="glymphaticChart"></canvas>
+            </div>
+            <div class="citation-box">Nedergaard, M. (2013). Garbage truck of the brain. Science, 340(6140), 1529-1530. | Iliff, J.J., et al. (2013). Impairment of glymphatic pathway function promotes tau pathology after traumatic brain injury. Journal of Neuroscience.</div>
+          </div>
+
+          <div class="card reveal mb-3" id="ad-prevention">
+            <span class="badge badge-green mb-2">Prevention</span>
+            <h3 class="mb-2">Modifiable Risk Factors and Prevention</h3>
+            <p class="text-dim">The 2020 Lancet Commission on Dementia Prevention identified 12 potentially modifiable risk factors that together account for approximately 40% of worldwide dementias. Sleep is increasingly recognized as a central modifiable risk factor, with inadequate sleep associated with elevated biological markers of Alzheimer's risk even in young and middle-aged adults.</p>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;margin:1.2rem 0;">
+              <div style="background:rgba(0,194,179,0.06);border:1px solid rgba(0,194,179,0.1);border-radius:8px;padding:0.8rem;"><strong style="font-size:0.85rem;">Sleep Consistency</strong><p class="text-dim" style="font-size:0.8rem;margin-top:0.3rem;">Regular sleep-wake timing preserves glymphatic function and circadian biology</p></div>
+              <div style="background:rgba(0,194,179,0.06);border:1px solid rgba(0,194,179,0.1);border-radius:8px;padding:0.8rem;"><strong style="font-size:0.85rem;">Sleep Duration</strong><p class="text-dim" style="font-size:0.8rem;margin-top:0.3rem;">7-9 hours associated with lowest risk; both too little and too much increase risk</p></div>
+              <div style="background:rgba(0,194,179,0.06);border:1px solid rgba(0,194,179,0.1);border-radius:8px;padding:0.8rem;"><strong style="font-size:0.85rem;">Physical Activity</strong><p class="text-dim" style="font-size:0.8rem;margin-top:0.3rem;">Aerobic exercise stimulates BDNF production and promotes neuroplasticity</p></div>
+              <div style="background:rgba(0,194,179,0.06);border:1px solid rgba(0,194,179,0.1);border-radius:8px;padding:0.8rem;"><strong style="font-size:0.85rem;">Cognitive Engagement</strong><p class="text-dim" style="font-size:0.8rem;margin-top:0.3rem;">Building cognitive reserve through lifelong learning delays symptom onset</p></div>
+              <div style="background:rgba(0,194,179,0.06);border:1px solid rgba(0,194,179,0.1);border-radius:8px;padding:0.8rem;"><strong style="font-size:0.85rem;">Light Exposure Management</strong><p class="text-dim" style="font-size:0.8rem;margin-top:0.3rem;">Morning bright light and evening dim light preserve circadian amplitude</p></div>
+              <div style="background:rgba(0,194,179,0.06);border:1px solid rgba(0,194,179,0.1);border-radius:8px;padding:0.8rem;"><strong style="font-size:0.85rem;">Dietary Patterns</strong><p class="text-dim" style="font-size:0.8rem;margin-top:0.3rem;">Mediterranean and MIND diets associated with slower cognitive decline</p></div>
+            </div>
+            <div class="citation-box">Livingston, G., et al. (2020). Dementia prevention, intervention, and care: 2020 report of the Lancet Commission. The Lancet, 396(10248), 413-446.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLEEP NEUROSCIENCE -->
+    <div class="tab-panel" data-panel="sleep" id="sleep">
+      <div class="grid-2">
+        <div class="card reveal mb-3">
+          <span class="badge badge-teal mb-2">Sleep Architecture</span>
+          <h3 class="mb-2">The Stages of Sleep</h3>
+          <p class="text-dim">Sleep is not a uniform state but a carefully orchestrated sequence of distinct physiological stages, each with critical functions for brain health:</p>
+          <div style="margin:1rem 0;display:flex;flex-direction:column;gap:0.6rem;">
+            <div style="padding:0.8rem;background:rgba(0,194,179,0.05);border-radius:8px;border-left:3px solid var(--teal);">
+              <strong>NREM Stage 1 (N1)</strong>
+              <p class="text-dim" style="font-size:0.82rem;margin-top:0.2rem;">Light sleep transition. Theta waves emerge. Duration: 1-7 minutes. Alpha waves from wakefulness give way to mixed-frequency lower amplitude activity.</p>
+            </div>
+            <div style="padding:0.8rem;background:rgba(0,194,179,0.05);border-radius:8px;border-left:3px solid rgba(0,194,179,0.5);">
+              <strong>NREM Stage 2 (N2)</strong>
+              <p class="text-dim" style="font-size:0.82rem;margin-top:0.2rem;">Sleep spindles and K-complexes appear. Memory consolidation begins. Core body temperature drops. Comprises roughly 50% of total sleep time.</p>
+            </div>
+            <div style="padding:0.8rem;background:rgba(0,194,179,0.05);border-radius:8px;border-left:3px solid var(--cyan);">
+              <strong>NREM Stage 3 (N3) - Slow-Wave Sleep</strong>
+              <p class="text-dim" style="font-size:0.82rem;margin-top:0.2rem;">Deep sleep with delta waves. Growth hormone release peaks. Glymphatic system maximally active. Crucial for declarative memory consolidation and amyloid clearance. Declines significantly with age.</p>
+            </div>
+            <div style="padding:0.8rem;background:rgba(155,93,229,0.05);border-radius:8px;border-left:3px solid var(--accent-purple);">
+              <strong>REM Sleep</strong>
+              <p class="text-dim" style="font-size:0.82rem;margin-top:0.2rem;">Brain activity resembles wakefulness. Emotional memory processing and integration. Procedural learning consolidation. Acetylcholine levels surge; norepinephrine near absent. Dreams occur.</p>
+            </div>
+          </div>
+          <div class="key-finding">A complete sleep cycle spanning all stages lasts approximately 90 minutes and repeats 4-6 times nightly. Early cycles are rich in slow-wave sleep; later cycles are rich in REM, explaining why cutting sleep short dramatically reduces REM exposure.</div>
+        </div>
+        <div class="card reveal">
+          <span class="badge badge-purple mb-2">Memory Consolidation</span>
+          <h3 class="mb-2">Sleep and Memory: The Hippocampal-Cortical Dialogue</h3>
+          <p class="text-dim">The hippocampus acts as the brain's temporary storage buffer for new memories. During wakefulness, the hippocampus encodes new experiences as patterns of neuronal activity. During slow-wave sleep, these patterns are "replayed" through a process of sharp-wave ripples, allowing memories to be transferred and integrated into long-term cortical storage.</p>
+          <p class="text-dim mt-2">This hippocampal-cortical memory consolidation is dependent on the quality and quantity of slow-wave sleep. Research by Walker et al. at UC Berkeley demonstrated that participants who napped showed a 44% improvement in learning capacity compared to those who remained awake, and that memory improvement correlated specifically with the amount of slow-wave sleep during the nap.</p>
+          <p class="text-dim mt-2">The implication for Alzheimer's prevention is profound: the hippocampus is among the first brain regions damaged by Alzheimer's pathology. Maintaining high-quality slow-wave sleep may both support hippocampal function and reduce the amyloid burden that initiates this damage.</p>
+          <div style="height:160px;margin-top:1.5rem;position:relative;">
+            <canvas id="memoryChart"></canvas>
+          </div>
+          <div class="citation-box">Walker, M.P., & Stickgold, R. (2006). Sleep, memory, and plasticity. Annual Review of Psychology, 57, 139-166.</div>
+        </div>
+        <div class="card reveal">
+          <span class="badge badge-orange mb-2">Sleep Deprivation</span>
+          <h3 class="mb-2">Acute and Chronic Sleep Deprivation Effects</h3>
+          <p class="text-dim">Even moderate sleep restriction produces measurable cognitive impairment. A seminal study by Van Dongen et al. published in Sleep showed that adults restricted to 6 hours per night for 14 days performed as poorly on cognitive tests as those who had been awake for 24 consecutive hours, yet these chronically sleep-restricted individuals did not report feeling severely sleepy, suggesting a dangerous disconnect between perceived and actual impairment.</p>
+          <p class="text-dim mt-2">Chronic sleep deprivation affects multiple cognitive domains simultaneously: sustained attention, working memory, executive function, and emotional regulation all deteriorate with insufficient sleep. The inflammatory pathways activated by sleep loss (elevated IL-6, CRP, and TNF-alpha) also directly damage neuronal synapses and accelerate the aging of neural tissue.</p>
+          <div class="key-finding">After 17 hours awake, cognitive performance is equivalent to a blood alcohol content of 0.05%. After 24 hours awake, it equals 0.10%, above the legal driving limit in most jurisdictions.</div>
+        </div>
+        <div class="card reveal">
+          <span class="badge badge-green mb-2">Adolescent Sleep</span>
+          <h3 class="mb-2">Sleep in Adolescence: A Critical Window</h3>
+          <p class="text-dim">Adolescence is a period of dramatic neurodevelopment during which the prefrontal cortex, hippocampus, and associated neural circuits undergo extensive synaptic pruning and myelination. Sleep plays a critical role in this maturation process through the secretion of growth hormone during slow-wave sleep and through the consolidation of learned information.</p>
+          <p class="text-dim mt-2">A biological delay in circadian phase during adolescence (the well-documented "night owl" shift) means that teenagers' internal clocks push sleep onset 1-2 hours later than adults. Combined with early school start times, this creates chronic social jetlag, a misalignment between internal biological time and social time demands. Research by Carskadon et al. demonstrated that adolescents sleeping less than 8 hours per night showed significantly impaired memory consolidation, emotional regulation, and executive function compared to those sleeping 9 or more hours.</p>
+          <p class="text-dim mt-2">Critically, habits formed during adolescence, including sleep timing, consistency, and hygiene behaviors, tend to persist into adulthood. Establishing healthy sleep patterns early may therefore have long-term protective effects on cognitive aging.</p>
+          <div class="citation-box">Carskadon, M.A. (2011). Sleep in adolescents: The perfect storm. Pediatric Clinics of North America, 58(3), 637-647.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CIRCADIAN BIOLOGY -->
+    <div class="tab-panel" data-panel="circadian" id="circadian">
+      <div class="card reveal mb-3">
+        <span class="badge badge-orange mb-2">Circadian Biology</span>
+        <h3 class="mb-2">The Circadian Clock: Architecture and Function</h3>
+        <p class="text-dim">The circadian clock is a self-sustaining molecular oscillator present in virtually every cell of the human body. The master pacemaker resides in the suprachiasmatic nucleus (SCN) of the anterior hypothalamus, a bilateral structure containing approximately 20,000 neurons that synchronize peripheral clocks throughout the body via hormonal and neural signals.</p>
+        <p class="text-dim mt-2">At the molecular level, the circadian clock is driven by a transcription-translation feedback loop involving the core clock genes CLOCK, BMAL1, PER1/2/3, and CRY1/2. This molecular machinery generates approximately 24-hour oscillations in gene expression that govern cellular metabolism, DNA repair, immune function, and neurotransmitter release. The clock genes are expressed throughout the brain, including in the hippocampus, where they regulate synaptic plasticity and memory formation.</p>
+      </div>
+      <div class="grid-3 reveal">
+        <div class="card">
+          <div class="card-icon">&#127758;</div>
+          <h3 class="mb-2">Light and Clock Entrainment</h3>
+          <p class="text-dim" style="font-size:0.88rem;">The circadian clock is primarily synchronized to the 24-hour day through light exposure. Intrinsically photosensitive retinal ganglion cells (ipRGCs) containing the photopigment melanopsin detect blue-wavelength light (around 480 nm) and relay information directly to the SCN via the retinohypothalamic tract. Morning light advances the clock; evening light delays it. Blue light from LED screens (phones, tablets, computers) emits wavelengths that powerfully suppress melatonin and delay sleep onset, with peak sensitivity occurring 2-3 hours before habitual bedtime.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#128164;</div>
+          <h3 class="mb-2">Melatonin and Sleep Signaling</h3>
+          <p class="text-dim" style="font-size:0.88rem;">Melatonin, secreted by the pineal gland in response to darkness, serves as the body's primary internal signal of night-time. It does not directly cause sleep but acts as a permissive signal that lowers the arousal threshold and coordinates the timing of sleep with other circadian physiological changes. Melatonin onset (DLMO, dim light melatonin onset) typically occurs approximately 2 hours before habitual sleep time and is one of the most accurate biomarkers of circadian phase. Screen exposure in the evening delays DLMO, shifting the entire sleep episode later.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">&#9889;</div>
+          <h3 class="mb-2">Social Jetlag and Cognitive Consequences</h3>
+          <p class="text-dim" style="font-size:0.88rem;">Social jetlag refers to the chronic misalignment between an individual's biological clock and the socially imposed sleep schedule. Quantified as the difference in sleep timing between work/school days and free days, even moderate social jetlag of 1-2 hours is associated with increased fatigue, impaired academic performance, higher BMI, elevated inflammatory markers, and, critically for this research, greater cognitive vulnerability. A study of over 55,000 participants found that each hour of social jetlag was associated with a 33% greater odds of obesity and measurable impairment in sustained attention and memory tasks.</p>
+        </div>
+      </div>
+      <div class="card reveal mt-3">
+        <h3 class="mb-2">Circadian Disruption as an Alzheimer's Risk Factor</h3>
+        <p class="text-dim">The relationship between circadian disruption and Alzheimer's risk operates through multiple biological mechanisms. Animal models using Drosophila, mice, and primates with genetically disrupted circadian rhythms show accelerated amyloid-beta accumulation, earlier tau pathology, greater neuroinflammation, and faster cognitive decline compared to animals with intact circadian function.</p>
+        <p class="text-dim mt-2">In humans, epidemiological studies have found that nurses and other shift workers with chronic circadian disruption have significantly higher rates of cognitive decline and dementia compared to day workers. The risk appears dose-dependent with years of shift work, and is partially but not fully explained by sleep duration, suggesting that circadian disruption beyond mere sleep loss carries independent neurological risk.</p>
+        <p class="text-dim mt-2">Conversely, Alzheimer's disease itself disrupts the circadian system through damage to the SCN and loss of orexin/hypocretin neurons that regulate sleep-wake transitions. This bidirectional relationship creates a vicious cycle: poor sleep and circadian disruption promote Alzheimer's pathology, which in turn further disrupts sleep, accelerating neurodegeneration.</p>
+        <div class="key-finding">Research shows that maintaining consistent sleep and wake times, even on weekends, is one of the most powerful behavioral interventions for preserving circadian health and reducing long-term neurological risk.</div>
+        <div class="citation-box">Logan, R.W., & McClung, C.A. (2019). Rhythms of life: circadian disruption and brain disorders across the lifespan. Nature Reviews Neuroscience, 20(1), 49-65.</div>
+      </div>
+    </div>
+
+    <!-- COGNITIVE ASSESSMENT -->
+    <div class="tab-panel" data-panel="cognitive" id="cognitive">
+      <div class="grid-2">
+        <div class="card reveal">
+          <span class="badge badge-teal mb-2">Reaction Time</span>
+          <h3 class="mb-2">Reaction Time as a Cognitive Biomarker</h3>
+          <p class="text-dim">Simple reaction time (SRT) measures the time elapsed between a stimulus and a response. It is one of the most sensitive and reliable psychomotor measures of overall cognitive processing speed and alertness. SRT is mediated by neural pathways involving the prefrontal cortex, anterior cingulate cortex, and basal ganglia, all regions that are sensitive to sleep deprivation and early neurodegeneration.</p>
+          <p class="text-dim mt-2">Normative SRT in healthy young adults ranges from 150-300 milliseconds. Sleep deprivation consistently slows SRT; research shows that 26 hours of wakefulness increases mean SRT by approximately 40% and dramatically increases response variability, which may be an even more sensitive marker of impairment than mean SRT alone.</p>
+          <p class="text-dim mt-2">Longitudinal studies have found that increased reaction time variability in mid-life predicts future dementia risk, suggesting that cognitive slowing measurable decades before diagnosis may serve as an early warning signal. NeuroSleep's reaction time test is designed to track this variability over time.</p>
+        </div>
+        <div class="card reveal">
+          <span class="badge badge-purple mb-2">Memory</span>
+          <h3 class="mb-2">Working Memory and Sleep</h3>
+          <p class="text-dim">Working memory is the cognitive system that holds and manipulates information in active awareness over short time periods. It is mediated primarily by the dorsolateral prefrontal cortex and is critically dependent on both the quality and quantity of preceding sleep. The n-back paradigm and digit span tests are widely used clinical instruments for measuring working memory capacity.</p>
+          <p class="text-dim mt-2">Sleep deprivation impairs working memory through two distinct mechanisms: reduced prefrontal activity during encoding (making it harder to hold information in mind) and disruption of the sleep-dependent consolidation processes that transfer information from hippocampal short-term storage to cortical long-term storage. Studies using functional MRI show that sleep-deprived individuals show 37% less activation in the prefrontal cortex during working memory tasks.</p>
+          <p class="text-dim mt-2">Progressive working memory decline is one of the earliest observable symptoms of Alzheimer's disease, often appearing years before formal diagnosis during the MCI (mild cognitive impairment) stage. Tracking working memory over time with standardized tests like those used in NeuroSleep can detect meaningful changes that might not otherwise be noticed in daily life.</p>
+        </div>
+        <div class="card reveal">
+          <span class="badge badge-orange mb-2">Pattern Recognition</span>
+          <h3 class="mb-2">Visual Pattern Recognition and Neural Efficiency</h3>
+          <p class="text-dim">Pattern recognition tests assess the ability of the brain's visual cortex and frontal-parietal networks to rapidly identify, discriminate, and classify visual stimuli. This cognitive domain reflects the efficiency of neural processing circuits and is dependent on the integrity of white matter connections between visual and prefrontal regions.</p>
+          <p class="text-dim mt-2">Performance on pattern recognition tasks is sensitive to both acute sleep loss and chronic sleep insufficiency. The speed and accuracy of pattern recognition declines measurably after even modest sleep restriction, reflecting impaired attentional filtering and reduced neural signal-to-noise ratios. These changes are thought to reflect disruptions in thalamo-cortical gating mechanisms that normally optimize sensory processing during alert wakefulness.</p>
+        </div>
+        <div class="card reveal">
+          <span class="badge badge-green mb-2">Cognitive Reserve</span>
+          <h3 class="mb-2">Cognitive Reserve and Sleep's Role</h3>
+          <p class="text-dim">Cognitive reserve refers to the brain's resilience to neuropathological damage, the capacity to tolerate accumulating Alzheimer's pathology before showing symptoms. Individuals with greater cognitive reserve (built through education, intellectual engagement, and social activity) can sustain more amyloid and tau pathology before manifesting clinical symptoms.</p>
+          <p class="text-dim mt-2">Sleep plays an underappreciated role in building and maintaining cognitive reserve. Neuroplasticity, the brain's ability to form new connections and reorganize itself in response to learning, is critically sleep-dependent. Brain-derived neurotrophic factor (BDNF), a protein that supports neuron survival and stimulates synaptogenesis, is upregulated during sleep. Chronic sleep deprivation is associated with significantly reduced BDNF levels, potentially limiting the brain's capacity to build the resilience that underpins cognitive reserve.</p>
+          <div class="citation-box">Yaffe, K., et al. (2011). Sleep-disordered breathing, hypoxia, and risk of mild cognitive impairment and dementia in older women. JAMA, 306(6), 613-619.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- METHODOLOGY -->
+    <div class="tab-panel" data-panel="methodology" id="methodology">
+      <div class="card reveal mb-3">
+        <span class="badge badge-teal mb-2">Research Design</span>
+        <h3 class="mb-2">NeuroSleep Research Methodology</h3>
+        <p class="text-dim">NeuroSleep employs a longitudinal observational design, collecting repeated behavioral and cognitive measurements from participants over an extended period to identify within-individual and between-individual patterns in the relationship between sleep behavior and cognitive performance.</p>
+        <div style="margin:1.5rem 0;display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;">
+          <div style="padding:1rem;background:rgba(0,194,179,0.06);border:1px solid rgba(0,194,179,0.15);border-radius:10px;">
+            <strong style="color:var(--teal);display:block;margin-bottom:0.5rem;">Research Question</strong>
+            <p class="text-dim" style="font-size:0.88rem;">How does sleep consistency (measured as the standard deviation of daily sleep onset and offset times) correlate with short-term cognitive performance in adolescents, as measured by reaction time, working memory accuracy, and pattern recognition speed?</p>
+          </div>
+          <div style="padding:1rem;background:rgba(155,93,229,0.06);border:1px solid rgba(155,93,229,0.15);border-radius:10px;">
+            <strong style="color:var(--accent-purple);display:block;margin-bottom:0.5rem;">Hypothesis</strong>
+            <p class="text-dim" style="font-size:0.88rem;">Participants with lower variability in sleep timing (higher sleep consistency) will demonstrate significantly better performance on cognitive assessments, with the strongest correlations emerging for reaction time variability and working memory capacity.</p>
+          </div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="card reveal">
+          <h3 class="mb-3">Data Collection Protocol</h3>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-year">Daily</div>
+              <p class="text-dim" style="font-size:0.88rem;">Participants log sleep onset time, sleep offset time, number of nocturnal awakenings, screen cutoff time, and subjective sleep quality on the Likert scale.</p>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">3 x Weekly</div>
+              <p class="text-dim" style="font-size:0.88rem;">Cognitive tests are administered: reaction time (5-trial average), n-back memory task (accuracy and response time), and visual pattern recognition (accuracy and response time).</p>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">Weekly</div>
+              <p class="text-dim" style="font-size:0.88rem;">Summary statistics are computed for sleep metrics (mean duration, consistency SD, quality average) and cognitive performance, enabling correlation analyses.</p>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-year">Monthly</div>
+              <p class="text-dim" style="font-size:0.88rem;">Trend analyses, group comparisons (high vs. low consistency), and risk behavior indicator updates are generated from accumulated data.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card reveal">
+          <h3 class="mb-3">Statistical Analysis Plan</h3>
+          <div style="display:flex;flex-direction:column;gap:0.8rem;">
+            <div style="padding:0.8rem;background:rgba(0,194,179,0.05);border-radius:8px;">
+              <strong style="font-size:0.88rem;">Descriptive Statistics</strong>
+              <p class="text-dim" style="font-size:0.82rem;margin-top:0.2rem;">Means, standard deviations, and distributions for all sleep and cognitive variables. Visualization through histograms and box plots.</p>
+            </div>
+            <div style="padding:0.8rem;background:rgba(0,194,179,0.05);border-radius:8px;">
+              <strong style="font-size:0.88rem;">Pearson Correlation Analysis</strong>
+              <p class="text-dim" style="font-size:0.82rem;margin-top:0.2rem;">Bivariate correlations between sleep consistency (SD) and each cognitive outcome. Correlation coefficients reported with 95% confidence intervals and p-values.</p>
+            </div>
+            <div style="padding:0.8rem;background:rgba(0,194,179,0.05);border-radius:8px;">
+              <strong style="font-size:0.88rem;">Group Comparison</strong>
+              <p class="text-dim" style="font-size:0.82rem;margin-top:0.2rem;">Participants stratified by sleep consistency (High: SD below 45 min; Low: SD above 90 min). Independent samples t-tests for cognitive score comparisons.</p>
+            </div>
+            <div style="padding:0.8rem;background:rgba(0,194,179,0.05);border-radius:8px;">
+              <strong style="font-size:0.88rem;">Visualization</strong>
+              <p class="text-dim" style="font-size:0.82rem;margin-top:0.2rem;">Scatter plots with regression lines, line graphs of temporal trends, bar charts for group comparisons, and heatmaps for correlation matrices.</p>
+            </div>
+          </div>
+          <div class="citation-box" style="margin-top:1rem;">All statistical analyses conducted using data collected through the NeuroSleep platform. Visualizations generated with Chart.js.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CITATIONS -->
+    <div class="tab-panel" data-panel="citations" id="citations">
+      <div class="card reveal">
+        <h3 class="mb-3">Full Reference List</h3>
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div style="padding:0.8rem;border-bottom:1px solid rgba(0,194,179,0.08);">
+            <p style="font-size:0.88rem;color:var(--white-dim);">1. Xie, L., Kang, H., Xu, Q., Chen, M.J., Liao, Y., Thiyagarajan, M., ... &amp; Nedergaard, M. (2013). Sleep drives metabolite clearance from the adult brain. <em>Science</em>, 342(6156), 373-377.</p>
+          </div>
+          <div style="padding:0.8rem;border-bottom:1px solid rgba(0,194,179,0.08);">
+            <p style="font-size:0.88rem;color:var(--white-dim);">2. Holth, J.K., Fritschi, S.K., Wang, C., Pedersen, N.P., Cirrito, J.R., Mahan, T.E., ... &amp; Bhaskaran, A.B. (2019). The sleep-wake cycle regulates brain interstitial fluid tau in mice and CSF tau in humans. <em>Science</em>, 363(6429), 880-884.</p>
+          </div>
+          <div style="padding:0.8rem;border-bottom:1px solid rgba(0,194,179,0.08);">
+            <p style="font-size:0.88rem;color:var(--white-dim);">3. Lucey, B.P., McCullough, A., Landsness, E.C., Toedebusch, C.D., McLeland, J.S., Zaza, A.M., ... &amp; Bhaskaran, A.B. (2019). Reduced non-rapid eye movement sleep is associated with tau pathology in early Alzheimer's disease. <em>Science Translational Medicine</em>, 11(474).</p>
+          </div>
+          <div style="padding:0.8rem;border-bottom:1px solid rgba(0,194,179,0.08);">
+            <p style="font-size:0.88rem;color:var(--white-dim);">4. Nedergaard, M. (2013). Garbage truck of the brain. <em>Science</em>, 340(6140), 1529-1530.</p>
+          </div>
+          <div style="padding:0.8rem;border-bottom:1px solid rgba(0,194,179,0.08);">
+            <p style="font-size:0.88rem;color:var(--white-dim);">5. Livingston, G., Huntley, J., Sommerlad, A., Ames, D., Ballard, C., Banerjee, S., ... &amp; Mukadam, N. (2020). Dementia prevention, intervention, and care: 2020 report of the Lancet Commission. <em>The Lancet</em>, 396(10248), 413-446.</p>
+          </div>
+          <div style="padding:0.8rem;border-bottom:1px solid rgba(0,194,179,0.08);">
+            <p style="font-size:0.88rem;color:var(--white-dim);">6. Walker, M.P., &amp; Stickgold, R. (2006). Sleep, memory, and plasticity. <em>Annual Review of Psychology</em>, 57, 139-166.</p>
+          </div>
+          <div style="padding:0.8rem;border-bottom:1px solid rgba(0,194,179,0.08);">
+            <p style="font-size:0.88rem;color:var(--white-dim);">7. Carskadon, M.A. (2011). Sleep in adolescents: The perfect storm. <em>Pediatric Clinics of North America</em>, 58(3), 637-647.</p>
+          </div>
+          <div style="padding:0.8rem;border-bottom:1px solid rgba(0,194,179,0.08);">
+            <p style="font-size:0.88rem;color:var(--white-dim);">8. Van Dongen, H.P.A., Maislin, G., Mullington, J.M., &amp; Dinges, D.F. (2003). The cumulative cost of additional wakefulness: dose-response effects on neurobehavioral functions and sleep physiology from chronic sleep restriction. <em>Sleep</em>, 26(2), 117-126.</p>
+          </div>
+          <div style="padding:0.8rem;border-bottom:1px solid rgba(0,194,179,0.08);">
+            <p style="font-size:0.88rem;color:var(--white-dim);">9. Logan, R.W., &amp; McClung, C.A. (2019). Rhythms of life: circadian disruption and brain disorders across the lifespan. <em>Nature Reviews Neuroscience</em>, 20(1), 49-65.</p>
+          </div>
+          <div style="padding:0.8rem;border-bottom:1px solid rgba(0,194,179,0.08);">
+            <p style="font-size:0.88rem;color:var(--white-dim);">10. Yaffe, K., Laffan, A.M., Harrison, S.L., Redline, S., Spira, A.P., Ensrud, K.E., ... &amp; Stone, K.L. (2011). Sleep-disordered breathing, hypoxia, and risk of mild cognitive impairment and dementia in older women. <em>JAMA</em>, 306(6), 613-619.</p>
+          </div>
+          <div style="padding:0.8rem;border-bottom:1px solid rgba(0,194,179,0.08);">
+            <p style="font-size:0.88rem;color:var(--white-dim);">11. Winer, J.R., Mander, B.A., Helfrich, R.F., Maass, A., Harrison, T.M., Baker, S.L., ... &amp; Walker, M.P. (2019). Sleep as a potential biomarker of tau and amyloid burden in the human brain. <em>Journal of Neuroscience</em>, 39(32), 6315-6324.</p>
+          </div>
+          <div style="padding:0.8rem;">
+            <p style="font-size:0.88rem;color:var(--white-dim);">12. Lim, A.S., Kowgier, M., Yu, L., Buchman, A.S., &amp; Bennett, D.A. (2013). Sleep fragmentation and the risk of incident Alzheimer's disease and cognitive decline in older persons. <em>Sleep</em>, 36(7), 1027-1032.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="../index.html" class="nav-logo"><svg viewBox="0 0 40 40" fill="none" width="32" height="32"><circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/><path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#00c2b3"/></svg><span class="nav-logo-text">Neuro<span>Sleep</span></span></a>
+      <p>Research-driven platform exploring sleep, cognition, and Alzheimer's prevention. Created by Mithil Gajula.</p>
+    </div>
+    <div class="footer-col"><h4>Platform</h4><ul><li><a href="tracker.html">Sleep Tracker</a></li><li><a href="cognitive.html">Cognitive Tests</a></li><li><a href="dashboard.html">Dashboard</a></li><li><a href="risk.html">Risk Calculator</a></li></ul></div>
+    <div class="footer-col"><h4>Research</h4><ul><li><a href="research.html">Research Library</a></li><li><a href="research.html#alzheimers">Alzheimer's Biology</a></li><li><a href="research.html#sleep">Sleep Neuroscience</a></li></ul></div>
+    <div class="footer-col"><h4>Info</h4><ul><li><a href="../index.html#about">About</a></li><li><a href="research.html#citations">Citations</a></li><li><a href="research.html#methodology">Methodology</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>&copy; 2025 NeuroSleep. Created by Mithil Gajula.</p><p style="font-size:0.78rem;">For educational and research purposes only.</p></div>
+</footer>
+
+<script src="../js/core.js"></script>
+<script>
+Chart.defaults.color = '#6e8aaa';
+Chart.defaults.borderColor = 'rgba(0,194,179,0.08)';
+
+// Glymphatic Activity Chart
+const gc = document.getElementById('glymphaticChart');
+if (gc) {
+  new Chart(gc, {
+    type: 'bar',
+    data: {
+      labels: ['Awake','N1','N2','Slow-Wave (N3)','REM'],
+      datasets: [{
+        label: 'Glymphatic Activity (%)',
+        data: [15, 35, 55, 95, 40],
+        backgroundColor: ['rgba(255,80,80,0.6)','rgba(255,200,0,0.6)','rgba(0,194,179,0.5)','rgba(0,194,179,0.9)','rgba(155,93,229,0.6)'],
+        borderRadius: 6, borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.raw}% relative activity` } } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { title: { display: true, text: 'Relative Glymphatic Activity (%)', color: '#6e8aaa', font:{size:10} }, max: 100, grid:{color:'rgba(0,194,179,0.05)'} }
+      }
+    }
+  });
+}
+
+// Memory Chart
+const mc = document.getElementById('memoryChart');
+if (mc) {
+  new Chart(mc, {
+    type: 'line',
+    data: {
+      labels: ['Day 1','Day 2','Day 3','Day 4','Day 5','Day 6','Day 7'],
+      datasets: [
+        { label: 'Good Sleep Group', data: [65,68,72,75,78,80,83], borderColor: '#00c2b3', backgroundColor: 'rgba(0,194,179,0.1)', tension: 0.4, fill: true, pointRadius: 4 },
+        { label: 'Poor Sleep Group', data: [65,63,60,58,55,53,50], borderColor: '#ff5050', backgroundColor: 'rgba(255,80,80,0.1)', tension: 0.4, fill: true, pointRadius: 4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 10 } } } },
+      scales: {
+        y: { title: { display: true, text: 'Memory Score', color: '#6e8aaa', font:{size:10} }, min: 40, max: 90, grid:{color:'rgba(0,194,179,0.05)'} },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>

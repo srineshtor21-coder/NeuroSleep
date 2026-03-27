@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cognitive Tests | NeuroSleep</title>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .page-hero{padding:120px 2rem 3rem;position:relative;}
+    .page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(155,93,229,0.1) 0%,transparent 60%);pointer-events:none;}
+    .test-arena{min-height:320px;border-radius:16px;border:1.5px solid var(--card-border);background:rgba(7,13,26,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;cursor:pointer;user-select:none;position:relative;overflow:hidden;transition:var(--transition);}
+    .arena-big{font-family:var(--font-head);font-size:clamp(2.5rem,8vw,5rem);font-weight:800;display:block;line-height:1;text-align:center;}
+    .arena-sub{font-size:1rem;color:var(--grey);margin-top:0.5rem;text-align:center;}
+    .arena-instruction{font-size:0.88rem;color:var(--white-dim);margin-top:1rem;text-align:center;max-width:340px;}
+    .rt-go{background:rgba(0,194,179,0.08);border-color:rgba(0,194,179,0.6);}
+    .rt-ready{background:rgba(255,80,80,0.07);border-color:rgba(255,80,80,0.3);}
+    .memory-grid{display:grid;grid-template-columns:repeat(4,65px);gap:8px;justify-content:center;}
+    .mem-cell{width:65px;height:65px;border-radius:10px;border:2px solid rgba(0,194,179,0.2);background:rgba(10,48,96,0.4);cursor:pointer;transition:var(--transition);}
+    .mem-cell.highlighted{background:var(--teal);border-color:var(--teal);box-shadow:0 0 18px rgba(0,194,179,0.6);}
+    .mem-cell.correct-sel{background:rgba(0,210,130,0.35);border-color:#00d282;}
+    .mem-cell.wrong-sel{background:rgba(255,80,80,0.3);border-color:#ff5050;}
+    .pattern-opts{display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;width:100%;max-width:380px;margin-top:1rem;}
+    .pattern-opt{padding:0.9rem;border-radius:10px;border:2px solid rgba(0,194,179,0.2);background:rgba(10,48,96,0.4);cursor:pointer;transition:var(--transition);font-size:1.3rem;text-align:center;}
+    .pattern-opt:hover{border-color:var(--teal);background:rgba(0,194,179,0.1);}
+    .pattern-opt.correct{border-color:#00d282;background:rgba(0,210,130,0.15);}
+    .pattern-opt.wrong{border-color:#ff5050;background:rgba(255,80,80,0.15);}
+    .score-history-row{display:flex;align-items:center;justify-content:space-between;padding:0.65rem 0;border-bottom:1px solid rgba(0,194,179,0.06);}
+  </style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-logo">
+    <svg viewBox="0 0 40 40" fill="none" width="38" height="38"><circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/><path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#00c2b3"/></svg>
+    <span class="nav-logo-text">Neuro<span>Sleep</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="research.html">Research</a></li>
+    <li><a href="tracker.html">Sleep Tracker</a></li>
+    <li><a href="cognitive.html" class="active">Cognitive Tests</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="risk.html">Risk Calculator</a></li>
+    <li><a href="risk.html" class="nav-cta">Get Started</a></li>
+  </ul>
+  <button class="nav-hamburger"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="page-hero">
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="section-label">Neuropsychological Assessment</div>
+    <h1>Cognitive <span class="text-teal">Tests</span></h1>
+    <p class="text-dim mt-1" style="max-width:560px;">Three validated assessments measuring reaction time, working memory, and pattern recognition. Results are stored and correlated with your sleep data in the Dashboard.</p>
+    <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+      <span class="badge badge-teal">&#9889; Reaction Time</span>
+      <span class="badge badge-purple">&#129504; Working Memory</span>
+      <span class="badge badge-orange">&#128302; Pattern Recognition</span>
+    </div>
+  </div>
+</div>
+
+<section style="padding-top:0;">
+  <div class="container">
+    <div class="grid-2" style="gap:2rem;align-items:start;">
+
+      <!-- LEFT: TESTS -->
+      <div>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="rt">&#9889; Reaction Time</button>
+          <button class="tab-btn" data-tab="mem">&#129504; Memory</button>
+          <button class="tab-btn" data-tab="pat">&#128302; Pattern</button>
+        </div>
+
+        <!-- REACTION TIME -->
+        <div class="tab-panel active" data-panel="rt">
+          <div class="card mb-2">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+              <h3>Simple Reaction Time Test</h3>
+              <span class="badge badge-teal" id="rtBadge">Trial 1 of 5</span>
+            </div>
+            <p class="text-dim mt-1" style="font-size:0.85rem;">When the screen flashes green, click as fast as you can. 5 trials are averaged. Measures neural processing speed — sensitive to sleep deprivation.</p>
+          </div>
+          <div class="test-arena" id="rtArena" tabindex="0">
+            <span class="arena-big" id="rtBig" style="color:var(--grey);">&#128994;</span>
+            <span class="arena-sub" id="rtSub">Click anywhere to begin</span>
+            <p class="arena-instruction" id="rtInstr">A 5-trial reaction time test. Click only when the screen turns green. Clicking early resets the trial.</p>
+          </div>
+          <div id="rtTrialDisplay" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.8rem;"></div>
+          <button class="btn btn-primary mt-2" id="rtSaveBtn" style="display:none;width:100%;">&#10003; Save Reaction Time Score</button>
+        </div>
+
+        <!-- MEMORY -->
+        <div class="tab-panel" data-panel="mem">
+          <div class="card mb-2">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+              <h3>Spatial Working Memory</h3>
+              <span class="badge badge-purple" id="memBadge">Level 1</span>
+            </div>
+            <p class="text-dim mt-1" style="font-size:0.85rem;">Watch which cells light up in sequence, then repeat the pattern by clicking them in order. Levels get harder. Based on the Corsi Block paradigm.</p>
+          </div>
+          <div style="text-align:center;padding:1rem 0;">
+            <p id="memMsg" style="font-size:1rem;font-weight:600;color:var(--teal);min-height:1.6rem;margin-bottom:1rem;"></p>
+            <div class="memory-grid" id="memGrid"></div>
+            <button class="btn btn-primary mt-3" id="memStartBtn">&#9654; Start Memory Test</button>
+          </div>
+          <button class="btn btn-primary mt-2" id="memSaveBtn" style="display:none;width:100%;">&#10003; Save Memory Score</button>
+        </div>
+
+        <!-- PATTERN -->
+        <div class="tab-panel" data-panel="pat">
+          <div class="card mb-2">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
+              <h3>Pattern Recognition</h3>
+              <span class="badge badge-orange" id="patBadge">Q 1 of 10</span>
+            </div>
+            <p class="text-dim mt-1" style="font-size:0.85rem;">Identify what comes next in the sequence. 10 questions of increasing difficulty. Measures executive function and visual reasoning speed.</p>
+          </div>
+          <div id="patArea" style="min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
+            <button class="btn btn-primary" id="patStartBtn">&#9654; Start Pattern Test</button>
+          </div>
+          <div style="display:none;margin-top:0.8rem;" id="patProgWrap">
+            <div class="progress-bar"><div class="progress-fill" id="patProg" style="width:0%"></div></div>
+            <p class="text-dim mt-1" style="font-size:0.78rem;text-align:right;" id="patProgLabel">0 / 10</p>
+          </div>
+          <button class="btn btn-primary mt-2" id="patSaveBtn" style="display:none;width:100%;">&#10003; Save Pattern Score</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: SCORES -->
+      <div>
+        <div class="card mb-3">
+          <h3 class="mb-3">&#128200; Score History</h3>
+          <div style="height:210px;position:relative;"><canvas id="scoreChart"></canvas></div>
+        </div>
+
+        <div class="card mb-3">
+          <h3 class="mb-2">&#128203; Recent Scores</h3>
+          <div id="scoreList">
+            <p class="text-dim" style="font-size:0.88rem;padding:1rem 0;">Complete a test to see your scores here.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 class="mb-3">&#128218; What Each Test Measures</h3>
+          <div style="display:flex;flex-direction:column;gap:0.8rem;">
+            <div style="padding:0.8rem;background:rgba(0,194,179,0.05);border-radius:8px;">
+              <strong style="color:var(--teal);">&#9889; Reaction Time</strong>
+              <p class="text-dim mt-1" style="font-size:0.82rem;">Measures neural processing speed via the prefrontal cortex and anterior cingulate. Normal range: 150-280ms. Sleep deprivation adds 40-60ms on average. Variability across trials is often more diagnostic than mean alone.</p>
+            </div>
+            <div style="padding:0.8rem;background:rgba(155,93,229,0.05);border-radius:8px;">
+              <strong style="color:var(--accent-purple);">&#129504; Working Memory</strong>
+              <p class="text-dim mt-1" style="font-size:0.82rem;">Spatial sequence task based on the Corsi Block Test. Taps visuospatial working memory capacity, typically 5-9 items. Sleep loss impairs prefrontal-hippocampal coordination, reducing both capacity and accuracy.</p>
+            </div>
+            <div style="padding:0.8rem;background:rgba(255,107,53,0.05);border-radius:8px;">
+              <strong style="color:var(--accent-orange);">&#128302; Pattern Recognition</strong>
+              <p class="text-dim mt-1" style="font-size:0.82rem;">Tests executive function and visual reasoning via sequence completion. Requires dorsal prefrontal and parietal cortex. Performance declines measurably after poor sleep, reflecting disrupted thalamo-cortical neural gating.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="../index.html" class="nav-logo"><svg viewBox="0 0 40 40" fill="none" width="32" height="32"><circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/><path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#00c2b3"/></svg><span class="nav-logo-text">Neuro<span>Sleep</span></span></a>
+      <p>Research platform exploring sleep and Alzheimer's prevention. Created by Mithil Gajula.</p>
+    </div>
+    <div class="footer-col"><h4>Platform</h4><ul><li><a href="tracker.html">Sleep Tracker</a></li><li><a href="cognitive.html">Cognitive Tests</a></li><li><a href="dashboard.html">Dashboard</a></li><li><a href="risk.html">Risk Calculator</a></li></ul></div>
+    <div class="footer-col"><h4>Research</h4><ul><li><a href="research.html">Research Library</a></li><li><a href="research.html">Alzheimer's Biology</a></li><li><a href="research.html">Methodology</a></li></ul></div>
+    <div class="footer-col"><h4>Info</h4><ul><li><a href="../index.html">About</a></li><li><a href="research.html">Citations</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>&copy; 2025 NeuroSleep. Created by Mithil Gajula. ISM Research Project.</p></div>
+</footer>
+
+<script src="../js/core.js"></script>
+<script>
+Chart.defaults.color='#6e8aaa';
+Chart.defaults.borderColor='rgba(0,194,179,0.08)';
+
+// ===== REACTION TIME =====
+let rtPhase='idle', rtTimer, rtStart, rtResults=[], rtMax=5;
+const rtArena=document.getElementById('rtArena');
+
+rtArena.addEventListener('click',()=>{
+  if(rtPhase==='idle'||rtPhase==='done') startRT();
+  else if(rtPhase==='waiting'){ clearTimeout(rtTimer); flashEarly(); }
+  else if(rtPhase==='go') recordRT();
+});
+
+function startRT(){
+  if(rtResults.length>=rtMax){rtResults=[];document.getElementById('rtTrialDisplay').innerHTML='';document.getElementById('rtSaveBtn').style.display='none';}
+  rtPhase='waiting';
+  rtArena.className='test-arena rt-ready';
+  document.getElementById('rtBig').textContent='🔴';
+  document.getElementById('rtBig').style.color='';
+  document.getElementById('rtSub').textContent='Wait for green...';
+  document.getElementById('rtInstr').textContent='Do NOT click yet!';
+  const delay=1500+Math.random()*3000;
+  rtTimer=setTimeout(()=>{
+    rtPhase='go'; rtStart=performance.now();
+    rtArena.className='test-arena rt-go';
+    document.getElementById('rtBig').textContent='CLICK!';
+    document.getElementById('rtBig').style.color='#00c2b3';
+    document.getElementById('rtSub').textContent='';
+    document.getElementById('rtInstr').textContent='';
+  },delay);
+}
+
+function flashEarly(){
+  rtPhase='idle'; rtArena.className='test-arena';
+  document.getElementById('rtBig').textContent='⚠️';
+  document.getElementById('rtBig').style.color='#ffc800';
+  document.getElementById('rtSub').textContent='Too early! Click to retry.';
+}
+
+function recordRT(){
+  const ms=performance.now()-rtStart;
+  rtResults.push(ms);
+  rtPhase='result';
+  const score=Math.max(0,Math.min(100,Math.round(100-(ms-150)/3)));
+  rtArena.className='test-arena';
+  const col=ms<220?'#00d282':ms<280?'#00c2b3':ms<350?'#ffc800':'#ff5050';
+  document.getElementById('rtBig').style.color=col;
+  document.getElementById('rtBig').textContent=Math.round(ms)+'ms';
+  document.getElementById('rtSub').textContent=ms<220?'Excellent!':ms<280?'Good':ms<350?'Average':'Slow';
+  document.getElementById('rtBadge').textContent=`Trial ${rtResults.length} of ${rtMax}`;
+
+  const disp=document.getElementById('rtTrialDisplay');
+  disp.innerHTML=rtResults.map((t,i)=>{
+    const c=t<220?'badge-green':t<280?'badge-teal':t<350?'badge-yellow':'badge-red';
+    return `<span class="badge ${c}">T${i+1}: ${Math.round(t)}ms</span>`;
+  }).join('');
+
+  if(rtResults.length>=rtMax){
+    const avg=mean(rtResults), sd=stdDev(rtResults);
+    document.getElementById('rtBig').textContent=Math.round(avg)+'ms';
+    document.getElementById('rtSub').textContent=`Average across ${rtMax} trials`;
+    document.getElementById('rtInstr').textContent=`Mean: ${Math.round(avg)}ms | Variability (SD): ${Math.round(sd)}ms`;
+    document.getElementById('rtSaveBtn').style.display='block';
+    document.getElementById('rtSaveBtn').dataset.score=Math.max(0,Math.min(100,Math.round(100-(avg-150)/3)));
+    document.getElementById('rtSaveBtn').dataset.ms=Math.round(avg);
+    rtPhase='done';
+  } else {
+    document.getElementById('rtInstr').textContent='Click to continue to next trial.';
+    setTimeout(()=>{ if(rtPhase==='result'){ rtPhase='idle'; startRT(); } }, 1500);
+  }
+}
+
+document.getElementById('rtSaveBtn').addEventListener('click',function(){
+  const sc=parseInt(this.dataset.score)||50;
+  NS.push('cog_scores',{type:'reaction',date:new Date().toISOString().slice(0,10),score:sc,raw:parseInt(this.dataset.ms)||250,timestamp:Date.now()});
+  showNotification('Saved!',`Reaction Time Score: ${sc}/100`,'⚡');
+  rtResults=[]; rtPhase='idle'; document.getElementById('rtSaveBtn').style.display='none';
+  document.getElementById('rtBig').textContent='🟢'; document.getElementById('rtBig').style.color='';
+  document.getElementById('rtSub').textContent='Click to begin again';
+  document.getElementById('rtTrialDisplay').innerHTML='';
+  renderScores();
+});
+
+// ===== MEMORY =====
+let memSeq=[],memPlayer=[],memLevel=1,memPhase='idle';
+const memGrid=document.getElementById('memGrid');
+
+function buildGrid(){
+  memGrid.innerHTML='';
+  for(let i=0;i<16;i++){
+    const c=document.createElement('div');
+    c.className='mem-cell'; c.dataset.i=i;
+    c.addEventListener('click',()=>memClick(i));
+    memGrid.appendChild(c);
+  }
+}
+
+const cells=()=>[...memGrid.querySelectorAll('.mem-cell')];
+
+function lightUp(idx,dur=550){
+  return new Promise(r=>{
+    cells()[idx].classList.add('highlighted');
+    setTimeout(()=>{ cells()[idx].classList.remove('highlighted'); setTimeout(r,150); },dur);
+  });
+}
+
+async function playSeq(){
+  memPhase='showing';
+  document.getElementById('memMsg').textContent='Watch carefully...';
+  cells().forEach(c=>c.style.pointerEvents='none');
+  for(const i of memSeq) await lightUp(i);
+  memPlayer=[];
+  memPhase='input';
+  cells().forEach(c=>c.style.pointerEvents='');
+  document.getElementById('memMsg').textContent=`Repeat the sequence (${memSeq.length} steps)`;
+}
+
+async function memClick(idx){
+  if(memPhase!=='input') return;
+  memPlayer.push(idx);
+  const c=cells()[idx];
+  if(memPlayer[memPlayer.length-1]!==memSeq[memPlayer.length-1]){
+    c.classList.add('wrong-sel');
+    memPhase='over';
+    const score=Math.min(100,Math.round((memSeq.length-1)/10*100));
+    document.getElementById('memMsg').textContent=`Wrong! Best sequence: ${memSeq.length-1} items (Level ${memLevel-1})`;
+    document.getElementById('memSaveBtn').style.display='block';
+    document.getElementById('memSaveBtn').dataset.score=score;
+    document.getElementById('memSaveBtn').dataset.level=memLevel-1;
+    document.getElementById('memStartBtn').textContent='↺ Try Again';
+    return;
+  }
+  c.classList.add('correct-sel');
+  setTimeout(()=>c.classList.remove('correct-sel'),400);
+  if(memPlayer.length===memSeq.length){
+    memPhase='between'; memLevel++;
+    document.getElementById('memBadge').textContent=`Level ${memLevel}`;
+    document.getElementById('memMsg').textContent=`Correct! Level ${memLevel} next...`;
+    memSeq.push(Math.floor(Math.random()*16));
+    setTimeout(()=>playSeq(),1000);
+  }
+}
+
+document.getElementById('memStartBtn').addEventListener('click',()=>{
+  memLevel=1; memSeq=[Math.floor(Math.random()*16),Math.floor(Math.random()*16)];
+  document.getElementById('memSaveBtn').style.display='none';
+  document.getElementById('memBadge').textContent='Level 1';
+  document.getElementById('memStartBtn').textContent='↺ Restart';
+  playSeq();
+});
+
+document.getElementById('memSaveBtn').addEventListener('click',function(){
+  const sc=parseInt(this.dataset.score)||20;
+  const lv=parseInt(this.dataset.level)||1;
+  NS.push('cog_scores',{type:'memory',date:new Date().toISOString().slice(0,10),score:sc,level:lv,timestamp:Date.now()});
+  showNotification('Saved!',`Memory Score: ${sc}/100 (Level ${lv})`,'🧠');
+  this.style.display='none'; renderScores();
+});
+
+buildGrid();
+
+// ===== PATTERN =====
+const PATTERNS=[
+  {seq:'2, 4, 6, 8, ?',opts:['10','9','12','11'],ans:'10'},
+  {seq:'1, 3, 9, 27, ?',opts:['54','81','63','36'],ans:'81'},
+  {seq:'1, 1, 2, 3, 5, 8, ?',opts:['12','13','11','16'],ans:'13'},
+  {seq:'A, C, E, G, ?',opts:['H','I','J','K'],ans:'I'},
+  {seq:'100, 50, 25, 12.5, ?',opts:['8','6','6.25','5'],ans:'6.25'},
+  {seq:'3, 6, 12, 24, ?',opts:['36','48','42','30'],ans:'48'},
+  {seq:'4, 9, 16, 25, ?',opts:['30','36','34','32'],ans:'36'},
+  {seq:'2, 5, 10, 17, 26, ?',opts:['35','36','37','38'],ans:'37'},
+  {seq:'Z, Y, X, W, ?',opts:['A','U','V','T'],ans:'V'},
+  {seq:'1, 4, 9, 16, 25, ?',opts:['30','36','34','32'],ans:'36'}
+];
+let patQ=0,patScore=0,patActive=false;
+
+function showPattern(){
+  if(patQ>=PATTERNS.length){ endPattern(); return; }
+  const p=PATTERNS[patQ];
+  document.getElementById('patBadge').textContent=`Q ${patQ+1} of ${PATTERNS.length}`;
+  document.getElementById('patProg').style.width=`${(patQ/PATTERNS.length)*100}%`;
+  document.getElementById('patProgLabel').textContent=`${patQ} / ${PATTERNS.length}`;
+  const shuffled=[...p.opts].sort(()=>Math.random()-0.5);
+  document.getElementById('patArea').innerHTML=`
+    <div style="margin-bottom:1rem;">
+      <p class="text-dim" style="font-size:0.78rem;margin-bottom:0.5rem;">What comes next?</p>
+      <div style="font-family:var(--font-head);font-size:1.8rem;font-weight:800;letter-spacing:0.1em;color:var(--white);margin-bottom:0.5rem;">${p.seq}</div>
+    </div>
+    <div class="pattern-opts">
+      ${shuffled.map(o=>`<div class="pattern-opt" onclick="checkPat(this,'${o}','${p.ans}')">${o}</div>`).join('')}
+    </div>`;
+}
+
+function checkPat(el,chosen,ans){
+  if(!patActive) return;
+  document.querySelectorAll('.pattern-opt').forEach(o=>o.style.pointerEvents='none');
+  if(chosen===ans){ el.classList.add('correct'); patScore++; }
+  else{
+    el.classList.add('wrong');
+    document.querySelectorAll('.pattern-opt').forEach(o=>{ if(o.textContent.trim()===ans) o.classList.add('correct'); });
+  }
+  patQ++;
+  setTimeout(showPattern,700);
+}
+
+function endPattern(){
+  patActive=false;
+  const sc=Math.round((patScore/PATTERNS.length)*100);
+  document.getElementById('patArea').innerHTML=`
+    <div style="text-align:center;">
+      <div style="font-family:var(--font-head);font-size:4rem;font-weight:800;color:var(--teal);">${sc}</div>
+      <div class="text-dim">/ 100</div>
+      <div style="margin-top:0.5rem;" class="text-dim">${patScore} correct out of ${PATTERNS.length}</div>
+    </div>`;
+  document.getElementById('patProgWrap').style.display='none';
+  document.getElementById('patSaveBtn').style.display='block';
+  document.getElementById('patSaveBtn').dataset.score=sc;
+}
+
+document.getElementById('patStartBtn').addEventListener('click',()=>{
+  patQ=0; patScore=0; patActive=true;
+  document.getElementById('patProgWrap').style.display='block';
+  document.getElementById('patSaveBtn').style.display='none';
+  showPattern();
+});
+
+document.getElementById('patSaveBtn').addEventListener('click',function(){
+  const sc=parseInt(this.dataset.score)||0;
+  NS.push('cog_scores',{type:'pattern',date:new Date().toISOString().slice(0,10),score:sc,timestamp:Date.now()});
+  showNotification('Saved!',`Pattern Score: ${sc}/100`,'🔷');
+  this.style.display='none'; renderScores();
+});
+
+// ===== SCORE CHART & LIST =====
+let scoreChart;
+function renderScores(){
+  const all=NS.get('cog_scores',[]).slice(-30);
+  const container=document.getElementById('scoreList');
+  if(!all.length){ container.innerHTML='<p class="text-dim" style="font-size:0.88rem;padding:0.5rem 0;">No scores yet.</p>'; }
+  else{
+    const recent=all.slice(-10).reverse();
+    const icons={reaction:'⚡',memory:'🧠',pattern:'🔷'};
+    const colors={reaction:'badge-teal',memory:'badge-purple',pattern:'badge-orange'};
+    container.innerHTML=recent.map(s=>`
+      <div class="score-history-row">
+        <div style="display:flex;align-items:center;gap:0.8rem;">
+          <span>${icons[s.type]||'●'}</span>
+          <div>
+            <div style="font-size:0.88rem;font-weight:600;text-transform:capitalize;">${s.type}</div>
+            <div style="font-size:0.75rem;color:var(--grey);">${s.date}</div>
+          </div>
+        </div>
+        <span class="badge ${colors[s.type]||'badge-teal'}">${s.score}/100</span>
+      </div>`).join('');
+  }
+
+  // Chart
+  const byDate={};
+  all.forEach(s=>{ if(!byDate[s.date]) byDate[s.date]={}; byDate[s.date][s.type]=s.score; });
+  const dates=Object.keys(byDate).sort().slice(-14);
+  const ctx=document.getElementById('scoreChart').getContext('2d');
+  if(scoreChart) scoreChart.destroy();
+  scoreChart=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:dates.map(d=>d.slice(5)),
+      datasets:[
+        {label:'Reaction',data:dates.map(d=>byDate[d]?.reaction??null),borderColor:'#00c2b3',backgroundColor:'rgba(0,194,179,0.08)',tension:0.4,spanGaps:true,pointRadius:4},
+        {label:'Memory',data:dates.map(d=>byDate[d]?.memory??null),borderColor:'#9b5de5',backgroundColor:'rgba(155,93,229,0.08)',tension:0.4,spanGaps:true,pointRadius:4},
+        {label:'Pattern',data:dates.map(d=>byDate[d]?.pattern??null),borderColor:'#ff6b35',backgroundColor:'rgba(255,107,53,0.08)',tension:0.4,spanGaps:true,pointRadius:4}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},
+      scales:{
+        y:{min:0,max:100,title:{display:true,text:'Score',color:'#6e8aaa',font:{size:10}},grid:{color:'rgba(0,194,179,0.05)'}},
+        x:{grid:{display:false}}
+      }
+    }
+  });
+}
+
+renderScores();
+</script>
+</body>
+</html>

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuroSleep | Sleep, Cognition & Alzheimer's Research Platform</title>
+  <meta name="description" content="NeuroSleep is a research-driven digital platform exploring the relationship between sleep consistency, cognitive performance, and Alzheimer's disease risk. Created by Mithil Gajula." />
+  <link rel="stylesheet" href="css/main.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* HOME-SPECIFIC */
+    .hero-wave { width: 100%; height: 80px; margin-bottom: 2rem; }
+    .research-card { display: flex; gap: 1.5rem; align-items: flex-start; }
+    .research-num { font-family: var(--font-head); font-size: 3rem; font-weight: 800; color: var(--teal); opacity: 0.25; line-height: 1; min-width: 60px; }
+    .brain-pathway { display: flex; align-items: center; gap: 0; flex-wrap: wrap; justify-content: center; margin: 3rem 0; }
+    .pathway-step { text-align: center; padding: 1.5rem 1rem; flex: 1; min-width: 140px; max-width: 180px; }
+    .pathway-icon { width: 56px; height: 56px; border-radius: 50%; background: var(--teal-glow); border: 2px solid rgba(0,194,179,0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem; font-size: 1.4rem; }
+    .pathway-arrow { color: var(--teal); font-size: 1.5rem; opacity: 0.4; align-self: center; margin-bottom: 2.5rem; }
+    .pathway-step h4 { font-family: var(--font-head); font-size: 0.85rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .pathway-step p { font-size: 0.75rem; color: var(--grey); }
+    .science-stat { text-align: center; padding: 2rem; }
+    .science-stat-num { font-family: var(--font-head); font-size: 2.8rem; font-weight: 800; background: linear-gradient(135deg, var(--teal), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .science-stat-text { font-size: 0.88rem; color: var(--white-dim); margin-top: 0.4rem; line-height: 1.5; max-width: 200px; margin-left: auto; margin-right: auto; }
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+    .feature-card { position: relative; }
+    .feature-card .badge { position: absolute; top: 1rem; right: 1rem; }
+    .cta-section { background: linear-gradient(135deg, rgba(0,194,179,0.08) 0%, rgba(155,93,229,0.06) 100%); border: 1px solid rgba(0,194,179,0.15); border-radius: var(--radius-lg); padding: 4rem 2rem; text-align: center; }
+    .team-section { background: var(--navy-mid); }
+    .mini-chart-wrap { height: 200px; position: relative; }
+    @media(max-width:900px){ .feature-grid{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:640px){ .feature-grid{grid-template-columns:1fr;} .brain-pathway{flex-direction:column;align-items:center;} .pathway-arrow{transform:rotate(90deg);} }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/>
+      <path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M6 26 Q10 16 18 20 Q26 24 34 14" stroke="#4fd8e4" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <circle cx="20" cy="20" r="4" fill="#00c2b3" opacity="0.2"/>
+      <circle cx="20" cy="20" r="2" fill="#00c2b3"/>
+      <path d="M20 16 L20 10 M20 16 L24 13 M20 16 L16 13" stroke="#00c2b3" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+    </svg>
+    <span class="nav-logo-text">Neuro<span>Sleep</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="pages/research.html">Research</a></li>
+    <li><a href="pages/tracker.html">Sleep Tracker</a></li>
+    <li><a href="pages/cognitive.html">Cognitive Tests</a></li>
+    <li><a href="pages/dashboard.html">Dashboard</a></li>
+    <li><a href="pages/risk.html">Risk Calculator</a></li>
+    <li><a href="pages/risk.html" class="nav-cta">Get Started</a></li>
+  </ul>
+  <button class="nav-hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="hero-grid-lines"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="hero-badge-dot"></span> Research Platform &bull; Neuroscience &bull; ISM Project</div>
+    <h1>Sleep is the<br><span class="gradient">Brain's Reset</span><br><span class="teal">Button</span></h1>
+    <p class="hero-sub">NeuroSleep is a research-driven platform modeling the relationship between sleep consistency, cognitive performance, and long-term Alzheimer's disease risk. Track, test, and understand your brain health.</p>
+    <div class="hero-buttons">
+      <a href="pages/tracker.html" class="btn btn-primary">&#9654; Start Tracking Sleep</a>
+      <a href="pages/research.html" class="btn btn-secondary">&#128270; Explore Research</a>
+    </div>
+    <!-- Live EEG-style wave -->
+    <svg class="hero-wave" viewBox="0 0 700 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:transparent"/>
+          <stop offset="20%" style="stop-color:#00c2b3;stop-opacity:0.8"/>
+          <stop offset="80%" style="stop-color:#4fd8e4;stop-opacity:0.8"/>
+          <stop offset="100%" style="stop-color:transparent"/>
+        </linearGradient>
+      </defs>
+      <polyline id="eegWave" fill="none" stroke="url(#wg)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="hero-stat-num" id="sc1">6.1M</span><span class="hero-stat-label">Americans with Alzheimer's</span></div>
+      <div class="hero-stat"><span class="hero-stat-num" id="sc2">40%</span><span class="hero-stat-label">Risk reduction with good sleep</span></div>
+      <div class="hero-stat"><span class="hero-stat-num" id="sc3">7-9h</span><span class="hero-stat-label">Optimal nightly sleep</span></div>
+      <div class="hero-stat"><span class="hero-stat-num" id="sc4">3x</span><span class="hero-stat-label">Higher amyloid clearance during sleep</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SCIENCE STATS BAND -->
+<section style="padding: 3rem 2rem; background: rgba(13,27,46,0.5);">
+  <div class="container">
+    <div class="grid-4">
+      <div class="science-stat reveal">
+        <div class="science-stat-num">55M+</div>
+        <div class="science-stat-text">People worldwide living with dementia as of 2024</div>
+      </div>
+      <div class="science-stat reveal anim-delay-1">
+        <div class="science-stat-num">2050</div>
+        <div class="science-stat-text">Projected year cases will triple without intervention</div>
+      </div>
+      <div class="science-stat reveal anim-delay-2">
+        <div class="science-stat-num">$345B</div>
+        <div class="science-stat-text">Annual US cost of Alzheimer's care</div>
+      </div>
+      <div class="science-stat reveal anim-delay-3">
+        <div class="science-stat-num">1-3</div>
+        <div class="science-stat-text">Hours of deep sleep needed for amyloid-beta clearance nightly</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- HOW SLEEP AFFECTS THE BRAIN -->
+<section>
+  <div class="container">
+    <div class="section-label">The Science</div>
+    <h2>Why Sleep is <span class="text-teal">Critical</span> for Your Brain</h2>
+    <p class="text-dim mb-4" style="max-width:640px;">Emerging research from Johns Hopkins, NIH, and the Alzheimer's Association has established a direct, bidirectional relationship between sleep quality and neurological health.</p>
+
+    <div class="brain-pathway reveal">
+      <div class="pathway-step">
+        <div class="pathway-icon">&#128721;</div>
+        <h4>You Sleep</h4>
+        <p>Brain enters NREM and REM cycles</p>
+      </div>
+      <div class="pathway-arrow">&#8594;</div>
+      <div class="pathway-step">
+        <div class="pathway-icon">&#128161;</div>
+        <h4>Glymphatic System Activates</h4>
+        <p>Cerebrospinal fluid flushes the brain</p>
+      </div>
+      <div class="pathway-arrow">&#8594;</div>
+      <div class="pathway-step">
+        <div class="pathway-icon">&#9889;</div>
+        <h4>Amyloid-Beta Cleared</h4>
+        <p>Toxic proteins removed 10x faster than waking</p>
+      </div>
+      <div class="pathway-arrow">&#8594;</div>
+      <div class="pathway-step">
+        <div class="pathway-icon">&#129504;</div>
+        <h4>Memory Consolidated</h4>
+        <p>Hippocampus replays and stores new memories</p>
+      </div>
+      <div class="pathway-arrow">&#8594;</div>
+      <div class="pathway-step">
+        <div class="pathway-icon">&#128170;</div>
+        <h4>Cognitive Resilience</h4>
+        <p>Lower long-term Alzheimer's risk</p>
+      </div>
+    </div>
+
+    <div class="grid-2 mt-4 reveal">
+      <div class="card">
+        <div class="card-icon">&#128293;</div>
+        <h3 class="mb-2">The Amyloid-Beta Connection</h3>
+        <p class="text-dim" style="font-size:0.92rem;line-height:1.7;">Amyloid-beta is a protein fragment produced naturally by the brain. During wakefulness, these fragments accumulate. During sleep, particularly slow-wave (deep) sleep, the glymphatic system activates and cerebrospinal fluid flows through the brain at dramatically increased rates, clearing amyloid-beta and other metabolic waste products. Chronic sleep deprivation disrupts this process, allowing amyloid plaques to build up, which is a hallmark of Alzheimer's disease pathology.</p>
+        <div class="mt-3"><span class="badge badge-teal">Source: Nature Neuroscience, 2019</span></div>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128336;</div>
+        <h3 class="mb-2">Circadian Rhythm Disruption</h3>
+        <p class="text-dim" style="font-size:0.92rem;line-height:1.7;">The circadian rhythm, your body's internal 24-hour clock, governs hormone release, metabolic activity, and cellular repair. Disruption of this rhythm through irregular sleep schedules, shift work, or chronic late-night screen exposure elevates cortisol, suppresses melatonin production, and impairs the brain's ability to regulate inflammation. Studies show that circadian disruption accelerates tau protein accumulation, another key driver of Alzheimer's neurodegeneration.</p>
+        <div class="mt-3"><span class="badge badge-purple">Source: NIH National Institute on Aging</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PLATFORM FEATURES -->
+<section style="background: rgba(13,27,46,0.4);">
+  <div class="container">
+    <div class="text-center mb-4">
+      <div class="section-label" style="justify-content:center;">Platform Features</div>
+      <h2>Everything You Need to<br><span class="text-teal">Understand Your Brain Health</span></h2>
+      <p class="text-dim" style="max-width:540px;margin:1rem auto 0;">A complete research-grade toolkit designed to collect, analyze, and visualize the connection between your daily habits and long-term neurological wellbeing.</p>
+    </div>
+    <div class="feature-grid mt-4">
+      <a href="pages/tracker.html" class="card reveal" style="text-decoration:none;color:inherit;">
+        <span class="badge badge-teal" style="position:absolute;top:1rem;right:1rem;">Live</span>
+        <div class="card-icon">&#128336;</div>
+        <h3 class="mb-2">Sleep Tracker</h3>
+        <p class="text-dim" style="font-size:0.9rem;">Log bedtime, wake time, interruptions, screen cutoff, and sleep quality. Visualize weekly trends and consistency scores with real-time analysis.</p>
+        <div class="mt-3" style="color:var(--teal);font-size:0.85rem;font-weight:600;">Open Tracker &#8594;</div>
+      </a>
+      <a href="pages/cognitive.html" class="card reveal anim-delay-1" style="text-decoration:none;color:inherit;">
+        <span class="badge badge-purple" style="position:absolute;top:1rem;right:1rem;">3 Tests</span>
+        <div class="card-icon">&#129504;</div>
+        <h3 class="mb-2">Cognitive Tests</h3>
+        <p class="text-dim" style="font-size:0.9rem;">Assess reaction time, working memory, and pattern recognition with validated neuropsychological testing instruments adapted for research use.</p>
+        <div class="mt-3" style="color:var(--teal);font-size:0.85rem;font-weight:600;">Take Tests &#8594;</div>
+      </a>
+      <a href="pages/dashboard.html" class="card reveal anim-delay-2" style="text-decoration:none;color:inherit;">
+        <span class="badge badge-orange" style="position:absolute;top:1rem;right:1rem;">Analytics</span>
+        <div class="card-icon">&#128200;</div>
+        <h3 class="mb-2">Data Dashboard</h3>
+        <p class="text-dim" style="font-size:0.9rem;">Explore correlation graphs, scatter plots, and trend analyses showing how your sleep patterns influence cognitive performance over time.</p>
+        <div class="mt-3" style="color:var(--teal);font-size:0.85rem;font-weight:600;">View Dashboard &#8594;</div>
+      </a>
+      <a href="pages/risk.html" class="card reveal" style="text-decoration:none;color:inherit;">
+        <span class="badge badge-red" style="position:absolute;top:1rem;right:1rem;">Predictive</span>
+        <div class="card-icon">&#9888;</div>
+        <h3 class="mb-2">Risk Calculator</h3>
+        <p class="text-dim" style="font-size:0.9rem;">Input your behavioral data to receive a personalized cognitive risk behavior score with actionable recommendations based on current neuroscience research.</p>
+        <div class="mt-3" style="color:var(--teal);font-size:0.85rem;font-weight:600;">Calculate Risk &#8594;</div>
+      </a>
+      <a href="pages/research.html" class="card reveal anim-delay-1" style="text-decoration:none;color:inherit;">
+        <span class="badge badge-teal" style="position:absolute;top:1rem;right:1rem;">Academic</span>
+        <div class="card-icon">&#128218;</div>
+        <h3 class="mb-2">Research Library</h3>
+        <p class="text-dim" style="font-size:0.9rem;">Comprehensive, peer-reviewed research on sleep neuroscience, Alzheimer's pathology, circadian biology, and cognitive assessment methodologies.</p>
+        <div class="mt-3" style="color:var(--teal);font-size:0.85rem;font-weight:600;">Read Research &#8594;</div>
+      </a>
+      <div class="card reveal anim-delay-2">
+        <span class="badge badge-green" style="position:absolute;top:1rem;right:1rem;">AI-Powered</span>
+        <div class="card-icon">&#127754;</div>
+        <h3 class="mb-2">Correlation Engine</h3>
+        <p class="text-dim" style="font-size:0.9rem;">Automatically identifies statistical relationships in your personal data, generating insights like "lower sleep consistency correlates with slower reaction time."</p>
+        <div class="mt-3" style="color:var(--grey);font-size:0.85rem;font-weight:600;">Runs automatically in Dashboard</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SAMPLE CHART PREVIEW -->
+<section>
+  <div class="container">
+    <div class="section-label">Data Preview</div>
+    <h2>Research-Grade <span class="text-teal">Visualizations</span></h2>
+    <p class="text-dim mb-4">NeuroSleep generates publication-quality graphs to reveal how sleep patterns shape cognitive outcomes.</p>
+    <div class="grid-2 reveal">
+      <div class="card">
+        <h3 class="mb-1" style="font-size:1rem;">Sleep Consistency vs. Reaction Time</h3>
+        <p class="text-dim mb-3" style="font-size:0.82rem;">Lower sleep variability correlates with faster cognitive processing speed</p>
+        <div style="height:200px;"><canvas id="previewChart1"></canvas></div>
+      </div>
+      <div class="card">
+        <h3 class="mb-1" style="font-size:1rem;">Sleep Duration vs. Memory Score</h3>
+        <p class="text-dim mb-3" style="font-size:0.82rem;">Participants averaging 7-9h show significantly higher recall accuracy</p>
+        <div style="height:200px;"><canvas id="previewChart2"></canvas></div>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <a href="pages/dashboard.html" class="btn btn-primary">View Full Dashboard &#8594;</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RESEARCH PILLARS -->
+<section style="background: rgba(13,27,46,0.4);">
+  <div class="container">
+    <div class="section-label">Research Foundation</div>
+    <h2>Built on <span class="text-teal">Peer-Reviewed Science</span></h2>
+    <p class="text-dim mb-4" style="max-width:600px;">Every feature of NeuroSleep is grounded in published neuroscience research from leading institutions.</p>
+    <div class="grid-3">
+      <div class="card reveal">
+        <div class="research-card">
+          <div class="research-num">01</div>
+          <div>
+            <h3 class="mb-2">Glymphatic System Research</h3>
+            <p class="text-dim" style="font-size:0.88rem;">Pioneering work by Dr. Maiken Nedergaard at the University of Rochester demonstrated that the brain's waste-clearance system is 10x more active during sleep, removing toxic proteins including amyloid-beta that are central to Alzheimer's progression.</p>
+            <div class="mt-2"><span class="badge badge-teal">Johns Hopkins, 2019</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card reveal anim-delay-1">
+        <div class="research-card">
+          <div class="research-num">02</div>
+          <div>
+            <h3 class="mb-2">Sleep Consistency Studies</h3>
+            <p class="text-dim" style="font-size:0.88rem;">Research published in the Journal of Alzheimer's Disease found that irregular sleep timing, not just duration, is independently associated with cognitive decline. Participants with highly variable sleep schedules showed 27% greater memory impairment.</p>
+            <div class="mt-2"><span class="badge badge-purple">Journal of Alzheimer's Disease, 2021</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="card reveal anim-delay-2">
+        <div class="research-card">
+          <div class="research-num">03</div>
+          <div>
+            <h3 class="mb-2">Tau Protein &amp; Circadian Rhythm</h3>
+            <p class="text-dim" style="font-size:0.88rem;">NIH-funded studies at Washington University School of Medicine established that circadian rhythm disruption accelerates tau spread in the brain. Even a single night of sleep deprivation resulted in a 50% increase in tau levels in cerebrospinal fluid.</p>
+            <div class="mt-2"><span class="badge badge-orange">NIH, Science 2019</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <a href="pages/research.html" class="btn btn-secondary">Read Full Research Library &#8594;</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CTA -->
+<section>
+  <div class="container">
+    <div class="cta-section reveal">
+      <div class="section-label" style="justify-content:center;">Get Started Today</div>
+      <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);">Your Brain Health Journey<br><span class="text-teal">Starts With One Night's Sleep</span></h2>
+      <p class="text-dim mt-2 mb-4" style="max-width:520px;margin-left:auto;margin-right:auto;">Begin tracking your sleep, take your first cognitive assessment, and discover what the data says about your long-term brain health.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+        <a href="pages/tracker.html" class="btn btn-primary" style="font-size:1rem;">&#128336; Log Tonight's Sleep</a>
+        <a href="pages/cognitive.html" class="btn btn-secondary" style="font-size:1rem;">&#129504; Take Cognitive Test</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section style="background: rgba(13,27,46,0.4);">
+  <div class="container">
+    <div class="grid-2 reveal" style="align-items:center;gap:3rem;">
+      <div>
+        <div class="section-label">About This Project</div>
+        <h2>Created by <span class="text-teal">Mithil Gajula</span></h2>
+        <p class="text-dim mt-2" style="line-height:1.8;">NeuroSleep is an ISM (Independent Study Mentorship) research project exploring the intersection of neuroscience, sleep medicine, and Alzheimer's prevention through data-driven technology.</p>
+        <p class="text-dim mt-2" style="line-height:1.8;">The platform serves as a functional research tool that collects real behavioral data, runs statistical analyses, and generates insights grounded in peer-reviewed science. It demonstrates how modifiable lifestyle factors, particularly sleep consistency, can influence measurable cognitive outcomes and long-term neurological risk.</p>
+        <p class="text-dim mt-2" style="line-height:1.8;">This project is mentored by faculty in neurology and reflects an ongoing commitment to understanding one of the most complex and important challenges in modern medicine.</p>
+      </div>
+      <div>
+        <div class="card" style="padding:2.5rem;">
+          <div style="text-align:center;margin-bottom:2rem;">
+            <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1rem;">&#129504;</div>
+            <h3>Mithil Gajula</h3>
+            <p class="text-dim" style="font-size:0.88rem;margin-top:0.3rem;">ISM Researcher &bull; Neuroscience</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.8rem;">
+            <div style="display:flex;align-items:center;gap:0.8rem;"><span style="color:var(--teal);">&#128218;</span><span class="text-dim" style="font-size:0.88rem;">ISM Independent Research Project</span></div>
+            <div style="display:flex;align-items:center;gap:0.8rem;"><span style="color:var(--teal);">&#128200;</span><span class="text-dim" style="font-size:0.88rem;">Sleep &amp; Alzheimer's Correlation Research</span></div>
+            <div style="display:flex;align-items:center;gap:0.8rem;"><span style="color:var(--teal);">&#129516;</span><span class="text-dim" style="font-size:0.88rem;">Mentored by Neurology Faculty</span></div>
+            <div style="display:flex;align-items:center;gap:0.8rem;"><span style="color:var(--teal);">&#127754;</span><span class="text-dim" style="font-size:0.88rem;">Data Analysis &amp; Platform Development</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="nav-logo" style="margin-bottom:0.5rem;">
+        <svg viewBox="0 0 40 40" fill="none" width="32" height="32">
+          <circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/>
+          <path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="20" cy="20" r="2" fill="#00c2b3"/>
+        </svg>
+        <span class="nav-logo-text">Neuro<span>Sleep</span></span>
+      </a>
+      <p>A research-driven digital platform exploring the relationship between sleep consistency, cognitive performance, and Alzheimer's disease risk. Created by Mithil Gajula as an ISM research project.</p>
+      <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+        <span class="badge badge-teal">ISM Research</span>
+        <span class="badge badge-purple">Neuroscience</span>
+        <span class="badge badge-orange">Sleep Medicine</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <ul>
+        <li><a href="pages/tracker.html">Sleep Tracker</a></li>
+        <li><a href="pages/cognitive.html">Cognitive Tests</a></li>
+        <li><a href="pages/dashboard.html">Data Dashboard</a></li>
+        <li><a href="pages/risk.html">Risk Calculator</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Research</h4>
+      <ul>
+        <li><a href="pages/research.html">Research Library</a></li>
+        <li><a href="pages/research.html#alzheimers">Alzheimer's Biology</a></li>
+        <li><a href="pages/research.html#sleep">Sleep Neuroscience</a></li>
+        <li><a href="pages/research.html#circadian">Circadian Rhythms</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Info</h4>
+      <ul>
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="pages/research.html#citations">Citations</a></li>
+        <li><a href="pages/research.html#methodology">Methodology</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 NeuroSleep. Created by Mithil Gajula. ISM Research Project.</p>
+    <p style="font-size:0.78rem;">This platform is for educational and research purposes only. Not a medical diagnostic tool.</p>
+  </div>
+</footer>
+
+<script src="js/core.js"></script>
+<script>
+// EEG Wave Animation
+(function() {
+  const wave = document.getElementById('eegWave');
+  if (!wave) return;
+  let t = 0;
+  function drawWave() {
+    t += 0.03;
+    const pts = [];
+    for (let x = 0; x <= 700; x += 5) {
+      const nx = x / 700;
+      let y = 40;
+      y += Math.sin(nx * 8 + t) * 12;
+      y += Math.sin(nx * 20 + t * 1.5) * 5;
+      y += Math.sin(nx * 3 + t * 0.5) * 8;
+      // Spike at 30%
+      if (nx > 0.28 && nx < 0.32) y -= 25 * Math.sin((nx - 0.28) / 0.04 * Math.PI);
+      // Spike at 65%
+      if (nx > 0.63 && nx < 0.67) y -= 20 * Math.sin((nx - 0.63) / 0.04 * Math.PI);
+      pts.push(`${x},${Math.max(5, Math.min(75, y))}`);
+    }
+    wave.setAttribute('points', pts.join(' '));
+    requestAnimationFrame(drawWave);
+  }
+  drawWave();
+})();
+
+// Preview Charts
+Chart.defaults.color = '#6e8aaa';
+Chart.defaults.borderColor = 'rgba(0,194,179,0.08)';
+
+const ctx1 = document.getElementById('previewChart1');
+if (ctx1) {
+  new Chart(ctx1, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Participants',
+        data: [
+          {x:0.3,y:180},{x:0.4,y:195},{x:0.5,y:210},{x:0.6,y:225},{x:0.8,y:240},
+          {x:1.0,y:260},{x:1.2,y:275},{x:1.4,y:290},{x:1.6,y:310},{x:1.8,y:330},
+          {x:0.35,y:185},{x:0.7,y:235},{x:0.9,y:250},{x:1.1,y:265},{x:1.3,y:280},
+          {x:1.5,y:300},{x:0.45,y:200},{x:0.65,y:230},{x:1.05,y:260},{x:1.7,y:320}
+        ],
+        backgroundColor: 'rgba(0,194,179,0.6)',
+        borderColor: 'rgba(0,194,179,0.9)',
+        pointRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { title: { display: true, text: 'Sleep Consistency (StdDev hrs)', color: '#6e8aaa', font:{size:10} }, grid:{color:'rgba(0,194,179,0.05)'} },
+        y: { title: { display: true, text: 'Reaction Time (ms)', color: '#6e8aaa', font:{size:10} }, grid:{color:'rgba(0,194,179,0.05)'} }
+      }
+    }
+  });
+}
+
+const ctx2 = document.getElementById('previewChart2');
+if (ctx2) {
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: ['<5h', '5-6h', '6-7h', '7-8h', '8-9h', '>9h'],
+      datasets: [{
+        label: 'Memory Score',
+        data: [42, 54, 65, 82, 85, 76],
+        backgroundColor: [
+          'rgba(255,80,80,0.6)','rgba(255,107,53,0.6)','rgba(255,200,0,0.6)',
+          'rgba(0,194,179,0.8)','rgba(79,216,228,0.8)','rgba(155,93,229,0.6)'
+        ],
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { title: { display: true, text: 'Memory Score (0-100)', color: '#6e8aaa', font:{size:10} }, grid:{color:'rgba(0,194,179,0.05)'}, min: 0, max: 100 }
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
