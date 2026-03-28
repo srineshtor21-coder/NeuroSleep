@@ -4,35 +4,629 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cognitive Tests | NeuroSleep</title>
-  <link rel="stylesheet" href="../css/main.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <style>
+body{background:#06101f;color:#e8f2fb;}
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Core palette — deep navy, clinical teal, warm accent */
+  --ink:         #04090f;
+  --navy:        #061020;
+  --navy-mid:    #091830;
+  --navy-card:   #0c1f3a;
+  --navy-raised: #102547;
+  --teal:        #0bbfa8;
+  --teal-dim:    rgba(11,191,168,0.14);
+  --teal-glow:   rgba(11,191,168,0.28);
+  --cyan:        #5de2db;
+  --ice:         #a8f0ec;
+  --white:       #eef5fb;
+  --white-dim:   #8faec9;
+  --grey:        #4d6a84;
+  --gold:        #e8b84b;
+  --rose:        #e06060;
+  --green:       #3dd68c;
+  --purple:      #8b72e0;
+
+  --card-bg:     rgba(12,31,58,0.9);
+  --card-border: rgba(11,191,168,0.12);
+  --card-shine:  rgba(11,191,168,0.3);
+
+  --font-serif:  'Playfair Display', Georgia, serif;
+  --font-body:   'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:   'IBM Plex Mono', 'Courier New', monospace;
+
+  --radius:      10px;
+  --radius-lg:   18px;
+  --radius-xl:   28px;
+
+  --shadow-card: 0 4px 32px rgba(4,9,15,0.5);
+  --shadow-teal: 0 0 40px rgba(11,191,168,0.18);
+  --shadow-glow: 0 0 80px rgba(11,191,168,0.12);
+
+  --transition:  all 0.28s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--navy);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.65;
+  background-color: #061020; /* hard-coded fallback */
+  color: #eef5fb; /* hard-coded fallback */
+}
+
+/* Grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-thumb { background: rgba(11,191,168,0.35); border-radius: 3px; }
+
+/* ===== NAVIGATION ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 0 2.5rem; height: 72px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(6,16,32,0.85);
+  backdrop-filter: blur(20px) saturate(150%);
+  border-bottom: 1px solid rgba(11,191,168,0.07);
+  transition: var(--transition);
+}
+nav.scrolled {
+  background: rgba(4,9,15,0.96);
+  border-bottom-color: rgba(11,191,168,0.18);
+  box-shadow: 0 2px 24px rgba(4,9,15,0.6);
+}
+
+/* LOGO */
+.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.nav-logo-img { width: 42px; height: 42px; flex-shrink: 0; }
+.nav-logo-text {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  line-height: 1;
+}
+.nav-logo-text em { color: var(--teal); font-style: normal; }
+.nav-logo-sub {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--grey);
+  display: block;
+  margin-top: 2px;
+}
+
+.nav-links { display: flex; align-items: center; gap: 0.15rem; list-style: none; }
+.nav-links a {
+  color: var(--white-dim); text-decoration: none;
+  font-size: 0.82rem; font-weight: 500;
+  padding: 0.4rem 0.85rem; border-radius: 7px;
+  transition: var(--transition);
+  letter-spacing: 0.01em;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--teal); background: var(--teal-dim); }
+.nav-cta {
+  background: var(--teal) !important;
+  color: var(--navy) !important;
+  font-weight: 600 !important;
+  margin-left: 0.5rem;
+}
+.nav-cta:hover { background: var(--cyan) !important; transform: translateY(-1px); }
+.nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+.nav-hamburger span { display: block; width: 22px; height: 1.5px; background: var(--white); border-radius: 2px; transition: var(--transition); }
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; padding: 108px 2rem 5rem; overflow: hidden;
+}
+.hero-bg { position: absolute; inset: 0; z-index: 0; }
+
+/* Sophisticated mesh gradient */
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 80% 20%, rgba(11,191,168,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 10% 80%, rgba(93,226,219,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 50% at 50% 50%, rgba(139,114,224,0.04) 0%, transparent 60%);
+}
+
+/* Subtle grid */
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(11,191,168,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11,191,168,0.025) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+}
+
+/* Floating orbs */
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(70px); pointer-events: none;
+}
+.orb-1 {
+  width: 560px; height: 560px;
+  background: radial-gradient(circle, rgba(11,191,168,0.11) 0%, transparent 65%);
+  top: -80px; right: -60px;
+  animation: orb-drift 10s ease-in-out infinite;
+}
+.orb-2 {
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, rgba(139,114,224,0.08) 0%, transparent 65%);
+  bottom: 60px; left: -40px;
+  animation: orb-drift 10s ease-in-out infinite reverse;
+  animation-delay: -4s;
+}
+@keyframes orb-drift { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-28px) scale(1.04)} }
+
+.hero-content { position: relative; z-index: 2; text-align: center; max-width: 880px; }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(11,191,168,0.08);
+  border: 1px solid rgba(11,191,168,0.22);
+  border-radius: 100px;
+  padding: 0.4rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 2.2rem;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal);
+  animation: blink 2.5s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 7vw, 5.8rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  margin-bottom: 1.6rem;
+}
+.hero h1 .accent-teal { color: var(--teal); }
+.hero h1 .accent-grad {
+  background: linear-gradient(125deg, var(--teal) 0%, var(--cyan) 45%, var(--ice) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero h1 em { font-style: italic; color: var(--white-dim); }
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--white-dim); font-weight: 300;
+  max-width: 620px; margin: 0 auto 2.8rem;
+  line-height: 1.75;
+}
+
+/* EEG wave */
+.hero-eeg {
+  width: 100%; height: 68px;
+  margin-bottom: 3rem; display: block;
+  opacity: 0.8;
+}
+
+/* CTA buttons */
+.hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4.5rem; }
+
+/* Stats row */
+.hero-stats { display: flex; gap: 0; justify-content: center; flex-wrap: wrap; border: 1px solid var(--card-border); border-radius: var(--radius-lg); background: rgba(12,31,58,0.6); backdrop-filter: blur(12px); overflow: hidden; }
+.hero-stat { padding: 1.4rem 2rem; text-align: center; border-right: 1px solid var(--card-border); flex: 1; min-width: 140px; }
+.hero-stat:last-child { border-right: none; }
+.hero-stat-num { font-family: var(--font-serif); font-size: 1.9rem; font-weight: 800; color: var(--teal); display: block; line-height: 1; }
+.hero-stat-label { font-size: 0.72rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 500; margin-top: 0.35rem; line-height: 1.4; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0.8rem 1.7rem;
+  border-radius: 9px;
+  font-family: var(--font-body); font-weight: 600; font-size: 0.9rem;
+  cursor: pointer; transition: var(--transition);
+  text-decoration: none; border: none;
+  letter-spacing: 0.02em; position: relative; overflow: hidden;
+}
+.btn-primary {
+  background: var(--teal); color: var(--navy);
+  box-shadow: 0 4px 24px rgba(11,191,168,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.btn-primary:hover {
+  background: var(--cyan); transform: translateY(-2px);
+  box-shadow: 0 8px 36px rgba(11,191,168,0.42);
+}
+.btn-ghost {
+  background: transparent; color: var(--white);
+  border: 1px solid rgba(238,245,251,0.18);
+}
+.btn-ghost:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-2px); }
+.btn-sm { padding: 0.45rem 1rem; font-size: 0.82rem; border-radius: 7px; }
+.btn-danger { background: rgba(224,96,96,0.12); color: var(--rose); border: 1px solid rgba(224,96,96,0.3); }
+.btn-danger:hover { background: rgba(224,96,96,0.22); }
+
+/* ===== LAYOUT ===== */
+section { position: relative; z-index: 1; padding: 6rem 2rem; }
+.container { max-width: 1180px; margin: 0 auto; }
+.section-kicker {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 1rem;
+}
+.section-kicker::before { content: ''; display: block; width: 28px; height: 1px; background: var(--teal); }
+
+h1 { font-family: var(--font-serif); font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 1rem; }
+h3 { font-family: var(--font-body); font-weight: 600; font-size: 1.15rem; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
+h4 { font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; }
+
+.text-teal { color: var(--teal); }
+.text-dim { color: var(--white-dim); }
+.text-grey { color: var(--grey); }
+.text-center { text-align: center; }
+.text-mono { font-family: var(--font-mono); }
+
+.mb-1{margin-bottom:.5rem}.mb-2{margin-bottom:1rem}.mb-3{margin-bottom:1.5rem}.mb-4{margin-bottom:2rem}.mb-5{margin-bottom:3rem}
+.mt-1{margin-top:.5rem}.mt-2{margin-top:1rem}.mt-3{margin-top:1.5rem}.mt-4{margin-top:2rem}
+
+.divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(11,191,168,0.18), transparent); }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 1.8rem;
+  backdrop-filter: blur(16px);
+  transition: var(--transition);
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+.card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(11,191,168,0.35), transparent);
+  opacity: 0; transition: var(--transition);
+}
+.card:hover { border-color: rgba(11,191,168,0.28); transform: translateY(-3px); box-shadow: var(--shadow-teal); }
+.card:hover::after { opacity: 1; }
+
+.card-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--teal-dim);
+  border: 1px solid rgba(11,191,168,0.2);
+  margin-bottom: 1.2rem; font-size: 1.3rem;
+}
+
+/* Stat cards */
+.stat-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 1.5rem;
+  text-align: center; transition: var(--transition);
+  box-shadow: var(--shadow-card);
+}
+.stat-card:hover { border-color: rgba(11,191,168,0.3); transform: translateY(-3px); }
+.stat-num { font-family: var(--font-serif); font-size: 2rem; font-weight: 800; display: block; }
+.stat-label { font-size: 0.72rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.3rem; }
+.stat-change { font-size: 0.78rem; margin-top: 0.4rem; font-family: var(--font-mono); }
+
+/* ===== GRIDS ===== */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex; gap: 0; flex-wrap: wrap;
+  border-bottom: 2px solid rgba(11,191,168,0.1);
+  margin-bottom: 2.5rem;
+}
+.tab-btn {
+  padding: 0.75rem 1.3rem; border: none; background: transparent;
+  color: var(--grey); font-family: var(--font-body); font-weight: 500;
+  font-size: 0.85rem; cursor: pointer; transition: var(--transition);
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  white-space: nowrap; letter-spacing: 0.02em;
+}
+.tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 600; }
+.tab-btn:hover:not(.active) { color: var(--white-dim); border-bottom-color: rgba(11,191,168,0.25); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+/* ===== FORMS ===== */
+.form-group { margin-bottom: 1.2rem; }
+label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--white-dim); margin-bottom: 0.4rem; letter-spacing: 0.04em; text-transform: uppercase; }
+input[type="text"], input[type="number"], input[type="time"], input[type="date"], select, textarea {
+  width: 100%;
+  background: rgba(6,16,32,0.7);
+  border: 1px solid rgba(11,191,168,0.14);
+  border-radius: var(--radius); padding: 0.7rem 1rem;
+  color: var(--white); font-family: var(--font-body); font-size: 0.92rem;
+  transition: var(--transition); outline: none; -webkit-appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(11,191,168,0.1);
+  background: rgba(6,16,32,0.9);
+}
+select option { background: var(--navy-card); color: var(--white); }
+input[type="range"] {
+  -webkit-appearance: none; width: 100%; height: 4px;
+  border-radius: 2px; background: rgba(11,191,168,0.18);
+  outline: none; border: none; padding: 0; box-shadow: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px;
+  border-radius: 50%; background: var(--teal); cursor: pointer;
+  box-shadow: 0 0 8px rgba(11,191,168,0.5);
+}
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 0.22rem 0.7rem; border-radius: 100px;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+}
+.badge-teal   { background: rgba(11,191,168,0.1);  color: var(--teal);   border: 1px solid rgba(11,191,168,0.25); }
+.badge-orange { background: rgba(232,184,75,0.1);  color: var(--gold);   border: 1px solid rgba(232,184,75,0.25); }
+.badge-purple { background: rgba(139,114,224,0.1); color: var(--purple); border: 1px solid rgba(139,114,224,0.25); }
+.badge-green  { background: rgba(61,214,140,0.1);  color: var(--green);  border: 1px solid rgba(61,214,140,0.25); }
+.badge-red    { background: rgba(224,96,96,0.1);   color: var(--rose);   border: 1px solid rgba(224,96,96,0.25); }
+.badge-yellow { background: rgba(232,184,75,0.1);  color: var(--gold);   border: 1px solid rgba(232,184,75,0.25); }
+.badge-grey   { background: rgba(77,106,132,0.15); color: var(--grey);   border: 1px solid rgba(77,106,132,0.25); }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar { width: 100%; height: 6px; background: rgba(11,191,168,0.1); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--cyan)); border-radius: 3px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+
+/* ===== NOTIFICATION ===== */
+.notification {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--navy-card);
+  border: 1px solid var(--teal); border-radius: var(--radius-lg);
+  padding: 1rem 1.4rem;
+  display: flex; align-items: center; gap: 12px;
+  z-index: 9999; transform: translateY(120%);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  max-width: 340px; box-shadow: var(--shadow-teal);
+}
+.notification.show { transform: translateY(0); }
+.notification-icon { font-size: 1.2rem; }
+.notification-text { font-size: 0.85rem; color: var(--white-dim); }
+.notification-text strong { color: var(--white); display: block; font-size: 0.9rem; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(4,9,15,0.88); backdrop-filter: blur(10px);
+  z-index: 5000; display: flex; align-items: center; justify-content: center;
+  padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--navy-card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl); padding: 2rem;
+  max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;
+  transform: scale(0.92) translateY(20px);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: var(--shadow-card);
+}
+.modal-overlay.open .modal { transform: scale(1) translateY(0); }
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+.modal-close { background: none; border: none; color: var(--grey); font-size: 1.3rem; cursor: pointer; transition: var(--transition); padding: 4px; }
+.modal-close:hover { color: var(--white); }
+
+/* ===== TABLE ===== */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--font-mono);
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--grey); padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--card-border); text-align: left;
+}
+.data-table td { padding: 0.85rem 1rem; font-size: 0.875rem; border-bottom: 1px solid rgba(11,191,168,0.04); color: var(--white-dim); }
+.data-table tr:hover td { background: rgba(11,191,168,0.025); }
+
+/* ===== SCIENCE BAND ===== */
+.stat-band { background: rgba(9,24,48,0.6); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); }
+.stat-band-item { text-align: center; padding: 2.5rem 1rem; border-right: 1px solid rgba(11,191,168,0.08); }
+.stat-band-item:last-child { border-right: none; }
+.stat-band-num {
+  font-family: var(--font-serif);
+  font-size: 2.6rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--cyan) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block; line-height: 1;
+}
+.stat-band-text { font-size: 0.82rem; color: var(--white-dim); margin-top: 0.5rem; line-height: 1.5; max-width: 190px; margin-left: auto; margin-right: auto; }
+
+/* ===== PAGE HERO ===== */
+.page-hero {
+  padding: 130px 2rem 4.5rem;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--card-border);
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 30% 20%, rgba(11,191,168,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.page-hero-inner { position: relative; z-index: 1; }
+
+/* Citation boxes */
+.citation-box {
+  background: rgba(11,191,168,0.04);
+  border-left: 2px solid var(--teal); border-radius: 0 8px 8px 0;
+  padding: 0.8rem 1.2rem; margin-top: 1rem;
+  font-family: var(--font-mono); font-size: 0.77rem;
+  color: var(--grey); line-height: 1.6;
+}
+
+/* Key finding highlight */
+.finding-box {
+  background: rgba(11,191,168,0.06);
+  border: 1px solid rgba(11,191,168,0.18);
+  border-radius: var(--radius); padding: 0.8rem 1.1rem; margin-top: 1rem;
+  font-size: 0.85rem; color: var(--cyan); line-height: 1.55;
+  display: flex; gap: 0.6rem; align-items: flex-start;
+}
+.finding-box::before { content: '◆'; color: var(--teal); font-size: 0.6rem; margin-top: 0.25rem; flex-shrink: 0; }
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--navy-mid);
+  border-top: 1px solid var(--card-border);
+  padding: 4.5rem 2rem 2rem;
+  position: relative; z-index: 1;
+}
+.footer-logo-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; max-width: 1180px; margin: 0 auto 3rem; }
+.footer-brand p { color: var(--grey); font-size: 0.85rem; line-height: 1.7; max-width: 280px; }
+.footer-col h4 {
+  font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--white-dim); margin-bottom: 1rem;
+}
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 0.5rem; }
+.footer-col ul a { color: var(--grey); text-decoration: none; font-size: 0.85rem; transition: var(--transition); }
+.footer-col ul a:hover { color: var(--teal); }
+.footer-bottom {
+  max-width: 1180px; margin: 0 auto;
+  padding-top: 2rem; border-top: 1px solid rgba(11,191,168,0.06);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+}
+.footer-bottom p { font-family: var(--font-mono); font-size: 0.75rem; color: var(--grey); }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shimmer { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.anim-delay-1{transition-delay:0.08s}.anim-delay-2{transition-delay:0.16s}.anim-delay-3{transition-delay:0.24s}.anim-delay-4{transition-delay:0.32s}
+
+.loader { width: 18px; height: 18px; border: 2px solid rgba(11,191,168,0.25); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.75s linear infinite; display: inline-block; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+}
+@media (max-width: 768px) {
+  nav { padding: 0 1.25rem; }
+  .nav-links { display: none; }
+  .nav-links.open {
+    display: flex; flex-direction: column;
+    position: fixed; top: 72px; left: 0; right: 0;
+    background: rgba(4,9,15,0.98); padding: 1.25rem;
+    border-bottom: 1px solid var(--card-border);
+    gap: 0.2rem; z-index: 999;
+  }
+  .nav-hamburger { display: flex; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  section { padding: 4rem 1.2rem; }
+  .hero-stats { flex-direction: column; }
+  .hero-stat { border-right: none !important; border-bottom: 1px solid var(--card-border); }
+}
+@media (max-width: 640px) {
+  .footer-grid { grid-template-columns: 1fr; }
+  .tabs { overflow-x: auto; flex-wrap: nowrap; }
+}
+
+</style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    .page-hero{padding:120px 2rem 3rem;position:relative;}
-    .page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 50%,rgba(155,93,229,0.1) 0%,transparent 60%);pointer-events:none;}
-    .test-arena{min-height:320px;border-radius:16px;border:1.5px solid var(--card-border);background:rgba(7,13,26,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;cursor:pointer;user-select:none;position:relative;overflow:hidden;transition:var(--transition);}
-    .arena-big{font-family:var(--font-head);font-size:clamp(2.5rem,8vw,5rem);font-weight:800;display:block;line-height:1;text-align:center;}
-    .arena-sub{font-size:1rem;color:var(--grey);margin-top:0.5rem;text-align:center;}
-    .arena-instruction{font-size:0.88rem;color:var(--white-dim);margin-top:1rem;text-align:center;max-width:340px;}
-    .rt-go{background:rgba(0,194,179,0.08);border-color:rgba(0,194,179,0.6);}
-    .rt-ready{background:rgba(255,80,80,0.07);border-color:rgba(255,80,80,0.3);}
-    .memory-grid{display:grid;grid-template-columns:repeat(4,65px);gap:8px;justify-content:center;}
-    .mem-cell{width:65px;height:65px;border-radius:10px;border:2px solid rgba(0,194,179,0.2);background:rgba(10,48,96,0.4);cursor:pointer;transition:var(--transition);}
-    .mem-cell.highlighted{background:var(--teal);border-color:var(--teal);box-shadow:0 0 18px rgba(0,194,179,0.6);}
-    .mem-cell.correct-sel{background:rgba(0,210,130,0.35);border-color:#00d282;}
-    .mem-cell.wrong-sel{background:rgba(255,80,80,0.3);border-color:#ff5050;}
-    .pattern-opts{display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;width:100%;max-width:380px;margin-top:1rem;}
-    .pattern-opt{padding:0.9rem;border-radius:10px;border:2px solid rgba(0,194,179,0.2);background:rgba(10,48,96,0.4);cursor:pointer;transition:var(--transition);font-size:1.3rem;text-align:center;}
-    .pattern-opt:hover{border-color:var(--teal);background:rgba(0,194,179,0.1);}
-    .pattern-opt.correct{border-color:#00d282;background:rgba(0,210,130,0.15);}
-    .pattern-opt.wrong{border-color:#ff5050;background:rgba(255,80,80,0.15);}
-    .score-history-row{display:flex;align-items:center;justify-content:space-between;padding:0.65rem 0;border-bottom:1px solid rgba(0,194,179,0.06);}
+    .test-arena {
+      min-height: 300px; border-radius: var(--radius-lg);
+      border: 1.5px solid var(--card-border);
+      background: rgba(4,9,15,0.95);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 2rem; cursor: pointer; user-select: none;
+      position: relative; overflow: hidden; transition: var(--transition);
+    }
+    .test-arena.rt-ready { border-color: rgba(224,96,96,0.4); background: rgba(224,96,96,0.04); }
+    .test-arena.rt-go { border-color: rgba(11,191,168,0.6); background: rgba(11,191,168,0.06); box-shadow: 0 0 40px rgba(11,191,168,0.12); }
+    .arena-big { font-family: var(--font-serif); font-size: clamp(2.8rem,9vw,5.5rem); font-weight: 800; display: block; line-height: 1; text-align: center; }
+    .arena-sub { font-size: 1rem; color: var(--grey); margin-top: 0.5rem; text-align: center; }
+    .arena-instruction { font-family: var(--font-mono); font-size: 0.8rem; color: var(--white-dim); margin-top: 1rem; text-align: center; max-width: 340px; }
+    .memory-grid { display: grid; grid-template-columns: repeat(4, 62px); gap: 8px; justify-content: center; }
+    .mem-cell {
+      width: 62px; height: 62px; border-radius: 10px;
+      border: 1.5px solid rgba(11,191,168,0.18);
+      background: rgba(9,24,48,0.6); cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .mem-cell:hover { border-color: rgba(11,191,168,0.4); background: rgba(11,191,168,0.06); }
+    .mem-cell.highlighted { background: var(--teal); border-color: var(--teal); box-shadow: 0 0 20px rgba(11,191,168,0.6); }
+    .mem-cell.correct-sel { background: rgba(61,214,140,0.3); border-color: var(--green); }
+    .mem-cell.wrong-sel { background: rgba(224,96,96,0.3); border-color: var(--rose); }
+    .pattern-opts { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; width: 100%; max-width: 380px; margin-top: 1.2rem; }
+    .pattern-opt {
+      padding: 0.9rem; border-radius: var(--radius);
+      border: 1.5px solid rgba(11,191,168,0.18);
+      background: rgba(9,24,48,0.6); cursor: pointer;
+      transition: var(--transition); font-size: 1.25rem; text-align: center;
+      font-family: var(--font-mono); font-weight: 600;
+    }
+    .pattern-opt:hover { border-color: var(--teal); background: rgba(11,191,168,0.08); }
+    .pattern-opt.correct { border-color: var(--green); background: rgba(61,214,140,0.12); }
+    .pattern-opt.wrong { border-color: var(--rose); background: rgba(224,96,96,0.12); }
+    .score-history-row { display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0; border-bottom: 1px solid rgba(11,191,168,0.06); }
+    .trial-badges { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.8rem; justify-content: center; }
+    .progress-bar-wrap { height: 6px; background: rgba(11,191,168,0.1); border-radius: 3px; overflow: hidden; margin-bottom: 0.4rem; }
+    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--cyan)); border-radius: 3px; transition: width 0.4s ease; }
   </style>
 </head>
 <body>
+
 <nav>
   <a href="../index.html" class="nav-logo">
-    <svg viewBox="0 0 40 40" fill="none" width="38" height="38"><circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/><path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#00c2b3"/></svg>
-    <span class="nav-logo-text">Neuro<span>Sleep</span></span>
+    <svg class="nav-logo-img" viewBox="0 0 42 42" fill="none">
+      <circle cx="21" cy="21" r="20" stroke="rgba(11,191,168,0.2)" stroke-width="1"/>
+      <path d="M21 10 C15 10 10 14 10 20 C10 24 12 27 15 28.5 C15 30 16 31.5 18 31.5 C19 31.5 20 31 21 30.5" stroke="#0bbfa8" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M12 18 Q14 16 15 19 Q16 22 14 23" stroke="#0bbfa8" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <path d="M21 10 C27 10 32 14 32 20 C32 24 30 27 27 28.5 C27 30 26 31.5 24 31.5 C23 31.5 22 31 21 30.5" stroke="#5de2db" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M30 18 Q28 16 27 19 Q26 22 28 23" stroke="#5de2db" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <line x1="21" y1="10.5" x2="21" y2="30.5" stroke="rgba(11,191,168,0.3)" stroke-width="1" stroke-dasharray="2 2"/>
+      <path d="M32 7 C31 5.5 29.5 5 28 5.2 C30 6 31 7.5 30.5 9.5 C30 11.5 28.5 12.5 27 12.5 C28.5 12.8 30 12 31 10.5 C31.8 9.5 32.3 8.5 32 7Z" fill="#5de2db" opacity="0.85"/>
+      <circle cx="27" cy="6" r="0.8" fill="#a8f0ec"/>
+    </svg>
+    <span class="nav-logo-text">Neuro<em>Sleep</em><span class="nav-logo-sub">Sleep &amp; Cognitive Research</span></span>
   </a>
   <ul class="nav-links">
     <li><a href="../index.html">Home</a></li>
@@ -46,12 +640,12 @@
   <button class="nav-hamburger"><span></span><span></span><span></span></button>
 </nav>
 
-<div class="page-hero">
-  <div class="container" style="position:relative;z-index:1;">
-    <div class="section-label">Neuropsychological Assessment</div>
+<div class="page-hero" style="background:radial-gradient(ellipse 55% 70% at 70% 0%,rgba(139,114,224,0.09) 0%,transparent 60%);">
+  <div class="container page-hero-inner">
+    <div class="section-kicker">Neuropsychological Assessment</div>
     <h1>Cognitive <span class="text-teal">Tests</span></h1>
-    <p class="text-dim mt-1" style="max-width:560px;">Three validated assessments measuring reaction time, working memory, and pattern recognition. Results are stored and correlated with your sleep data in the Dashboard.</p>
-    <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+    <p class="text-dim mt-2" style="max-width:600px;font-size:1.05rem;line-height:1.75;">Three validated assessments measuring reaction time, working memory, and pattern recognition. Complete all three and results are saved to correlate with your sleep data in the Dashboard.</p>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.25rem;">
       <span class="badge badge-teal">&#9889; Reaction Time</span>
       <span class="badge badge-purple">&#129504; Working Memory</span>
       <span class="badge badge-orange">&#128302; Pattern Recognition</span>
@@ -59,102 +653,155 @@
   </div>
 </div>
 
-<section style="padding-top:0;">
+<div class="divider"></div>
+
+<section style="padding-top:2.5rem;">
   <div class="container">
-    <div class="grid-2" style="gap:2rem;align-items:start;">
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="reaction">&#9889; Reaction Time</button>
+      <button class="tab-btn" data-tab="memory">&#129504; Working Memory</button>
+      <button class="tab-btn" data-tab="pattern">&#128302; Pattern Recognition</button>
+      <button class="tab-btn" data-tab="history">&#128202; Score History</button>
+    </div>
 
-      <!-- LEFT: TESTS -->
-      <div>
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="rt">&#9889; Reaction Time</button>
-          <button class="tab-btn" data-tab="mem">&#129504; Memory</button>
-          <button class="tab-btn" data-tab="pat">&#128302; Pattern</button>
-        </div>
-
-        <!-- REACTION TIME -->
-        <div class="tab-panel active" data-panel="rt">
-          <div class="card mb-2">
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
-              <h3>Simple Reaction Time Test</h3>
-              <span class="badge badge-teal" id="rtBadge">Trial 1 of 5</span>
+    <!-- REACTION TIME -->
+    <div class="tab-panel active" data-panel="reaction">
+      <div class="grid-2" style="gap:2rem;align-items:start;">
+        <div>
+          <div class="card mb-3">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+              <h3 style="margin:0;">Psychomotor Vigilance Test</h3>
+              <span class="badge badge-teal" id="rtBadge">5 trials</span>
             </div>
-            <p class="text-dim mt-1" style="font-size:0.85rem;">When the screen flashes green, click as fast as you can. 5 trials are averaged. Measures neural processing speed — sensitive to sleep deprivation.</p>
-          </div>
-          <div class="test-arena" id="rtArena" tabindex="0">
-            <span class="arena-big" id="rtBig" style="color:var(--grey);">&#128994;</span>
-            <span class="arena-sub" id="rtSub">Click anywhere to begin</span>
-            <p class="arena-instruction" id="rtInstr">A 5-trial reaction time test. Click only when the screen turns green. Clicking early resets the trial.</p>
-          </div>
-          <div id="rtTrialDisplay" style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.8rem;"></div>
-          <button class="btn btn-primary mt-2" id="rtSaveBtn" style="display:none;width:100%;">&#10003; Save Reaction Time Score</button>
-        </div>
-
-        <!-- MEMORY -->
-        <div class="tab-panel" data-panel="mem">
-          <div class="card mb-2">
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
-              <h3>Spatial Working Memory</h3>
-              <span class="badge badge-purple" id="memBadge">Level 1</span>
+            <div class="test-arena" id="rtArena">
+              <span class="arena-big" id="rtBig" style="color:var(--teal);">&#128994;</span>
+              <span class="arena-sub" id="rtSub">Click to begin test</span>
+              <span class="arena-instruction" id="rtInstr">When the green stimulus appears, click as fast as you can. Complete 5 trials for a full assessment.</span>
             </div>
-            <p class="text-dim mt-1" style="font-size:0.85rem;">Watch which cells light up in sequence, then repeat the pattern by clicking them in order. Levels get harder. Based on the Corsi Block paradigm.</p>
+            <div class="trial-badges" id="rtTrialDisplay"></div>
+            <button class="btn btn-primary mt-3" id="rtSaveBtn" style="display:none;width:100%;">&#128190;&ensp;Save Result to Dashboard</button>
           </div>
-          <div style="text-align:center;padding:1rem 0;">
-            <p id="memMsg" style="font-size:1rem;font-weight:600;color:var(--teal);min-height:1.6rem;margin-bottom:1rem;"></p>
-            <div class="memory-grid" id="memGrid"></div>
-            <button class="btn btn-primary mt-3" id="memStartBtn">&#9654; Start Memory Test</button>
-          </div>
-          <button class="btn btn-primary mt-2" id="memSaveBtn" style="display:none;width:100%;">&#10003; Save Memory Score</button>
         </div>
-
-        <!-- PATTERN -->
-        <div class="tab-panel" data-panel="pat">
-          <div class="card mb-2">
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;">
-              <h3>Pattern Recognition</h3>
-              <span class="badge badge-orange" id="patBadge">Q 1 of 10</span>
-            </div>
-            <p class="text-dim mt-1" style="font-size:0.85rem;">Identify what comes next in the sequence. 10 questions of increasing difficulty. Measures executive function and visual reasoning speed.</p>
+        <div>
+          <div class="card mb-3">
+            <div class="section-kicker" style="margin-bottom:0.75rem;">About This Test</div>
+            <h3>Reaction Time Measurement</h3>
+            <p class="text-dim" style="font-size:0.875rem;line-height:1.75;margin-top:0.5rem;">The Psychomotor Vigilance Task (PVT) measures sustained attention and psychomotor speed. It was developed by Dinges (1985) and is the gold standard for assessing neurobehavioral impairment from sleep loss. Reaction time increases significantly with sleep deprivation, often before the individual notices any subjective impairment.</p>
+            <div class="finding-box" style="margin-top:1rem;">Interpretation: under 220ms = Excellent; 220 to 280ms = Good; 280 to 350ms = Average; above 350ms = Below average for a rested adult.</div>
           </div>
-          <div id="patArea" style="min-height:260px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;">
-            <button class="btn btn-primary" id="patStartBtn">&#9654; Start Pattern Test</button>
+          <div class="card" style="background:rgba(11,191,168,0.04);border-color:rgba(11,191,168,0.12);">
+            <div class="section-kicker" style="margin-bottom:0.75rem;">Scoring</div>
+            <table class="data-table">
+              <tr><td style="color:var(--green);padding:0.5rem 0;">Under 220ms</td><td style="text-align:right;font-family:var(--font-mono);">Excellent (90-100)</td></tr>
+              <tr><td style="color:var(--teal);">220 to 280ms</td><td style="text-align:right;font-family:var(--font-mono);">Good (70-89)</td></tr>
+              <tr><td style="color:var(--gold);">280 to 350ms</td><td style="text-align:right;font-family:var(--font-mono);">Average (40-69)</td></tr>
+              <tr><td style="color:var(--rose);border:none;">Above 350ms</td><td style="text-align:right;font-family:var(--font-mono);border:none;">Below Average (0-39)</td></tr>
+            </table>
           </div>
-          <div style="display:none;margin-top:0.8rem;" id="patProgWrap">
-            <div class="progress-bar"><div class="progress-fill" id="patProg" style="width:0%"></div></div>
-            <p class="text-dim mt-1" style="font-size:0.78rem;text-align:right;" id="patProgLabel">0 / 10</p>
-          </div>
-          <button class="btn btn-primary mt-2" id="patSaveBtn" style="display:none;width:100%;">&#10003; Save Pattern Score</button>
         </div>
       </div>
+    </div>
 
-      <!-- RIGHT: SCORES -->
-      <div>
-        <div class="card mb-3">
-          <h3 class="mb-3">&#128200; Score History</h3>
-          <div style="height:210px;position:relative;"><canvas id="scoreChart"></canvas></div>
-        </div>
-
-        <div class="card mb-3">
-          <h3 class="mb-2">&#128203; Recent Scores</h3>
-          <div id="scoreList">
-            <p class="text-dim" style="font-size:0.88rem;padding:1rem 0;">Complete a test to see your scores here.</p>
+    <!-- WORKING MEMORY -->
+    <div class="tab-panel" data-panel="memory">
+      <div class="grid-2" style="gap:2rem;align-items:start;">
+        <div>
+          <div class="card mb-3">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+              <h3 style="margin:0;">Spatial Sequence Memory</h3>
+              <span class="badge badge-purple" id="memBadge">Level 1</span>
+            </div>
+            <div style="text-align:center;margin-bottom:1.2rem;">
+              <p class="text-grey" id="memMsg" style="font-family:var(--font-mono);font-size:0.82rem;">Press Start to begin. Watch the pattern, then reproduce it.</p>
+            </div>
+            <div class="memory-grid" id="memGrid"></div>
+            <div style="display:flex;gap:0.75rem;margin-top:1.2rem;">
+              <button class="btn btn-primary" id="memStartBtn" style="flex:1;">&#128161;&ensp;Start Test</button>
+              <button class="btn btn-primary" id="memSaveBtn" style="display:none;flex:1;">&#128190;&ensp;Save Result</button>
+            </div>
           </div>
         </div>
+        <div>
+          <div class="card mb-3">
+            <div class="section-kicker" style="margin-bottom:0.75rem;">About This Test</div>
+            <h3>Spatial Working Memory</h3>
+            <p class="text-dim" style="font-size:0.875rem;line-height:1.75;margin-top:0.5rem;">This test measures spatial working memory capacity, a cognitive function critically dependent on prefrontal cortex-hippocampal networks. A sequence of grid cells illuminates in order; you must reproduce the sequence exactly. Each correct reproduction extends the sequence by one step. Sleep deprivation impairs working memory by reducing the functional connectivity between the hippocampus and prefrontal cortex, reducing the maximum sequence length you can retain.</p>
+            <div class="finding-box" style="margin-top:1rem;">Most rested adults can recall sequences of 5 to 9 items (Miller's Law). Sleep-deprived individuals often show reductions to 3 to 5 items.</div>
+          </div>
+          <div class="card" style="background:rgba(139,114,224,0.04);border-color:rgba(139,114,224,0.15);">
+            <div class="section-kicker" style="margin-bottom:0.75rem;">How it works</div>
+            <ol style="padding-left:1.2rem;display:flex;flex-direction:column;gap:0.5rem;font-size:0.875rem;color:var(--white-dim);">
+              <li>Watch the grid cells light up in sequence</li>
+              <li>Click them back in the same order</li>
+              <li>Each correct sequence adds one more step</li>
+              <li>One wrong click ends the test</li>
+              <li>Your score is based on the maximum level reached</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <div class="card">
-          <h3 class="mb-3">&#128218; What Each Test Measures</h3>
-          <div style="display:flex;flex-direction:column;gap:0.8rem;">
-            <div style="padding:0.8rem;background:rgba(0,194,179,0.05);border-radius:8px;">
-              <strong style="color:var(--teal);">&#9889; Reaction Time</strong>
-              <p class="text-dim mt-1" style="font-size:0.82rem;">Measures neural processing speed via the prefrontal cortex and anterior cingulate. Normal range: 150-280ms. Sleep deprivation adds 40-60ms on average. Variability across trials is often more diagnostic than mean alone.</p>
+    <!-- PATTERN RECOGNITION -->
+    <div class="tab-panel" data-panel="pattern">
+      <div class="grid-2" style="gap:2rem;align-items:start;">
+        <div>
+          <div class="card mb-3">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+              <h3 style="margin:0;">Pattern Recognition</h3>
+              <span class="badge badge-orange" id="patBadge">10 questions</span>
             </div>
-            <div style="padding:0.8rem;background:rgba(155,93,229,0.05);border-radius:8px;">
-              <strong style="color:var(--accent-purple);">&#129504; Working Memory</strong>
-              <p class="text-dim mt-1" style="font-size:0.82rem;">Spatial sequence task based on the Corsi Block Test. Taps visuospatial working memory capacity, typically 5-9 items. Sleep loss impairs prefrontal-hippocampal coordination, reducing both capacity and accuracy.</p>
+            <div id="patProgWrap" style="display:none;margin-bottom:1rem;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:0.3rem;">
+                <span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--grey);">Progress</span>
+                <span style="font-family:var(--font-mono);font-size:0.68rem;color:var(--teal);" id="patProgLabel">0 / 10</span>
+              </div>
+              <div class="progress-bar-wrap"><div class="progress-bar-fill" id="patProg" style="width:0%;"></div></div>
             </div>
-            <div style="padding:0.8rem;background:rgba(255,107,53,0.05);border-radius:8px;">
-              <strong style="color:var(--accent-orange);">&#128302; Pattern Recognition</strong>
-              <p class="text-dim mt-1" style="font-size:0.82rem;">Tests executive function and visual reasoning via sequence completion. Requires dorsal prefrontal and parietal cortex. Performance declines measurably after poor sleep, reflecting disrupted thalamo-cortical neural gating.</p>
+            <div id="patArea" style="text-align:center;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <p class="text-dim" style="font-size:0.9rem;margin-bottom:1.2rem;">10 numerical and alphabetical pattern questions. Identify the rule and select the correct next element.</p>
             </div>
+            <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+              <button class="btn btn-primary" id="patStartBtn" style="flex:1;">&#128302;&ensp;Begin Assessment</button>
+              <button class="btn btn-primary" id="patSaveBtn" style="display:none;flex:1;">&#128190;&ensp;Save Result</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card mb-3">
+            <div class="section-kicker" style="margin-bottom:0.75rem;">About This Test</div>
+            <h3>Executive Function Assessment</h3>
+            <p class="text-dim" style="font-size:0.875rem;line-height:1.75;margin-top:0.5rem;">Pattern recognition and rule induction engage prefrontal executive systems and fluid reasoning capacity. Wagner et al. (2004) demonstrated that sleep facilitates the consolidation of implicit pattern knowledge, with a single night of sleep tripling the likelihood that subjects discover hidden rules. This test assesses the abstract reasoning capacity that is most vulnerable to sleep deprivation-induced prefrontal dysfunction.</p>
+            <div class="finding-box" style="margin-top:1rem;">Scoring is based on percentage correct out of 10 questions. Well-rested individuals typically score 80 to 100 percent. Sleep-deprived adults often show reduced accuracy on novel rule induction tasks.</div>
+          </div>
+          <div class="card" style="background:rgba(232,184,75,0.04);border-color:rgba(232,184,75,0.15);">
+            <div class="section-kicker" style="margin-bottom:0.75rem;">Pattern Types Included</div>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:0.4rem;font-size:0.875rem;color:var(--white-dim);">
+              <li>&#9654; Arithmetic sequences (addition, multiplication)</li>
+              <li>&#9654; Geometric sequences (powers, squares)</li>
+              <li>&#9654; Fibonacci-type sequences</li>
+              <li>&#9654; Alphabetical sequences</li>
+              <li>&#9654; Mixed numerical and symbolic patterns</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="tab-panel" data-panel="history">
+      <div class="grid-2" style="gap:2rem;align-items:start;">
+        <div>
+          <div class="card">
+            <h3 class="mb-3">Recent Scores</h3>
+            <div id="scoreList"><p class="text-dim" style="font-size:0.875rem;">No scores yet. Complete a test to see results here.</p></div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <h3 class="mb-2">Score Trends</h3>
+            <p class="text-grey" style="font-family:var(--font-mono);font-size:0.7rem;margin-bottom:1rem;">Last 14 sessions</p>
+            <div style="height:240px;position:relative;"><canvas id="scoreChart"></canvas></div>
           </div>
         </div>
       </div>
@@ -165,20 +812,24 @@
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <a href="../index.html" class="nav-logo"><svg viewBox="0 0 40 40" fill="none" width="32" height="32"><circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/><path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#00c2b3"/></svg><span class="nav-logo-text">Neuro<span>Sleep</span></span></a>
-      <p>Research platform exploring sleep and Alzheimer's prevention. Created by Mithil Gajula.</p>
+      <div class="footer-logo-wrap">
+        <svg viewBox="0 0 42 42" width="32" height="32" fill="none"><circle cx="21" cy="21" r="20" stroke="rgba(11,191,168,0.2)" stroke-width="1"/><path d="M21 10 C15 10 10 14 10 20 C10 24 12 27 15 28.5 C15 30 16 31.5 18 31.5 C19 31.5 20 31 21 30.5" stroke="#0bbfa8" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M21 10 C27 10 32 14 32 20 C32 24 30 27 27 28.5 C27 30 26 31.5 24 31.5 C23 31.5 22 31 21 30.5" stroke="#5de2db" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M32 7 C31 5.5 29.5 5 28 5.2 C30 6 31 7.5 30.5 9.5 C30 11.5 28.5 12.5 27 12.5 C28.5 12.8 30 12 31 10.5 C31.8 9.5 32.3 8.5 32 7Z" fill="#5de2db" opacity="0.85"/></svg>
+        <span style="font-family:var(--font-serif);font-size:1.1rem;font-weight:700;color:var(--white);">Neuro<span style="color:var(--teal);">Sleep</span></span>
+      </div>
+      <p>ISM Research Project by Mithil Gajula. Not a medical diagnostic tool.</p>
     </div>
     <div class="footer-col"><h4>Platform</h4><ul><li><a href="tracker.html">Sleep Tracker</a></li><li><a href="cognitive.html">Cognitive Tests</a></li><li><a href="dashboard.html">Dashboard</a></li><li><a href="risk.html">Risk Calculator</a></li></ul></div>
-    <div class="footer-col"><h4>Research</h4><ul><li><a href="research.html">Research Library</a></li><li><a href="research.html">Alzheimer's Biology</a></li><li><a href="research.html">Methodology</a></li></ul></div>
-    <div class="footer-col"><h4>Info</h4><ul><li><a href="../index.html">About</a></li><li><a href="research.html">Citations</a></li></ul></div>
+    <div class="footer-col"><h4>Research</h4><ul><li><a href="research.html">Research Library</a></li><li><a href="research.html">Methodology</a></li></ul></div>
+    <div class="footer-col"><h4>About</h4><ul><li><a href="../index.html">Project Overview</a></li><li><a href="research.html">Citations</a></li></ul></div>
   </div>
-  <div class="footer-bottom"><p>&copy; 2025 NeuroSleep. Created by Mithil Gajula. ISM Research Project.</p></div>
+  <div class="footer-bottom"><p>&copy; 2025 NeuroSleep &mdash; Mithil Gajula.</p></div>
 </footer>
 
 <script src="../js/core.js"></script>
 <script>
-Chart.defaults.color='#6e8aaa';
-Chart.defaults.borderColor='rgba(0,194,179,0.08)';
+Chart.defaults.color='#4d6a84';
+Chart.defaults.borderColor='rgba(11,191,168,0.06)';
+Chart.defaults.font.family="'IBM Plex Sans', sans-serif";
 
 // ===== REACTION TIME =====
 let rtPhase='idle', rtTimer, rtStart, rtResults=[], rtMax=5;
@@ -194,8 +845,8 @@ function startRT(){
   if(rtResults.length>=rtMax){rtResults=[];document.getElementById('rtTrialDisplay').innerHTML='';document.getElementById('rtSaveBtn').style.display='none';}
   rtPhase='waiting';
   rtArena.className='test-arena rt-ready';
-  document.getElementById('rtBig').textContent='🔴';
-  document.getElementById('rtBig').style.color='';
+  document.getElementById('rtBig').textContent='&#128308;';
+  document.getElementById('rtBig').style.color='var(--rose)';
   document.getElementById('rtSub').textContent='Wait for green...';
   document.getElementById('rtInstr').textContent='Do NOT click yet!';
   const delay=1500+Math.random()*3000;
@@ -203,7 +854,7 @@ function startRT(){
     rtPhase='go'; rtStart=performance.now();
     rtArena.className='test-arena rt-go';
     document.getElementById('rtBig').textContent='CLICK!';
-    document.getElementById('rtBig').style.color='#00c2b3';
+    document.getElementById('rtBig').style.color='var(--teal)';
     document.getElementById('rtSub').textContent='';
     document.getElementById('rtInstr').textContent='';
   },delay);
@@ -211,18 +862,18 @@ function startRT(){
 
 function flashEarly(){
   rtPhase='idle'; rtArena.className='test-arena';
-  document.getElementById('rtBig').textContent='⚠️';
-  document.getElementById('rtBig').style.color='#ffc800';
-  document.getElementById('rtSub').textContent='Too early! Click to retry.';
+  document.getElementById('rtBig').textContent='&#9888;';
+  document.getElementById('rtBig').style.color='var(--gold)';
+  document.getElementById('rtSub').textContent='Too early. Click to retry.';
+  document.getElementById('rtInstr').textContent='';
 }
 
 function recordRT(){
   const ms=performance.now()-rtStart;
   rtResults.push(ms);
   rtPhase='result';
-  const score=Math.max(0,Math.min(100,Math.round(100-(ms-150)/3)));
   rtArena.className='test-arena';
-  const col=ms<220?'#00d282':ms<280?'#00c2b3':ms<350?'#ffc800':'#ff5050';
+  const col=ms<220?'var(--green)':ms<280?'var(--teal)':ms<350?'var(--gold)':'var(--rose)';
   document.getElementById('rtBig').style.color=col;
   document.getElementById('rtBig').textContent=Math.round(ms)+'ms';
   document.getElementById('rtSub').textContent=ms<220?'Excellent!':ms<280?'Good':ms<350?'Average':'Slow';
@@ -244,17 +895,17 @@ function recordRT(){
     document.getElementById('rtSaveBtn').dataset.ms=Math.round(avg);
     rtPhase='done';
   } else {
-    document.getElementById('rtInstr').textContent='Click to continue to next trial.';
-    setTimeout(()=>{ if(rtPhase==='result'){ rtPhase='idle'; startRT(); } }, 1500);
+    document.getElementById('rtInstr').textContent='Click to continue.';
+    setTimeout(()=>{ if(rtPhase==='result'){ rtPhase='idle'; startRT(); } },1500);
   }
 }
 
 document.getElementById('rtSaveBtn').addEventListener('click',function(){
   const sc=parseInt(this.dataset.score)||50;
   NS.push('cog_scores',{type:'reaction',date:new Date().toISOString().slice(0,10),score:sc,raw:parseInt(this.dataset.ms)||250,timestamp:Date.now()});
-  showNotification('Saved!',`Reaction Time Score: ${sc}/100`,'⚡');
-  rtResults=[]; rtPhase='idle'; document.getElementById('rtSaveBtn').style.display='none';
-  document.getElementById('rtBig').textContent='🟢'; document.getElementById('rtBig').style.color='';
+  showNotification('Score Saved',`Reaction Time: ${sc}/100`,'&#9889;');
+  rtResults=[]; rtPhase='idle'; this.style.display='none';
+  document.getElementById('rtBig').textContent='&#128994;'; document.getElementById('rtBig').style.color='var(--teal)';
   document.getElementById('rtSub').textContent='Click to begin again';
   document.getElementById('rtTrialDisplay').innerHTML='';
   renderScores();
@@ -263,7 +914,6 @@ document.getElementById('rtSaveBtn').addEventListener('click',function(){
 // ===== MEMORY =====
 let memSeq=[],memPlayer=[],memLevel=1,memPhase='idle';
 const memGrid=document.getElementById('memGrid');
-
 function buildGrid(){
   memGrid.innerHTML='';
   for(let i=0;i<16;i++){
@@ -273,16 +923,13 @@ function buildGrid(){
     memGrid.appendChild(c);
   }
 }
-
 const cells=()=>[...memGrid.querySelectorAll('.mem-cell')];
-
 function lightUp(idx,dur=550){
   return new Promise(r=>{
     cells()[idx].classList.add('highlighted');
     setTimeout(()=>{ cells()[idx].classList.remove('highlighted'); setTimeout(r,150); },dur);
   });
 }
-
 async function playSeq(){
   memPhase='showing';
   document.getElementById('memMsg').textContent='Watch carefully...';
@@ -291,22 +938,20 @@ async function playSeq(){
   memPlayer=[];
   memPhase='input';
   cells().forEach(c=>c.style.pointerEvents='');
-  document.getElementById('memMsg').textContent=`Repeat the sequence (${memSeq.length} steps)`;
+  document.getElementById('memMsg').textContent=`Reproduce the sequence (${memSeq.length} steps)`;
 }
-
 async function memClick(idx){
   if(memPhase!=='input') return;
   memPlayer.push(idx);
   const c=cells()[idx];
   if(memPlayer[memPlayer.length-1]!==memSeq[memPlayer.length-1]){
-    c.classList.add('wrong-sel');
-    memPhase='over';
+    c.classList.add('wrong-sel'); memPhase='over';
     const score=Math.min(100,Math.round((memSeq.length-1)/10*100));
-    document.getElementById('memMsg').textContent=`Wrong! Best sequence: ${memSeq.length-1} items (Level ${memLevel-1})`;
+    document.getElementById('memMsg').textContent=`Sequence ended at level ${memLevel-1} (${memSeq.length-1} items)`;
     document.getElementById('memSaveBtn').style.display='block';
     document.getElementById('memSaveBtn').dataset.score=score;
     document.getElementById('memSaveBtn').dataset.level=memLevel-1;
-    document.getElementById('memStartBtn').textContent='↺ Try Again';
+    document.getElementById('memStartBtn').textContent='&#8635; Try Again';
     return;
   }
   c.classList.add('correct-sel');
@@ -314,28 +959,24 @@ async function memClick(idx){
   if(memPlayer.length===memSeq.length){
     memPhase='between'; memLevel++;
     document.getElementById('memBadge').textContent=`Level ${memLevel}`;
-    document.getElementById('memMsg').textContent=`Correct! Level ${memLevel} next...`;
+    document.getElementById('memMsg').textContent=`Correct! Preparing level ${memLevel}...`;
     memSeq.push(Math.floor(Math.random()*16));
     setTimeout(()=>playSeq(),1000);
   }
 }
-
 document.getElementById('memStartBtn').addEventListener('click',()=>{
   memLevel=1; memSeq=[Math.floor(Math.random()*16),Math.floor(Math.random()*16)];
   document.getElementById('memSaveBtn').style.display='none';
   document.getElementById('memBadge').textContent='Level 1';
-  document.getElementById('memStartBtn').textContent='↺ Restart';
+  document.getElementById('memStartBtn').textContent='&#8635; Restart';
   playSeq();
 });
-
 document.getElementById('memSaveBtn').addEventListener('click',function(){
-  const sc=parseInt(this.dataset.score)||20;
-  const lv=parseInt(this.dataset.level)||1;
+  const sc=parseInt(this.dataset.score)||20, lv=parseInt(this.dataset.level)||1;
   NS.push('cog_scores',{type:'memory',date:new Date().toISOString().slice(0,10),score:sc,level:lv,timestamp:Date.now()});
-  showNotification('Saved!',`Memory Score: ${sc}/100 (Level ${lv})`,'🧠');
+  showNotification('Score Saved',`Memory Score: ${sc}/100 (Level ${lv})`,'&#129504;');
   this.style.display='none'; renderScores();
 });
-
 buildGrid();
 
 // ===== PATTERN =====
@@ -352,7 +993,6 @@ const PATTERNS=[
   {seq:'1, 4, 9, 16, 25, ?',opts:['30','36','34','32'],ans:'36'}
 ];
 let patQ=0,patScore=0,patActive=false;
-
 function showPattern(){
   if(patQ>=PATTERNS.length){ endPattern(); return; }
   const p=PATTERNS[patQ];
@@ -361,79 +1001,65 @@ function showPattern(){
   document.getElementById('patProgLabel').textContent=`${patQ} / ${PATTERNS.length}`;
   const shuffled=[...p.opts].sort(()=>Math.random()-0.5);
   document.getElementById('patArea').innerHTML=`
-    <div style="margin-bottom:1rem;">
-      <p class="text-dim" style="font-size:0.78rem;margin-bottom:0.5rem;">What comes next?</p>
-      <div style="font-family:var(--font-head);font-size:1.8rem;font-weight:800;letter-spacing:0.1em;color:var(--white);margin-bottom:0.5rem;">${p.seq}</div>
+    <div style="margin-bottom:0.8rem;width:100%;text-align:center;">
+      <p class="text-grey" style="font-family:var(--font-mono);font-size:0.72rem;margin-bottom:0.6rem;letter-spacing:0.05em;">COMPLETE THE SEQUENCE</p>
+      <div style="font-family:var(--font-mono);font-size:1.9rem;font-weight:700;letter-spacing:0.12em;color:var(--white);">${p.seq}</div>
     </div>
-    <div class="pattern-opts">
-      ${shuffled.map(o=>`<div class="pattern-opt" onclick="checkPat(this,'${o}','${p.ans}')">${o}</div>`).join('')}
-    </div>`;
+    <div class="pattern-opts">${shuffled.map(o=>`<div class="pattern-opt" onclick="checkPat(this,'${o}','${p.ans}')">${o}</div>`).join('')}</div>`;
 }
-
 function checkPat(el,chosen,ans){
   if(!patActive) return;
   document.querySelectorAll('.pattern-opt').forEach(o=>o.style.pointerEvents='none');
   if(chosen===ans){ el.classList.add('correct'); patScore++; }
-  else{
-    el.classList.add('wrong');
-    document.querySelectorAll('.pattern-opt').forEach(o=>{ if(o.textContent.trim()===ans) o.classList.add('correct'); });
-  }
-  patQ++;
-  setTimeout(showPattern,700);
+  else{ el.classList.add('wrong'); document.querySelectorAll('.pattern-opt').forEach(o=>{ if(o.textContent.trim()===ans) o.classList.add('correct'); }); }
+  patQ++; setTimeout(showPattern,700);
 }
-
 function endPattern(){
   patActive=false;
   const sc=Math.round((patScore/PATTERNS.length)*100);
   document.getElementById('patArea').innerHTML=`
     <div style="text-align:center;">
-      <div style="font-family:var(--font-head);font-size:4rem;font-weight:800;color:var(--teal);">${sc}</div>
-      <div class="text-dim">/ 100</div>
-      <div style="margin-top:0.5rem;" class="text-dim">${patScore} correct out of ${PATTERNS.length}</div>
+      <div style="font-family:var(--font-serif);font-size:4rem;font-weight:800;color:var(--teal);">${sc}</div>
+      <div class="text-grey" style="font-family:var(--font-mono);font-size:0.8rem;">/ 100 &nbsp; (${patScore} of ${PATTERNS.length} correct)</div>
     </div>`;
   document.getElementById('patProgWrap').style.display='none';
   document.getElementById('patSaveBtn').style.display='block';
   document.getElementById('patSaveBtn').dataset.score=sc;
 }
-
 document.getElementById('patStartBtn').addEventListener('click',()=>{
   patQ=0; patScore=0; patActive=true;
   document.getElementById('patProgWrap').style.display='block';
   document.getElementById('patSaveBtn').style.display='none';
   showPattern();
 });
-
 document.getElementById('patSaveBtn').addEventListener('click',function(){
   const sc=parseInt(this.dataset.score)||0;
   NS.push('cog_scores',{type:'pattern',date:new Date().toISOString().slice(0,10),score:sc,timestamp:Date.now()});
-  showNotification('Saved!',`Pattern Score: ${sc}/100`,'🔷');
+  showNotification('Score Saved',`Pattern Score: ${sc}/100`,'&#128302;');
   this.style.display='none'; renderScores();
 });
 
-// ===== SCORE CHART & LIST =====
+// ===== HISTORY =====
 let scoreChart;
 function renderScores(){
   const all=NS.get('cog_scores',[]).slice(-30);
   const container=document.getElementById('scoreList');
-  if(!all.length){ container.innerHTML='<p class="text-dim" style="font-size:0.88rem;padding:0.5rem 0;">No scores yet.</p>'; }
+  if(!all.length){ container.innerHTML='<p class="text-dim" style="font-size:0.875rem;font-family:var(--font-mono);">No scores yet.</p>'; }
   else{
     const recent=all.slice(-10).reverse();
-    const icons={reaction:'⚡',memory:'🧠',pattern:'🔷'};
+    const icons={reaction:'&#9889;',memory:'&#129504;',pattern:'&#128302;'};
     const colors={reaction:'badge-teal',memory:'badge-purple',pattern:'badge-orange'};
-    container.innerHTML=recent.map(s=>`
-      <div class="score-history-row">
-        <div style="display:flex;align-items:center;gap:0.8rem;">
-          <span>${icons[s.type]||'●'}</span>
-          <div>
-            <div style="font-size:0.88rem;font-weight:600;text-transform:capitalize;">${s.type}</div>
-            <div style="font-size:0.75rem;color:var(--grey);">${s.date}</div>
-          </div>
+    container.innerHTML=recent.map(s=>`<div class="score-history-row">
+      <div style="display:flex;align-items:center;gap:0.8rem;">
+        <span style="font-size:1.1rem;">${icons[s.type]||'&#9679;'}</span>
+        <div>
+          <div style="font-size:0.875rem;font-weight:600;text-transform:capitalize;">${s.type}</div>
+          <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--grey);">${s.date}</div>
         </div>
-        <span class="badge ${colors[s.type]||'badge-teal'}">${s.score}/100</span>
-      </div>`).join('');
+      </div>
+      <span class="badge ${colors[s.type]||'badge-teal'}">${s.score}/100</span>
+    </div>`).join('');
   }
-
-  // Chart
   const byDate={};
   all.forEach(s=>{ if(!byDate[s.date]) byDate[s.date]={}; byDate[s.date][s.type]=s.score; });
   const dates=Object.keys(byDate).sort().slice(-14);
@@ -444,22 +1070,21 @@ function renderScores(){
     data:{
       labels:dates.map(d=>d.slice(5)),
       datasets:[
-        {label:'Reaction',data:dates.map(d=>byDate[d]?.reaction??null),borderColor:'#00c2b3',backgroundColor:'rgba(0,194,179,0.08)',tension:0.4,spanGaps:true,pointRadius:4},
-        {label:'Memory',data:dates.map(d=>byDate[d]?.memory??null),borderColor:'#9b5de5',backgroundColor:'rgba(155,93,229,0.08)',tension:0.4,spanGaps:true,pointRadius:4},
-        {label:'Pattern',data:dates.map(d=>byDate[d]?.pattern??null),borderColor:'#ff6b35',backgroundColor:'rgba(255,107,53,0.08)',tension:0.4,spanGaps:true,pointRadius:4}
+        {label:'Reaction',data:dates.map(d=>byDate[d]?.reaction??null),borderColor:'#0bbfa8',backgroundColor:'rgba(11,191,168,0.06)',tension:0.4,spanGaps:true,pointRadius:4,pointBackgroundColor:'#0bbfa8',pointBorderWidth:0},
+        {label:'Memory',data:dates.map(d=>byDate[d]?.memory??null),borderColor:'#8b72e0',backgroundColor:'rgba(139,114,224,0.06)',tension:0.4,spanGaps:true,pointRadius:4,pointBackgroundColor:'#8b72e0',pointBorderWidth:0},
+        {label:'Pattern',data:dates.map(d=>byDate[d]?.pattern??null),borderColor:'#e8b84b',backgroundColor:'rgba(232,184,75,0.06)',tension:0.4,spanGaps:true,pointRadius:4,pointBackgroundColor:'#e8b84b',pointBorderWidth:0}
       ]
     },
     options:{
       responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:8,font:{size:10},color:'#4d6a84',padding:16}}},
       scales:{
-        y:{min:0,max:100,title:{display:true,text:'Score',color:'#6e8aaa',font:{size:10}},grid:{color:'rgba(0,194,179,0.05)'}},
-        x:{grid:{display:false}}
+        y:{min:0,max:100,title:{display:true,text:'Score (0-100)',color:'#4d6a84',font:{size:10}},grid:{color:'rgba(11,191,168,0.04)'},ticks:{color:'#4d6a84'}},
+        x:{grid:{display:false},ticks:{color:'#4d6a84',font:{size:10}}}
       }
     }
   });
 }
-
 renderScores();
 </script>
 </body>
