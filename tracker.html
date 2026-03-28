@@ -4,33 +4,637 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sleep Tracker | NeuroSleep</title>
-  <link rel="stylesheet" href="../css/main.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <style>
+body{background:#06101f;color:#e8f2fb;}
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Core palette — deep navy, clinical teal, warm accent */
+  --ink:         #04090f;
+  --navy:        #061020;
+  --navy-mid:    #091830;
+  --navy-card:   #0c1f3a;
+  --navy-raised: #102547;
+  --teal:        #0bbfa8;
+  --teal-dim:    rgba(11,191,168,0.14);
+  --teal-glow:   rgba(11,191,168,0.28);
+  --cyan:        #5de2db;
+  --ice:         #a8f0ec;
+  --white:       #eef5fb;
+  --white-dim:   #8faec9;
+  --grey:        #4d6a84;
+  --gold:        #e8b84b;
+  --rose:        #e06060;
+  --green:       #3dd68c;
+  --purple:      #8b72e0;
+
+  --card-bg:     rgba(12,31,58,0.9);
+  --card-border: rgba(11,191,168,0.12);
+  --card-shine:  rgba(11,191,168,0.3);
+
+  --font-serif:  'Playfair Display', Georgia, serif;
+  --font-body:   'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:   'IBM Plex Mono', 'Courier New', monospace;
+
+  --radius:      10px;
+  --radius-lg:   18px;
+  --radius-xl:   28px;
+
+  --shadow-card: 0 4px 32px rgba(4,9,15,0.5);
+  --shadow-teal: 0 0 40px rgba(11,191,168,0.18);
+  --shadow-glow: 0 0 80px rgba(11,191,168,0.12);
+
+  --transition:  all 0.28s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--navy);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.65;
+  background-color: #061020; /* hard-coded fallback */
+  color: #eef5fb; /* hard-coded fallback */
+}
+
+/* Grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-thumb { background: rgba(11,191,168,0.35); border-radius: 3px; }
+
+/* ===== NAVIGATION ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 0 2.5rem; height: 72px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(6,16,32,0.85);
+  backdrop-filter: blur(20px) saturate(150%);
+  border-bottom: 1px solid rgba(11,191,168,0.07);
+  transition: var(--transition);
+}
+nav.scrolled {
+  background: rgba(4,9,15,0.96);
+  border-bottom-color: rgba(11,191,168,0.18);
+  box-shadow: 0 2px 24px rgba(4,9,15,0.6);
+}
+
+/* LOGO */
+.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.nav-logo-img { width: 42px; height: 42px; flex-shrink: 0; }
+.nav-logo-text {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  line-height: 1;
+}
+.nav-logo-text em { color: var(--teal); font-style: normal; }
+.nav-logo-sub {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--grey);
+  display: block;
+  margin-top: 2px;
+}
+
+.nav-links { display: flex; align-items: center; gap: 0.15rem; list-style: none; }
+.nav-links a {
+  color: var(--white-dim); text-decoration: none;
+  font-size: 0.82rem; font-weight: 500;
+  padding: 0.4rem 0.85rem; border-radius: 7px;
+  transition: var(--transition);
+  letter-spacing: 0.01em;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--teal); background: var(--teal-dim); }
+.nav-cta {
+  background: var(--teal) !important;
+  color: var(--navy) !important;
+  font-weight: 600 !important;
+  margin-left: 0.5rem;
+}
+.nav-cta:hover { background: var(--cyan) !important; transform: translateY(-1px); }
+.nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+.nav-hamburger span { display: block; width: 22px; height: 1.5px; background: var(--white); border-radius: 2px; transition: var(--transition); }
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; padding: 108px 2rem 5rem; overflow: hidden;
+}
+.hero-bg { position: absolute; inset: 0; z-index: 0; }
+
+/* Sophisticated mesh gradient */
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 80% 20%, rgba(11,191,168,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 10% 80%, rgba(93,226,219,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 50% at 50% 50%, rgba(139,114,224,0.04) 0%, transparent 60%);
+}
+
+/* Subtle grid */
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(11,191,168,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11,191,168,0.025) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+}
+
+/* Floating orbs */
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(70px); pointer-events: none;
+}
+.orb-1 {
+  width: 560px; height: 560px;
+  background: radial-gradient(circle, rgba(11,191,168,0.11) 0%, transparent 65%);
+  top: -80px; right: -60px;
+  animation: orb-drift 10s ease-in-out infinite;
+}
+.orb-2 {
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, rgba(139,114,224,0.08) 0%, transparent 65%);
+  bottom: 60px; left: -40px;
+  animation: orb-drift 10s ease-in-out infinite reverse;
+  animation-delay: -4s;
+}
+@keyframes orb-drift { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-28px) scale(1.04)} }
+
+.hero-content { position: relative; z-index: 2; text-align: center; max-width: 880px; }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(11,191,168,0.08);
+  border: 1px solid rgba(11,191,168,0.22);
+  border-radius: 100px;
+  padding: 0.4rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 2.2rem;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal);
+  animation: blink 2.5s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 7vw, 5.8rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  margin-bottom: 1.6rem;
+}
+.hero h1 .accent-teal { color: var(--teal); }
+.hero h1 .accent-grad {
+  background: linear-gradient(125deg, var(--teal) 0%, var(--cyan) 45%, var(--ice) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero h1 em { font-style: italic; color: var(--white-dim); }
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--white-dim); font-weight: 300;
+  max-width: 620px; margin: 0 auto 2.8rem;
+  line-height: 1.75;
+}
+
+/* EEG wave */
+.hero-eeg {
+  width: 100%; height: 68px;
+  margin-bottom: 3rem; display: block;
+  opacity: 0.8;
+}
+
+/* CTA buttons */
+.hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4.5rem; }
+
+/* Stats row */
+.hero-stats { display: flex; gap: 0; justify-content: center; flex-wrap: wrap; border: 1px solid var(--card-border); border-radius: var(--radius-lg); background: rgba(12,31,58,0.6); backdrop-filter: blur(12px); overflow: hidden; }
+.hero-stat { padding: 1.4rem 2rem; text-align: center; border-right: 1px solid var(--card-border); flex: 1; min-width: 140px; }
+.hero-stat:last-child { border-right: none; }
+.hero-stat-num { font-family: var(--font-serif); font-size: 1.9rem; font-weight: 800; color: var(--teal); display: block; line-height: 1; }
+.hero-stat-label { font-size: 0.72rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 500; margin-top: 0.35rem; line-height: 1.4; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0.8rem 1.7rem;
+  border-radius: 9px;
+  font-family: var(--font-body); font-weight: 600; font-size: 0.9rem;
+  cursor: pointer; transition: var(--transition);
+  text-decoration: none; border: none;
+  letter-spacing: 0.02em; position: relative; overflow: hidden;
+}
+.btn-primary {
+  background: var(--teal); color: var(--navy);
+  box-shadow: 0 4px 24px rgba(11,191,168,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.btn-primary:hover {
+  background: var(--cyan); transform: translateY(-2px);
+  box-shadow: 0 8px 36px rgba(11,191,168,0.42);
+}
+.btn-ghost {
+  background: transparent; color: var(--white);
+  border: 1px solid rgba(238,245,251,0.18);
+}
+.btn-ghost:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-2px); }
+.btn-sm { padding: 0.45rem 1rem; font-size: 0.82rem; border-radius: 7px; }
+.btn-danger { background: rgba(224,96,96,0.12); color: var(--rose); border: 1px solid rgba(224,96,96,0.3); }
+.btn-danger:hover { background: rgba(224,96,96,0.22); }
+
+/* ===== LAYOUT ===== */
+section { position: relative; z-index: 1; padding: 6rem 2rem; }
+.container { max-width: 1180px; margin: 0 auto; }
+.section-kicker {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 1rem;
+}
+.section-kicker::before { content: ''; display: block; width: 28px; height: 1px; background: var(--teal); }
+
+h1 { font-family: var(--font-serif); font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 1rem; }
+h3 { font-family: var(--font-body); font-weight: 600; font-size: 1.15rem; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
+h4 { font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; }
+
+.text-teal { color: var(--teal); }
+.text-dim { color: var(--white-dim); }
+.text-grey { color: var(--grey); }
+.text-center { text-align: center; }
+.text-mono { font-family: var(--font-mono); }
+
+.mb-1{margin-bottom:.5rem}.mb-2{margin-bottom:1rem}.mb-3{margin-bottom:1.5rem}.mb-4{margin-bottom:2rem}.mb-5{margin-bottom:3rem}
+.mt-1{margin-top:.5rem}.mt-2{margin-top:1rem}.mt-3{margin-top:1.5rem}.mt-4{margin-top:2rem}
+
+.divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(11,191,168,0.18), transparent); }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 1.8rem;
+  backdrop-filter: blur(16px);
+  transition: var(--transition);
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+.card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(11,191,168,0.35), transparent);
+  opacity: 0; transition: var(--transition);
+}
+.card:hover { border-color: rgba(11,191,168,0.28); transform: translateY(-3px); box-shadow: var(--shadow-teal); }
+.card:hover::after { opacity: 1; }
+
+.card-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--teal-dim);
+  border: 1px solid rgba(11,191,168,0.2);
+  margin-bottom: 1.2rem; font-size: 1.3rem;
+}
+
+/* Stat cards */
+.stat-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 1.5rem;
+  text-align: center; transition: var(--transition);
+  box-shadow: var(--shadow-card);
+}
+.stat-card:hover { border-color: rgba(11,191,168,0.3); transform: translateY(-3px); }
+.stat-num { font-family: var(--font-serif); font-size: 2rem; font-weight: 800; display: block; }
+.stat-label { font-size: 0.72rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.3rem; }
+.stat-change { font-size: 0.78rem; margin-top: 0.4rem; font-family: var(--font-mono); }
+
+/* ===== GRIDS ===== */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex; gap: 0; flex-wrap: wrap;
+  border-bottom: 2px solid rgba(11,191,168,0.1);
+  margin-bottom: 2.5rem;
+}
+.tab-btn {
+  padding: 0.75rem 1.3rem; border: none; background: transparent;
+  color: var(--grey); font-family: var(--font-body); font-weight: 500;
+  font-size: 0.85rem; cursor: pointer; transition: var(--transition);
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  white-space: nowrap; letter-spacing: 0.02em;
+}
+.tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 600; }
+.tab-btn:hover:not(.active) { color: var(--white-dim); border-bottom-color: rgba(11,191,168,0.25); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+/* ===== FORMS ===== */
+.form-group { margin-bottom: 1.2rem; }
+label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--white-dim); margin-bottom: 0.4rem; letter-spacing: 0.04em; text-transform: uppercase; }
+input[type="text"], input[type="number"], input[type="time"], input[type="date"], select, textarea {
+  width: 100%;
+  background: rgba(6,16,32,0.7);
+  border: 1px solid rgba(11,191,168,0.14);
+  border-radius: var(--radius); padding: 0.7rem 1rem;
+  color: var(--white); font-family: var(--font-body); font-size: 0.92rem;
+  transition: var(--transition); outline: none; -webkit-appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(11,191,168,0.1);
+  background: rgba(6,16,32,0.9);
+}
+select option { background: var(--navy-card); color: var(--white); }
+input[type="range"] {
+  -webkit-appearance: none; width: 100%; height: 4px;
+  border-radius: 2px; background: rgba(11,191,168,0.18);
+  outline: none; border: none; padding: 0; box-shadow: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px;
+  border-radius: 50%; background: var(--teal); cursor: pointer;
+  box-shadow: 0 0 8px rgba(11,191,168,0.5);
+}
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 0.22rem 0.7rem; border-radius: 100px;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+}
+.badge-teal   { background: rgba(11,191,168,0.1);  color: var(--teal);   border: 1px solid rgba(11,191,168,0.25); }
+.badge-orange { background: rgba(232,184,75,0.1);  color: var(--gold);   border: 1px solid rgba(232,184,75,0.25); }
+.badge-purple { background: rgba(139,114,224,0.1); color: var(--purple); border: 1px solid rgba(139,114,224,0.25); }
+.badge-green  { background: rgba(61,214,140,0.1);  color: var(--green);  border: 1px solid rgba(61,214,140,0.25); }
+.badge-red    { background: rgba(224,96,96,0.1);   color: var(--rose);   border: 1px solid rgba(224,96,96,0.25); }
+.badge-yellow { background: rgba(232,184,75,0.1);  color: var(--gold);   border: 1px solid rgba(232,184,75,0.25); }
+.badge-grey   { background: rgba(77,106,132,0.15); color: var(--grey);   border: 1px solid rgba(77,106,132,0.25); }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar { width: 100%; height: 6px; background: rgba(11,191,168,0.1); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--cyan)); border-radius: 3px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+
+/* ===== NOTIFICATION ===== */
+.notification {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--navy-card);
+  border: 1px solid var(--teal); border-radius: var(--radius-lg);
+  padding: 1rem 1.4rem;
+  display: flex; align-items: center; gap: 12px;
+  z-index: 9999; transform: translateY(120%);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  max-width: 340px; box-shadow: var(--shadow-teal);
+}
+.notification.show { transform: translateY(0); }
+.notification-icon { font-size: 1.2rem; }
+.notification-text { font-size: 0.85rem; color: var(--white-dim); }
+.notification-text strong { color: var(--white); display: block; font-size: 0.9rem; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(4,9,15,0.88); backdrop-filter: blur(10px);
+  z-index: 5000; display: flex; align-items: center; justify-content: center;
+  padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--navy-card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl); padding: 2rem;
+  max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;
+  transform: scale(0.92) translateY(20px);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: var(--shadow-card);
+}
+.modal-overlay.open .modal { transform: scale(1) translateY(0); }
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+.modal-close { background: none; border: none; color: var(--grey); font-size: 1.3rem; cursor: pointer; transition: var(--transition); padding: 4px; }
+.modal-close:hover { color: var(--white); }
+
+/* ===== TABLE ===== */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--font-mono);
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--grey); padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--card-border); text-align: left;
+}
+.data-table td { padding: 0.85rem 1rem; font-size: 0.875rem; border-bottom: 1px solid rgba(11,191,168,0.04); color: var(--white-dim); }
+.data-table tr:hover td { background: rgba(11,191,168,0.025); }
+
+/* ===== SCIENCE BAND ===== */
+.stat-band { background: rgba(9,24,48,0.6); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); }
+.stat-band-item { text-align: center; padding: 2.5rem 1rem; border-right: 1px solid rgba(11,191,168,0.08); }
+.stat-band-item:last-child { border-right: none; }
+.stat-band-num {
+  font-family: var(--font-serif);
+  font-size: 2.6rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--cyan) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block; line-height: 1;
+}
+.stat-band-text { font-size: 0.82rem; color: var(--white-dim); margin-top: 0.5rem; line-height: 1.5; max-width: 190px; margin-left: auto; margin-right: auto; }
+
+/* ===== PAGE HERO ===== */
+.page-hero {
+  padding: 130px 2rem 4.5rem;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--card-border);
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 30% 20%, rgba(11,191,168,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.page-hero-inner { position: relative; z-index: 1; }
+
+/* Citation boxes */
+.citation-box {
+  background: rgba(11,191,168,0.04);
+  border-left: 2px solid var(--teal); border-radius: 0 8px 8px 0;
+  padding: 0.8rem 1.2rem; margin-top: 1rem;
+  font-family: var(--font-mono); font-size: 0.77rem;
+  color: var(--grey); line-height: 1.6;
+}
+
+/* Key finding highlight */
+.finding-box {
+  background: rgba(11,191,168,0.06);
+  border: 1px solid rgba(11,191,168,0.18);
+  border-radius: var(--radius); padding: 0.8rem 1.1rem; margin-top: 1rem;
+  font-size: 0.85rem; color: var(--cyan); line-height: 1.55;
+  display: flex; gap: 0.6rem; align-items: flex-start;
+}
+.finding-box::before { content: '◆'; color: var(--teal); font-size: 0.6rem; margin-top: 0.25rem; flex-shrink: 0; }
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--navy-mid);
+  border-top: 1px solid var(--card-border);
+  padding: 4.5rem 2rem 2rem;
+  position: relative; z-index: 1;
+}
+.footer-logo-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; max-width: 1180px; margin: 0 auto 3rem; }
+.footer-brand p { color: var(--grey); font-size: 0.85rem; line-height: 1.7; max-width: 280px; }
+.footer-col h4 {
+  font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--white-dim); margin-bottom: 1rem;
+}
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 0.5rem; }
+.footer-col ul a { color: var(--grey); text-decoration: none; font-size: 0.85rem; transition: var(--transition); }
+.footer-col ul a:hover { color: var(--teal); }
+.footer-bottom {
+  max-width: 1180px; margin: 0 auto;
+  padding-top: 2rem; border-top: 1px solid rgba(11,191,168,0.06);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+}
+.footer-bottom p { font-family: var(--font-mono); font-size: 0.75rem; color: var(--grey); }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shimmer { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.anim-delay-1{transition-delay:0.08s}.anim-delay-2{transition-delay:0.16s}.anim-delay-3{transition-delay:0.24s}.anim-delay-4{transition-delay:0.32s}
+
+.loader { width: 18px; height: 18px; border: 2px solid rgba(11,191,168,0.25); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.75s linear infinite; display: inline-block; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+}
+@media (max-width: 768px) {
+  nav { padding: 0 1.25rem; }
+  .nav-links { display: none; }
+  .nav-links.open {
+    display: flex; flex-direction: column;
+    position: fixed; top: 72px; left: 0; right: 0;
+    background: rgba(4,9,15,0.98); padding: 1.25rem;
+    border-bottom: 1px solid var(--card-border);
+    gap: 0.2rem; z-index: 999;
+  }
+  .nav-hamburger { display: flex; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  section { padding: 4rem 1.2rem; }
+  .hero-stats { flex-direction: column; }
+  .hero-stat { border-right: none !important; border-bottom: 1px solid var(--card-border); }
+}
+@media (max-width: 640px) {
+  .footer-grid { grid-template-columns: 1fr; }
+  .tabs { overflow-x: auto; flex-wrap: nowrap; }
+}
+
+</style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    .page-hero { padding: 120px 2rem 3rem; position: relative; }
-    .page-hero::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse at 30% 50%, rgba(0,194,179,0.1) 0%, transparent 60%); pointer-events:none; }
-    .quality-btn { width: 44px; height: 44px; border-radius: 50%; border: 2px solid rgba(0,194,179,0.2); background: rgba(10,48,96,0.3); color: var(--white-dim); font-size: 1.1rem; cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; font-weight: 700; }
+    .quality-btn {
+      width: 42px; height: 42px; border-radius: 8px;
+      border: 1px solid rgba(11,191,168,0.2);
+      background: rgba(6,16,32,0.7); color: var(--white-dim);
+      font-size: 0.95rem; cursor: pointer; transition: var(--transition);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 600; font-family: var(--font-body);
+    }
     .quality-btn.selected { background: var(--teal); border-color: var(--teal); color: var(--navy); }
-    .quality-row { display: flex; gap: 0.5rem; align-items: center; }
-    .stat-box { background: rgba(0,194,179,0.06); border: 1px solid rgba(0,194,179,0.15); border-radius: 12px; padding: 1.2rem; text-align: center; }
-    .stat-box-num { font-family: var(--font-head); font-size: 1.8rem; font-weight: 800; color: var(--teal); }
-    .stat-box-label { font-size: 0.75rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.2rem; }
-    .log-entry { display: grid; grid-template-columns: 100px 80px 80px 80px 80px 80px auto; gap: 0.5rem; align-items: center; padding: 0.7rem 1rem; border-bottom: 1px solid rgba(0,194,179,0.06); font-size: 0.88rem; }
-    .log-entry:hover { background: rgba(0,194,179,0.03); }
-    .log-header { font-size: 0.72rem; font-weight: 700; color: var(--grey); letter-spacing: 0.06em; text-transform: uppercase; padding: 0.6rem 1rem; border-bottom: 1px solid var(--card-border); display: grid; grid-template-columns: 100px 80px 80px 80px 80px 80px auto; gap: 0.5rem; }
-    .delete-btn { background: none; border: none; color: var(--grey); cursor: pointer; font-size: 1rem; padding: 0.2rem; transition: var(--transition); }
-    .delete-btn:hover { color: #ff5050; }
-    .sleep-tip { background: rgba(0,194,179,0.06); border: 1px solid rgba(0,194,179,0.15); border-radius: 10px; padding: 0.8rem 1rem; font-size: 0.85rem; display: flex; gap: 0.8rem; align-items: flex-start; }
-    @media(max-width:900px){ .log-entry,.log-header{grid-template-columns:1fr 1fr 1fr;font-size:0.78rem;} }
-    @media(max-width:640px){ .log-entry,.log-header{grid-template-columns:1fr 1fr;} }
+    .quality-btn:hover:not(.selected) { border-color: var(--teal); color: var(--teal); }
+    .quality-row { display: flex; gap: 0.4rem; align-items: center; }
+    .stat-box {
+      background: rgba(11,191,168,0.05); border: 1px solid rgba(11,191,168,0.13);
+      border-radius: var(--radius); padding: 1.2rem; text-align: center;
+    }
+    .stat-box-num { font-family: var(--font-serif); font-size: 1.7rem; font-weight: 800; color: var(--teal); }
+    .stat-box-label { font-family: var(--font-mono); font-size: 0.65rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.2rem; }
+    .log-entry {
+      display: grid;
+      grid-template-columns: 110px 72px 72px 82px 78px 60px 36px;
+      gap: 0.4rem; align-items: center;
+      padding: 0.75rem 1rem; border-bottom: 1px solid rgba(11,191,168,0.05);
+      font-size: 0.855rem; transition: var(--transition);
+    }
+    .log-entry:hover { background: rgba(11,191,168,0.025); }
+    .log-header {
+      font-family: var(--font-mono); font-size: 0.64rem; font-weight: 500;
+      color: var(--grey); letter-spacing: 0.09em; text-transform: uppercase;
+      padding: 0.65rem 1rem; border-bottom: 1px solid var(--card-border);
+      display: grid; grid-template-columns: 110px 72px 72px 82px 78px 60px 36px;
+      gap: 0.4rem;
+    }
+    .delete-btn { background: none; border: none; color: var(--grey); cursor: pointer; font-size: 0.9rem; padding: 4px; transition: var(--transition); border-radius: 4px; }
+    .delete-btn:hover { color: var(--rose); background: rgba(224,96,96,0.1); }
+    .sleep-tip {
+      background: rgba(11,191,168,0.04); border: 1px solid rgba(11,191,168,0.1);
+      border-radius: var(--radius); padding: 0.85rem 1.1rem;
+      font-size: 0.85rem; display: flex; gap: 0.9rem; align-items: flex-start;
+      transition: var(--transition);
+    }
+    .sleep-tip:hover { background: rgba(11,191,168,0.07); border-color: rgba(11,191,168,0.2); }
+    .sleep-tip strong { color: var(--white); font-size: 0.875rem; display: block; margin-bottom: 0.25rem; }
+    .sleep-tip p { color: var(--white-dim); font-size: 0.8rem; line-height: 1.6; margin: 0; }
+    .chart-wrap { height: 220px; position: relative; }
+    .chart-wrap-sm { height: 170px; position: relative; }
+    @media(max-width:900px){ .log-entry,.log-header{grid-template-columns:100px 60px 60px 70px 70px auto;font-size:0.78rem;} }
+    @media(max-width:640px){ .log-entry,.log-header{grid-template-columns:1fr 1fr 1fr;} }
   </style>
 </head>
 <body>
 
 <nav>
   <a href="../index.html" class="nav-logo">
-    <svg viewBox="0 0 40 40" fill="none" width="38" height="38"><circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/><path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#00c2b3"/></svg>
-    <span class="nav-logo-text">Neuro<span>Sleep</span></span>
+    <svg class="nav-logo-img" viewBox="0 0 42 42" fill="none">
+      <circle cx="21" cy="21" r="20" stroke="rgba(11,191,168,0.2)" stroke-width="1"/>
+      <path d="M21 10 C15 10 10 14 10 20 C10 24 12 27 15 28.5 C15 30 16 31.5 18 31.5 C19 31.5 20 31 21 30.5" stroke="#0bbfa8" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M12 18 Q14 16 15 19 Q16 22 14 23" stroke="#0bbfa8" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <path d="M21 10 C27 10 32 14 32 20 C32 24 30 27 27 28.5 C27 30 26 31.5 24 31.5 C23 31.5 22 31 21 30.5" stroke="#5de2db" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M30 18 Q28 16 27 19 Q26 22 28 23" stroke="#5de2db" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <line x1="21" y1="10.5" x2="21" y2="30.5" stroke="rgba(11,191,168,0.3)" stroke-width="1" stroke-dasharray="2 2"/>
+      <path d="M32 7 C31 5.5 29.5 5 28 5.2 C30 6 31 7.5 30.5 9.5 C30 11.5 28.5 12.5 27 12.5 C28.5 12.8 30 12 31 10.5 C31.8 9.5 32.3 8.5 32 7Z" fill="#5de2db" opacity="0.85"/>
+      <circle cx="27" cy="6" r="0.8" fill="#a8f0ec"/>
+    </svg>
+    <span class="nav-logo-text">Neuro<em>Sleep</em><span class="nav-logo-sub">Sleep &amp; Cognitive Research</span></span>
   </a>
   <ul class="nav-links">
     <li><a href="../index.html">Home</a></li>
@@ -45,27 +649,40 @@
 </nav>
 
 <div class="page-hero">
-  <div class="container" style="position:relative;z-index:1;">
-    <div class="section-label">Data Collection</div>
+  <div class="container page-hero-inner">
+    <div class="section-kicker">Data Collection</div>
     <h1>Sleep <span class="text-teal">Tracker</span></h1>
-    <p class="text-dim mt-1" style="max-width:560px;">Log your daily sleep data to build a longitudinal dataset for analysis. Every entry strengthens the correlations between your sleep patterns and cognitive performance.</p>
+    <p class="text-dim mt-2" style="max-width:600px;font-size:1.05rem;line-height:1.75;">Log your daily sleep data to build a longitudinal dataset for analysis. Every entry strengthens the correlations between your sleep patterns and cognitive performance outcomes in the Dashboard.</p>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.25rem;">
+      <span class="badge badge-teal" id="entryCountBadge">0 entries</span>
+      <span class="badge badge-purple">14-day minimum for analysis</span>
+      <span class="badge badge-green">Data stored locally</span>
+    </div>
   </div>
 </div>
 
-<section style="padding-top:0;">
+<div class="divider"></div>
+
+<section style="padding-top:2.5rem;">
   <div class="container">
     <div class="grid-2" style="gap:2rem;align-items:start;">
 
       <!-- LOG FORM -->
       <div>
-        <div class="card">
-          <h3 class="mb-3">&#128336; Log Tonight's Sleep</h3>
+        <div class="card mb-3">
+          <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1.5rem;">
+            <div class="card-icon" style="margin:0;">&#128336;</div>
+            <div>
+              <h3 style="margin:0;">Log Tonight's Sleep</h3>
+              <p class="text-grey" style="font-size:0.8rem;font-family:var(--font-mono);">Enter data each morning after waking</p>
+            </div>
+          </div>
 
           <div class="form-group">
             <label for="sleepDate">Date</label>
             <input type="date" id="sleepDate"/>
           </div>
-          <div class="grid-2">
+          <div class="grid-2" style="gap:1rem;">
             <div class="form-group">
               <label for="bedtime">Bedtime</label>
               <input type="time" id="bedtime" value="23:00"/>
@@ -84,66 +701,73 @@
             <input type="number" id="awakenings" min="0" max="20" value="0" placeholder="How many times did you wake up?"/>
           </div>
           <div class="form-group">
-            <label>Sleep Quality (1 = Poor, 5 = Excellent)</label>
-            <div class="quality-row" id="qualityBtns">
+            <label>Sleep Quality &nbsp;<span style="color:var(--teal);font-weight:700;" id="qualityLabel">Average (3/5)</span></label>
+            <div class="quality-row" id="qualityBtns" style="margin-top:0.4rem;">
               <button class="quality-btn" data-q="1">1</button>
               <button class="quality-btn" data-q="2">2</button>
               <button class="quality-btn selected" data-q="3">3</button>
               <button class="quality-btn" data-q="4">4</button>
               <button class="quality-btn" data-q="5">5</button>
-              <span class="text-dim" id="qualityLabel" style="font-size:0.85rem;margin-left:0.5rem;">Average</span>
             </div>
           </div>
           <div class="form-group">
             <label for="sleepNotes">Notes (optional)</label>
-            <textarea id="sleepNotes" rows="2" placeholder="Stress, caffeine, exercise, etc."></textarea>
+            <textarea id="sleepNotes" rows="2" placeholder="Stress levels, caffeine, exercise, illness, etc." style="resize:vertical;"></textarea>
           </div>
-          <button class="btn btn-primary" id="logSleepBtn" style="width:100%;">&#10010; Log Sleep Entry</button>
+          <button class="btn btn-primary" id="logSleepBtn" style="width:100%;font-size:1rem;padding:0.9rem;">&#43;&ensp;Log Sleep Entry</button>
         </div>
 
-        <!-- TIPS -->
-        <div class="card mt-3">
-          <h3 class="mb-3">&#128161; Sleep Optimization Tips</h3>
-          <div style="display:flex;flex-direction:column;gap:0.7rem;" id="tipsList">
-            <div class="sleep-tip"><span>&#9728;&#65039;</span><div><strong>Morning Light Exposure</strong><p class="text-dim" style="margin-top:0.2rem;">Get 10-30 minutes of bright outdoor light within 30 minutes of waking. This anchors your circadian clock and promotes earlier, more consistent sleep onset.</p></div></div>
-            <div class="sleep-tip"><span>&#128247;</span><div><strong>Screen Cutoff Timing</strong><p class="text-dim" style="margin-top:0.2rem;">Eliminate blue light exposure at least 60-90 minutes before bed. Use night mode or blue-light blocking glasses in the evening to preserve melatonin onset.</p></div></div>
-            <div class="sleep-tip"><span>&#127975;</span><div><strong>Temperature Regulation</strong><p class="text-dim" style="margin-top:0.2rem;">A cool bedroom (65-68°F / 18-20°C) facilitates the core body temperature drop needed to initiate and maintain deep slow-wave sleep.</p></div></div>
-            <div class="sleep-tip"><span>&#128336;</span><div><strong>Consistent Schedule</strong><p class="text-dim" style="margin-top:0.2rem;">Maintaining a fixed wake time even on weekends is the single most powerful intervention for improving sleep consistency and circadian alignment.</p></div></div>
+        <!-- TIPS CARD -->
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1.25rem;">
+            <div class="card-icon" style="margin:0;">&#128161;</div>
+            <h3 style="margin:0;">Sleep Optimization Tips</h3>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:0.6rem;">
+            <div class="sleep-tip"><span style="font-size:1.2rem;">&#9728;&#65039;</span><div><strong>Morning Light Exposure</strong><p>Get 10 to 30 minutes of bright outdoor light within 30 minutes of waking. This anchors your circadian clock and promotes earlier, more consistent sleep onset each night.</p></div></div>
+            <div class="sleep-tip"><span style="font-size:1.2rem;">&#128247;</span><div><strong>Screen Cutoff Timing</strong><p>Eliminate blue light exposure at least 60 to 90 minutes before bed. Blue wavelength light (460 to 480 nm) suppresses melatonin by up to 50 percent and delays sleep onset.</p></div></div>
+            <div class="sleep-tip"><span style="font-size:1.2rem;">&#127975;</span><div><strong>Temperature Regulation</strong><p>A cool bedroom (65 to 68 degrees F / 18 to 20 degrees C) facilitates the core body temperature drop required to initiate and maintain deep slow-wave sleep.</p></div></div>
+            <div class="sleep-tip"><span style="font-size:1.2rem;">&#128336;</span><div><strong>Consistent Wake Time</strong><p>Maintaining a fixed wake time every day, including weekends, is the single most effective intervention for improving circadian alignment and sleep quality over time.</p></div></div>
           </div>
         </div>
       </div>
 
-      <!-- STATS + CHART -->
+      <!-- CHARTS + TABLE -->
       <div>
         <div class="card mb-3">
-          <h3 class="mb-3">&#128200; Weekly Summary</h3>
-          <div class="grid-3 mb-3" style="gap:0.8rem;" id="weeklyStats">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.5rem;">
+            <h3 style="margin:0;">Weekly Summary</h3>
+            <div style="display:flex;gap:0.4rem;font-family:var(--font-mono);font-size:0.68rem;color:var(--grey);">
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;background:#0bbfa8;border-radius:2px;display:inline-block;"></span> Optimal</span>
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;background:#e8b84b;border-radius:2px;display:inline-block;"></span> Sub-optimal</span>
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;background:#e06060;border-radius:2px;display:inline-block;"></span> Insufficient</span>
+            </div>
+          </div>
+          <div class="grid-3 mb-3" style="gap:0.7rem;">
             <div class="stat-box"><div class="stat-box-num" id="avgDuration">--</div><div class="stat-box-label">Avg Duration</div></div>
             <div class="stat-box"><div class="stat-box-num" id="consistency">--</div><div class="stat-box-label">Consistency</div></div>
             <div class="stat-box"><div class="stat-box-num" id="avgQuality">--</div><div class="stat-box-label">Avg Quality</div></div>
           </div>
-          <div style="height:220px;position:relative;">
-            <canvas id="weeklyChart"></canvas>
-          </div>
+          <div class="chart-wrap"><canvas id="weeklyChart"></canvas></div>
         </div>
 
         <div class="card mb-3">
-          <h3 class="mb-3">&#128197; Sleep Consistency (Bedtime Variation)</h3>
-          <div style="height:160px;position:relative;">
-            <canvas id="consistencyChart"></canvas>
+          <div style="margin-bottom:1rem;">
+            <h3 style="margin-bottom:0.2rem;">Bedtime Consistency</h3>
+            <p style="font-size:0.78rem;color:var(--grey);font-family:var(--font-mono);">Lower variance = better circadian alignment = lower Alzheimer's risk</p>
           </div>
-          <p class="text-dim mt-2" style="font-size:0.82rem;">Lower standard deviation = more consistent sleep schedule = better brain health outcomes. Target: under 30 minutes variation.</p>
+          <div class="chart-wrap-sm"><canvas id="consistencyChart"></canvas></div>
+          <div class="finding-box" style="margin-top:1rem;">Target: bedtime variation of under 30 minutes per night. Consistent sleep timing independently reduces neuroinflammation and supports glymphatic efficiency.</div>
         </div>
 
-        <!-- LOG TABLE -->
         <div class="card">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
-            <h3>&#128203; Sleep Log</h3>
-            <button class="btn btn-sm btn-secondary" id="clearAllBtn">Clear All</button>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+            <h3 style="margin:0;">Sleep Log</h3>
+            <button class="btn btn-sm btn-danger" id="clearAllBtn">Clear All</button>
           </div>
           <div style="overflow-x:auto;">
             <div class="log-header">
-              <span>Date</span><span>Bedtime</span><span>Wake</span><span>Duration</span><span>Quality</span><span>Awake</span><span></span>
+              <span>Date</span><span>Bedtime</span><span>Wake</span><span>Duration</span><span>Quality</span><span>Wakes</span><span></span>
             </div>
             <div id="logEntries"></div>
           </div>
@@ -155,20 +779,28 @@
 
 <footer>
   <div class="footer-grid">
-    <div class="footer-brand"><a href="../index.html" class="nav-logo"><svg viewBox="0 0 40 40" fill="none" width="32" height="32"><circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/><path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#00c2b3"/></svg><span class="nav-logo-text">Neuro<span>Sleep</span></span></a><p>Research platform for sleep and Alzheimer's prevention. Created by Mithil Gajula.</p></div>
+    <div class="footer-brand">
+      <div class="footer-logo-wrap">
+        <svg viewBox="0 0 42 42" width="32" height="32" fill="none"><circle cx="21" cy="21" r="20" stroke="rgba(11,191,168,0.2)" stroke-width="1"/><path d="M21 10 C15 10 10 14 10 20 C10 24 12 27 15 28.5 C15 30 16 31.5 18 31.5 C19 31.5 20 31 21 30.5" stroke="#0bbfa8" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M21 10 C27 10 32 14 32 20 C32 24 30 27 27 28.5 C27 30 26 31.5 24 31.5 C23 31.5 22 31 21 30.5" stroke="#5de2db" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M32 7 C31 5.5 29.5 5 28 5.2 C30 6 31 7.5 30.5 9.5 C30 11.5 28.5 12.5 27 12.5 C28.5 12.8 30 12 31 10.5 C31.8 9.5 32.3 8.5 32 7Z" fill="#5de2db" opacity="0.85"/></svg>
+        <span style="font-family:var(--font-serif);font-size:1.1rem;font-weight:700;color:var(--white);">Neuro<span style="color:var(--teal);">Sleep</span></span>
+      </div>
+      <p>ISM Research Project by Mithil Gajula. Not a medical diagnostic tool.</p>
+    </div>
     <div class="footer-col"><h4>Platform</h4><ul><li><a href="tracker.html">Sleep Tracker</a></li><li><a href="cognitive.html">Cognitive Tests</a></li><li><a href="dashboard.html">Dashboard</a></li><li><a href="risk.html">Risk Calculator</a></li></ul></div>
-    <div class="footer-col"><h4>Research</h4><ul><li><a href="research.html">Research Library</a></li><li><a href="research.html#alzheimers">Alzheimer's Biology</a></li><li><a href="research.html#methodology">Methodology</a></li></ul></div>
-    <div class="footer-col"><h4>Info</h4><ul><li><a href="../index.html">About</a></li><li><a href="research.html#citations">Citations</a></li></ul></div>
+    <div class="footer-col"><h4>Research</h4><ul><li><a href="research.html">Research Library</a></li><li><a href="research.html">Alzheimer's Biology</a></li><li><a href="research.html">Methodology</a></li></ul></div>
+    <div class="footer-col"><h4>About</h4><ul><li><a href="../index.html">Project Overview</a></li><li><a href="research.html">Citations</a></li></ul></div>
   </div>
-  <div class="footer-bottom"><p>&copy; 2025 NeuroSleep. Created by Mithil Gajula.</p></div>
+  <div class="footer-bottom"><p>&copy; 2025 NeuroSleep &mdash; Mithil Gajula.</p></div>
 </footer>
 
 <script src="../js/core.js"></script>
 <script>
-// SET DEFAULTS
+Chart.defaults.color = '#4d6a84';
+Chart.defaults.borderColor = 'rgba(11,191,168,0.06)';
+Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
+
 document.getElementById('sleepDate').valueAsDate = new Date();
 
-// QUALITY BUTTONS
 let selectedQuality = 3;
 const qlabels = ['','Poor','Below Average','Average','Good','Excellent'];
 document.querySelectorAll('.quality-btn').forEach(btn => {
@@ -176,11 +808,10 @@ document.querySelectorAll('.quality-btn').forEach(btn => {
     document.querySelectorAll('.quality-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     selectedQuality = parseInt(btn.dataset.q);
-    document.getElementById('qualityLabel').textContent = qlabels[selectedQuality];
+    document.getElementById('qualityLabel').textContent = `${qlabels[selectedQuality]} (${selectedQuality}/5)`;
   });
 });
 
-// LOG SLEEP
 document.getElementById('logSleepBtn').addEventListener('click', () => {
   const date = document.getElementById('sleepDate').value;
   const bed = document.getElementById('bedtime').value;
@@ -188,60 +819,49 @@ document.getElementById('logSleepBtn').addEventListener('click', () => {
   const screen = document.getElementById('screenOff').value;
   const awk = parseInt(document.getElementById('awakenings').value) || 0;
   const notes = document.getElementById('sleepNotes').value;
-
-  if (!date || !bed || !wake) { showNotification('Missing Data', 'Please fill in date, bedtime, and wake time.', '⚠️'); return; }
-
+  if (!date || !bed || !wake) { showNotification('Missing Data', 'Please fill in date, bedtime, and wake time.', '&#9888;'); return; }
   const duration = calcSleepDuration(bed, wake);
   const entry = { date, bedtime: bed, waketime: wake, screenOff: screen, awakenings: awk, quality: selectedQuality, notes, duration, timestamp: Date.now() };
-
   NS.push('sleep_log', entry);
   document.getElementById('sleepNotes').value = '';
-  showNotification('Sleep Logged!', `${formatHours(duration)} recorded for ${date}`, '🌙');
-  renderLog();
-  renderCharts();
+  showNotification('Sleep Logged', `${formatHours(duration)} recorded for ${date}`, '&#127769;');
+  renderLog(); renderCharts();
 });
 
-// RENDER LOG TABLE
 function renderLog() {
   const log = NS.get('sleep_log', []).sort((a,b) => new Date(b.date) - new Date(a.date));
+  const el = document.getElementById('entryCountBadge');
+  if (el) el.textContent = `${log.length} ${log.length === 1 ? 'entry' : 'entries'}`;
   const container = document.getElementById('logEntries');
-  if (!log.length) { container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--grey);font-size:0.9rem;">No entries yet. Log your first sleep entry above.</div>'; return; }
-  container.innerHTML = log.map((e, i) => {
-    const qColors = ['','#ff5050','#ff6b35','#ffc800','#00c2b3','#00d282'];
-    return `<div class="log-entry">
-      <span>${e.date}</span>
-      <span>${e.bedtime}</span>
-      <span>${e.waketime}</span>
-      <span style="color:var(--teal);font-weight:600;">${formatHours(e.duration)}</span>
-      <span style="color:${qColors[e.quality]}">&#9733; ${e.quality}/5</span>
-      <span>${e.awakenings}x</span>
-      <button class="delete-btn" onclick="deleteEntry(${e.timestamp})" title="Delete">&#10005;</button>
-    </div>`;
-  }).join('');
+  if (!log.length) { container.innerHTML = '<div style="padding:2.5rem;text-align:center;color:var(--grey);font-size:0.875rem;font-family:var(--font-mono);">No entries yet. Log your first sleep entry above.</div>'; return; }
+  const qColors = ['','#e06060','#e8b84b','#e8b84b','#0bbfa8','#3dd68c'];
+  container.innerHTML = log.map(e => `<div class="log-entry">
+    <span style="font-family:var(--font-mono);font-size:0.8rem;">${e.date}</span>
+    <span>${e.bedtime}</span>
+    <span>${e.waketime}</span>
+    <span style="color:var(--teal);font-weight:600;font-family:var(--font-mono);">${formatHours(e.duration)}</span>
+    <span style="color:${qColors[e.quality]};font-family:var(--font-mono);">&#9733; ${e.quality}/5</span>
+    <span style="font-family:var(--font-mono);">${e.awakenings}x</span>
+    <button class="delete-btn" onclick="deleteEntry(${e.timestamp})" title="Delete entry">&#10005;</button>
+  </div>`).join('');
 }
 
 function deleteEntry(ts) {
-  let log = NS.get('sleep_log', []).filter(e => e.timestamp !== ts);
-  NS.set('sleep_log', log);
-  renderLog();
-  renderCharts();
-  showNotification('Entry Removed', 'Sleep log entry deleted.', '🗑️');
+  NS.set('sleep_log', NS.get('sleep_log', []).filter(e => e.timestamp !== ts));
+  renderLog(); renderCharts();
+  showNotification('Entry Removed', 'Sleep log entry deleted.', '&#128465;');
 }
 
 document.getElementById('clearAllBtn').addEventListener('click', () => {
-  if (confirm('Clear all sleep log entries?')) { NS.set('sleep_log', []); renderLog(); renderCharts(); }
+  if (confirm('Clear all sleep log entries? This cannot be undone.')) {
+    NS.set('sleep_log', []); renderLog(); renderCharts();
+  }
 });
 
-// CHARTS
-Chart.defaults.color = '#6e8aaa';
-Chart.defaults.borderColor = 'rgba(0,194,179,0.08)';
 let weeklyChart, consistencyChart;
-
 function renderCharts() {
   const log = NS.get('sleep_log', []).sort((a,b) => new Date(a.date) - new Date(b.date));
   const recent = log.slice(-14);
-
-  // Stats
   if (log.length > 0) {
     const durations = log.map(e => e.duration);
     const qualities = log.map(e => e.quality);
@@ -249,71 +869,68 @@ function renderCharts() {
     const avgD = mean(durations);
     const sd = stdDev(bedtimes);
     const avgQ = mean(qualities);
-
     document.getElementById('avgDuration').textContent = formatHours(avgD);
-    document.getElementById('consistency').textContent = sd < 0.3 ? 'Excellent' : sd < 0.6 ? 'Good' : sd < 1.0 ? 'Fair' : 'Poor';
-    document.getElementById('consistency').style.color = sd < 0.3 ? '#00d282' : sd < 0.6 ? '#00c2b3' : sd < 1.0 ? '#ffc800' : '#ff5050';
+    const consEl = document.getElementById('consistency');
+    if (sd < 0.3) { consEl.textContent = 'Excellent'; consEl.style.color = '#3dd68c'; }
+    else if (sd < 0.6) { consEl.textContent = 'Good'; consEl.style.color = '#0bbfa8'; }
+    else if (sd < 1.0) { consEl.textContent = 'Fair'; consEl.style.color = '#e8b84b'; }
+    else { consEl.textContent = 'Poor'; consEl.style.color = '#e06060'; }
     document.getElementById('avgQuality').textContent = avgQ.toFixed(1) + '/5';
   }
 
-  // Weekly duration chart
-  const wCtx = document.getElementById('weeklyChart').getContext('2d');
   if (weeklyChart) weeklyChart.destroy();
-  weeklyChart = new Chart(wCtx, {
+  weeklyChart = new Chart(document.getElementById('weeklyChart').getContext('2d'), {
     type: 'bar',
     data: {
       labels: recent.map(e => e.date.slice(5)),
       datasets: [{
-        label: 'Sleep Duration (hrs)',
+        label: 'Duration',
         data: recent.map(e => parseFloat(e.duration.toFixed(2))),
-        backgroundColor: recent.map(e => e.duration >= 7 && e.duration <= 9 ? 'rgba(0,194,179,0.75)' : e.duration >= 6 ? 'rgba(255,200,0,0.75)' : 'rgba(255,80,80,0.75)'),
-        borderRadius: 5, borderSkipped: false,
-      }, {
-        label: 'Optimal Min (7h)',
+        backgroundColor: recent.map(e => e.duration >= 7 && e.duration <= 9 ? 'rgba(11,191,168,0.8)' : e.duration >= 6 ? 'rgba(232,184,75,0.8)' : 'rgba(224,96,96,0.8)'),
+        borderRadius: 6, borderSkipped: false,
+      },{
         data: new Array(recent.length).fill(7),
-        type: 'line', borderColor: 'rgba(0,194,179,0.3)', borderDash: [4,4], pointRadius: 0, fill: false,
-      }, {
-        label: 'Optimal Max (9h)',
+        type: 'line', borderColor: 'rgba(11,191,168,0.3)', borderDash:[4,4], pointRadius:0, fill:false, label:'Min Optimal'
+      },{
         data: new Array(recent.length).fill(9),
-        type: 'line', borderColor: 'rgba(0,194,179,0.3)', borderDash: [4,4], pointRadius: 0, fill: false,
+        type: 'line', borderColor: 'rgba(11,191,168,0.3)', borderDash:[4,4], pointRadius:0, fill:false, label:'Max Optimal'
       }]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
-        y: { min: 0, max: 12, title: { display: true, text: 'Hours', color: '#6e8aaa', font:{size:10} }, grid:{color:'rgba(0,194,179,0.05)'} },
-        x: { grid: { display: false } }
+        y: { min:0, max:12, title:{display:true,text:'Hours',color:'#4d6a84',font:{size:10}}, grid:{color:'rgba(11,191,168,0.05)'}, ticks:{color:'#4d6a84'} },
+        x: { grid:{display:false}, ticks:{color:'#4d6a84',font:{size:10}} }
       }
     }
   });
 
-  // Consistency chart
-  const cCtx = document.getElementById('consistencyChart').getContext('2d');
   if (consistencyChart) consistencyChart.destroy();
   const bedtimeMins = recent.map(e => { const [h,m] = e.bedtime.split(':').map(Number); return (h >= 12 ? h - 24 : h) * 60 + m; });
-  consistencyChart = new Chart(cCtx, {
+  consistencyChart = new Chart(document.getElementById('consistencyChart').getContext('2d'), {
     type: 'line',
     data: {
       labels: recent.map(e => e.date.slice(5)),
       datasets: [{
-        label: 'Bedtime (min from midnight)',
+        label: 'Bedtime',
         data: bedtimeMins,
-        borderColor: '#9b5de5', backgroundColor: 'rgba(155,93,229,0.1)', tension: 0.3, fill: true, pointRadius: 4, pointBackgroundColor: '#9b5de5',
+        borderColor: '#8b72e0', backgroundColor: 'rgba(139,114,224,0.08)',
+        tension: 0.35, fill: true, pointRadius: 4, pointBackgroundColor: '#8b72e0', pointBorderWidth: 0,
       }]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => { const m = ctx.raw; const h = Math.floor(Math.abs(m)/60) * (m<0?-1:1); const min = Math.abs(m)%60; return ` Bedtime: ${m<0?'-':''}${Math.abs(h)}:${String(min).padStart(2,'0')}`; } } } },
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:ctx => { const m = ctx.raw; const sign = m < 0 ? '-' : ''; const h = Math.abs(Math.floor(m/60)); const min = Math.abs(m%60); return ` Bedtime: ${sign}${h}:${String(min).padStart(2,'0')}`; }}} },
       scales: {
-        y: { title: { display: true, text: 'Minutes from Midnight', color: '#6e8aaa', font:{size:10} }, grid:{color:'rgba(0,194,179,0.05)'} },
-        x: { grid: { display: false } }
+        y: { title:{display:true,text:'Mins from midnight',color:'#4d6a84',font:{size:10}}, grid:{color:'rgba(11,191,168,0.05)'}, ticks:{color:'#4d6a84'} },
+        x: { grid:{display:false}, ticks:{color:'#4d6a84',font:{size:10}} }
       }
     }
   });
 }
 
-// INIT WITH DEMO DATA if empty
+// Seed demo data
 function seedDemoData() {
   if (NS.get('sleep_log', []).length > 0) return;
   const base = new Date();
@@ -324,21 +941,11 @@ function seedDemoData() {
     ['23:45','07:30',1,3],['23:00','07:00',0,4]
   ];
   times.forEach(([bed,wake,awk,q], i) => {
-    const d = new Date(base);
-    d.setDate(d.getDate() - (13 - i));
-    NS.push('sleep_log', {
-      date: d.toISOString().slice(0,10),
-      bedtime: bed, waketime: wake, screenOff: bed,
-      awakenings: awk, quality: q, notes: '',
-      duration: calcSleepDuration(bed, wake),
-      timestamp: d.getTime() + i
-    });
+    const d = new Date(base); d.setDate(d.getDate()-(13-i));
+    NS.push('sleep_log', { date:d.toISOString().slice(0,10), bedtime:bed, waketime:wake, screenOff:bed, awakenings:awk, quality:q, notes:'Demo data', duration:calcSleepDuration(bed,wake), timestamp:d.getTime()+i });
   });
 }
-
-seedDemoData();
-renderLog();
-renderCharts();
+seedDemoData(); renderLog(); renderCharts();
 </script>
 </body>
 </html>
