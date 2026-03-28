@@ -4,38 +4,633 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Risk Calculator | NeuroSleep</title>
-  <link rel="stylesheet" href="../css/main.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <style>
+body{background:#06101f;color:#e8f2fb;}
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Core palette — deep navy, clinical teal, warm accent */
+  --ink:         #04090f;
+  --navy:        #061020;
+  --navy-mid:    #091830;
+  --navy-card:   #0c1f3a;
+  --navy-raised: #102547;
+  --teal:        #0bbfa8;
+  --teal-dim:    rgba(11,191,168,0.14);
+  --teal-glow:   rgba(11,191,168,0.28);
+  --cyan:        #5de2db;
+  --ice:         #a8f0ec;
+  --white:       #eef5fb;
+  --white-dim:   #8faec9;
+  --grey:        #4d6a84;
+  --gold:        #e8b84b;
+  --rose:        #e06060;
+  --green:       #3dd68c;
+  --purple:      #8b72e0;
+
+  --card-bg:     rgba(12,31,58,0.9);
+  --card-border: rgba(11,191,168,0.12);
+  --card-shine:  rgba(11,191,168,0.3);
+
+  --font-serif:  'Playfair Display', Georgia, serif;
+  --font-body:   'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:   'IBM Plex Mono', 'Courier New', monospace;
+
+  --radius:      10px;
+  --radius-lg:   18px;
+  --radius-xl:   28px;
+
+  --shadow-card: 0 4px 32px rgba(4,9,15,0.5);
+  --shadow-teal: 0 0 40px rgba(11,191,168,0.18);
+  --shadow-glow: 0 0 80px rgba(11,191,168,0.12);
+
+  --transition:  all 0.28s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--navy);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.65;
+  background-color: #061020; /* hard-coded fallback */
+  color: #eef5fb; /* hard-coded fallback */
+}
+
+/* Grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-thumb { background: rgba(11,191,168,0.35); border-radius: 3px; }
+
+/* ===== NAVIGATION ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 0 2.5rem; height: 72px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(6,16,32,0.85);
+  backdrop-filter: blur(20px) saturate(150%);
+  border-bottom: 1px solid rgba(11,191,168,0.07);
+  transition: var(--transition);
+}
+nav.scrolled {
+  background: rgba(4,9,15,0.96);
+  border-bottom-color: rgba(11,191,168,0.18);
+  box-shadow: 0 2px 24px rgba(4,9,15,0.6);
+}
+
+/* LOGO */
+.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.nav-logo-img { width: 42px; height: 42px; flex-shrink: 0; }
+.nav-logo-text {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  line-height: 1;
+}
+.nav-logo-text em { color: var(--teal); font-style: normal; }
+.nav-logo-sub {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--grey);
+  display: block;
+  margin-top: 2px;
+}
+
+.nav-links { display: flex; align-items: center; gap: 0.15rem; list-style: none; }
+.nav-links a {
+  color: var(--white-dim); text-decoration: none;
+  font-size: 0.82rem; font-weight: 500;
+  padding: 0.4rem 0.85rem; border-radius: 7px;
+  transition: var(--transition);
+  letter-spacing: 0.01em;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--teal); background: var(--teal-dim); }
+.nav-cta {
+  background: var(--teal) !important;
+  color: var(--navy) !important;
+  font-weight: 600 !important;
+  margin-left: 0.5rem;
+}
+.nav-cta:hover { background: var(--cyan) !important; transform: translateY(-1px); }
+.nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+.nav-hamburger span { display: block; width: 22px; height: 1.5px; background: var(--white); border-radius: 2px; transition: var(--transition); }
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; padding: 108px 2rem 5rem; overflow: hidden;
+}
+.hero-bg { position: absolute; inset: 0; z-index: 0; }
+
+/* Sophisticated mesh gradient */
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 80% 20%, rgba(11,191,168,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 10% 80%, rgba(93,226,219,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 50% at 50% 50%, rgba(139,114,224,0.04) 0%, transparent 60%);
+}
+
+/* Subtle grid */
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(11,191,168,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11,191,168,0.025) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+}
+
+/* Floating orbs */
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(70px); pointer-events: none;
+}
+.orb-1 {
+  width: 560px; height: 560px;
+  background: radial-gradient(circle, rgba(11,191,168,0.11) 0%, transparent 65%);
+  top: -80px; right: -60px;
+  animation: orb-drift 10s ease-in-out infinite;
+}
+.orb-2 {
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, rgba(139,114,224,0.08) 0%, transparent 65%);
+  bottom: 60px; left: -40px;
+  animation: orb-drift 10s ease-in-out infinite reverse;
+  animation-delay: -4s;
+}
+@keyframes orb-drift { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-28px) scale(1.04)} }
+
+.hero-content { position: relative; z-index: 2; text-align: center; max-width: 880px; }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(11,191,168,0.08);
+  border: 1px solid rgba(11,191,168,0.22);
+  border-radius: 100px;
+  padding: 0.4rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 2.2rem;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal);
+  animation: blink 2.5s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 7vw, 5.8rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  margin-bottom: 1.6rem;
+}
+.hero h1 .accent-teal { color: var(--teal); }
+.hero h1 .accent-grad {
+  background: linear-gradient(125deg, var(--teal) 0%, var(--cyan) 45%, var(--ice) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero h1 em { font-style: italic; color: var(--white-dim); }
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--white-dim); font-weight: 300;
+  max-width: 620px; margin: 0 auto 2.8rem;
+  line-height: 1.75;
+}
+
+/* EEG wave */
+.hero-eeg {
+  width: 100%; height: 68px;
+  margin-bottom: 3rem; display: block;
+  opacity: 0.8;
+}
+
+/* CTA buttons */
+.hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4.5rem; }
+
+/* Stats row */
+.hero-stats { display: flex; gap: 0; justify-content: center; flex-wrap: wrap; border: 1px solid var(--card-border); border-radius: var(--radius-lg); background: rgba(12,31,58,0.6); backdrop-filter: blur(12px); overflow: hidden; }
+.hero-stat { padding: 1.4rem 2rem; text-align: center; border-right: 1px solid var(--card-border); flex: 1; min-width: 140px; }
+.hero-stat:last-child { border-right: none; }
+.hero-stat-num { font-family: var(--font-serif); font-size: 1.9rem; font-weight: 800; color: var(--teal); display: block; line-height: 1; }
+.hero-stat-label { font-size: 0.72rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 500; margin-top: 0.35rem; line-height: 1.4; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0.8rem 1.7rem;
+  border-radius: 9px;
+  font-family: var(--font-body); font-weight: 600; font-size: 0.9rem;
+  cursor: pointer; transition: var(--transition);
+  text-decoration: none; border: none;
+  letter-spacing: 0.02em; position: relative; overflow: hidden;
+}
+.btn-primary {
+  background: var(--teal); color: var(--navy);
+  box-shadow: 0 4px 24px rgba(11,191,168,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.btn-primary:hover {
+  background: var(--cyan); transform: translateY(-2px);
+  box-shadow: 0 8px 36px rgba(11,191,168,0.42);
+}
+.btn-ghost {
+  background: transparent; color: var(--white);
+  border: 1px solid rgba(238,245,251,0.18);
+}
+.btn-ghost:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-2px); }
+.btn-sm { padding: 0.45rem 1rem; font-size: 0.82rem; border-radius: 7px; }
+.btn-danger { background: rgba(224,96,96,0.12); color: var(--rose); border: 1px solid rgba(224,96,96,0.3); }
+.btn-danger:hover { background: rgba(224,96,96,0.22); }
+
+/* ===== LAYOUT ===== */
+section { position: relative; z-index: 1; padding: 6rem 2rem; }
+.container { max-width: 1180px; margin: 0 auto; }
+.section-kicker {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 1rem;
+}
+.section-kicker::before { content: ''; display: block; width: 28px; height: 1px; background: var(--teal); }
+
+h1 { font-family: var(--font-serif); font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 1rem; }
+h3 { font-family: var(--font-body); font-weight: 600; font-size: 1.15rem; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
+h4 { font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; }
+
+.text-teal { color: var(--teal); }
+.text-dim { color: var(--white-dim); }
+.text-grey { color: var(--grey); }
+.text-center { text-align: center; }
+.text-mono { font-family: var(--font-mono); }
+
+.mb-1{margin-bottom:.5rem}.mb-2{margin-bottom:1rem}.mb-3{margin-bottom:1.5rem}.mb-4{margin-bottom:2rem}.mb-5{margin-bottom:3rem}
+.mt-1{margin-top:.5rem}.mt-2{margin-top:1rem}.mt-3{margin-top:1.5rem}.mt-4{margin-top:2rem}
+
+.divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(11,191,168,0.18), transparent); }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 1.8rem;
+  backdrop-filter: blur(16px);
+  transition: var(--transition);
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+.card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(11,191,168,0.35), transparent);
+  opacity: 0; transition: var(--transition);
+}
+.card:hover { border-color: rgba(11,191,168,0.28); transform: translateY(-3px); box-shadow: var(--shadow-teal); }
+.card:hover::after { opacity: 1; }
+
+.card-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--teal-dim);
+  border: 1px solid rgba(11,191,168,0.2);
+  margin-bottom: 1.2rem; font-size: 1.3rem;
+}
+
+/* Stat cards */
+.stat-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 1.5rem;
+  text-align: center; transition: var(--transition);
+  box-shadow: var(--shadow-card);
+}
+.stat-card:hover { border-color: rgba(11,191,168,0.3); transform: translateY(-3px); }
+.stat-num { font-family: var(--font-serif); font-size: 2rem; font-weight: 800; display: block; }
+.stat-label { font-size: 0.72rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.3rem; }
+.stat-change { font-size: 0.78rem; margin-top: 0.4rem; font-family: var(--font-mono); }
+
+/* ===== GRIDS ===== */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex; gap: 0; flex-wrap: wrap;
+  border-bottom: 2px solid rgba(11,191,168,0.1);
+  margin-bottom: 2.5rem;
+}
+.tab-btn {
+  padding: 0.75rem 1.3rem; border: none; background: transparent;
+  color: var(--grey); font-family: var(--font-body); font-weight: 500;
+  font-size: 0.85rem; cursor: pointer; transition: var(--transition);
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  white-space: nowrap; letter-spacing: 0.02em;
+}
+.tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 600; }
+.tab-btn:hover:not(.active) { color: var(--white-dim); border-bottom-color: rgba(11,191,168,0.25); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+/* ===== FORMS ===== */
+.form-group { margin-bottom: 1.2rem; }
+label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--white-dim); margin-bottom: 0.4rem; letter-spacing: 0.04em; text-transform: uppercase; }
+input[type="text"], input[type="number"], input[type="time"], input[type="date"], select, textarea {
+  width: 100%;
+  background: rgba(6,16,32,0.7);
+  border: 1px solid rgba(11,191,168,0.14);
+  border-radius: var(--radius); padding: 0.7rem 1rem;
+  color: var(--white); font-family: var(--font-body); font-size: 0.92rem;
+  transition: var(--transition); outline: none; -webkit-appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(11,191,168,0.1);
+  background: rgba(6,16,32,0.9);
+}
+select option { background: var(--navy-card); color: var(--white); }
+input[type="range"] {
+  -webkit-appearance: none; width: 100%; height: 4px;
+  border-radius: 2px; background: rgba(11,191,168,0.18);
+  outline: none; border: none; padding: 0; box-shadow: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px;
+  border-radius: 50%; background: var(--teal); cursor: pointer;
+  box-shadow: 0 0 8px rgba(11,191,168,0.5);
+}
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 0.22rem 0.7rem; border-radius: 100px;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+}
+.badge-teal   { background: rgba(11,191,168,0.1);  color: var(--teal);   border: 1px solid rgba(11,191,168,0.25); }
+.badge-orange { background: rgba(232,184,75,0.1);  color: var(--gold);   border: 1px solid rgba(232,184,75,0.25); }
+.badge-purple { background: rgba(139,114,224,0.1); color: var(--purple); border: 1px solid rgba(139,114,224,0.25); }
+.badge-green  { background: rgba(61,214,140,0.1);  color: var(--green);  border: 1px solid rgba(61,214,140,0.25); }
+.badge-red    { background: rgba(224,96,96,0.1);   color: var(--rose);   border: 1px solid rgba(224,96,96,0.25); }
+.badge-yellow { background: rgba(232,184,75,0.1);  color: var(--gold);   border: 1px solid rgba(232,184,75,0.25); }
+.badge-grey   { background: rgba(77,106,132,0.15); color: var(--grey);   border: 1px solid rgba(77,106,132,0.25); }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar { width: 100%; height: 6px; background: rgba(11,191,168,0.1); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--cyan)); border-radius: 3px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+
+/* ===== NOTIFICATION ===== */
+.notification {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--navy-card);
+  border: 1px solid var(--teal); border-radius: var(--radius-lg);
+  padding: 1rem 1.4rem;
+  display: flex; align-items: center; gap: 12px;
+  z-index: 9999; transform: translateY(120%);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  max-width: 340px; box-shadow: var(--shadow-teal);
+}
+.notification.show { transform: translateY(0); }
+.notification-icon { font-size: 1.2rem; }
+.notification-text { font-size: 0.85rem; color: var(--white-dim); }
+.notification-text strong { color: var(--white); display: block; font-size: 0.9rem; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(4,9,15,0.88); backdrop-filter: blur(10px);
+  z-index: 5000; display: flex; align-items: center; justify-content: center;
+  padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--navy-card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl); padding: 2rem;
+  max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;
+  transform: scale(0.92) translateY(20px);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: var(--shadow-card);
+}
+.modal-overlay.open .modal { transform: scale(1) translateY(0); }
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+.modal-close { background: none; border: none; color: var(--grey); font-size: 1.3rem; cursor: pointer; transition: var(--transition); padding: 4px; }
+.modal-close:hover { color: var(--white); }
+
+/* ===== TABLE ===== */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--font-mono);
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--grey); padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--card-border); text-align: left;
+}
+.data-table td { padding: 0.85rem 1rem; font-size: 0.875rem; border-bottom: 1px solid rgba(11,191,168,0.04); color: var(--white-dim); }
+.data-table tr:hover td { background: rgba(11,191,168,0.025); }
+
+/* ===== SCIENCE BAND ===== */
+.stat-band { background: rgba(9,24,48,0.6); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); }
+.stat-band-item { text-align: center; padding: 2.5rem 1rem; border-right: 1px solid rgba(11,191,168,0.08); }
+.stat-band-item:last-child { border-right: none; }
+.stat-band-num {
+  font-family: var(--font-serif);
+  font-size: 2.6rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--cyan) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block; line-height: 1;
+}
+.stat-band-text { font-size: 0.82rem; color: var(--white-dim); margin-top: 0.5rem; line-height: 1.5; max-width: 190px; margin-left: auto; margin-right: auto; }
+
+/* ===== PAGE HERO ===== */
+.page-hero {
+  padding: 130px 2rem 4.5rem;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--card-border);
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 30% 20%, rgba(11,191,168,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.page-hero-inner { position: relative; z-index: 1; }
+
+/* Citation boxes */
+.citation-box {
+  background: rgba(11,191,168,0.04);
+  border-left: 2px solid var(--teal); border-radius: 0 8px 8px 0;
+  padding: 0.8rem 1.2rem; margin-top: 1rem;
+  font-family: var(--font-mono); font-size: 0.77rem;
+  color: var(--grey); line-height: 1.6;
+}
+
+/* Key finding highlight */
+.finding-box {
+  background: rgba(11,191,168,0.06);
+  border: 1px solid rgba(11,191,168,0.18);
+  border-radius: var(--radius); padding: 0.8rem 1.1rem; margin-top: 1rem;
+  font-size: 0.85rem; color: var(--cyan); line-height: 1.55;
+  display: flex; gap: 0.6rem; align-items: flex-start;
+}
+.finding-box::before { content: '◆'; color: var(--teal); font-size: 0.6rem; margin-top: 0.25rem; flex-shrink: 0; }
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--navy-mid);
+  border-top: 1px solid var(--card-border);
+  padding: 4.5rem 2rem 2rem;
+  position: relative; z-index: 1;
+}
+.footer-logo-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; max-width: 1180px; margin: 0 auto 3rem; }
+.footer-brand p { color: var(--grey); font-size: 0.85rem; line-height: 1.7; max-width: 280px; }
+.footer-col h4 {
+  font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--white-dim); margin-bottom: 1rem;
+}
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 0.5rem; }
+.footer-col ul a { color: var(--grey); text-decoration: none; font-size: 0.85rem; transition: var(--transition); }
+.footer-col ul a:hover { color: var(--teal); }
+.footer-bottom {
+  max-width: 1180px; margin: 0 auto;
+  padding-top: 2rem; border-top: 1px solid rgba(11,191,168,0.06);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+}
+.footer-bottom p { font-family: var(--font-mono); font-size: 0.75rem; color: var(--grey); }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shimmer { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.anim-delay-1{transition-delay:0.08s}.anim-delay-2{transition-delay:0.16s}.anim-delay-3{transition-delay:0.24s}.anim-delay-4{transition-delay:0.32s}
+
+.loader { width: 18px; height: 18px; border: 2px solid rgba(11,191,168,0.25); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.75s linear infinite; display: inline-block; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+}
+@media (max-width: 768px) {
+  nav { padding: 0 1.25rem; }
+  .nav-links { display: none; }
+  .nav-links.open {
+    display: flex; flex-direction: column;
+    position: fixed; top: 72px; left: 0; right: 0;
+    background: rgba(4,9,15,0.98); padding: 1.25rem;
+    border-bottom: 1px solid var(--card-border);
+    gap: 0.2rem; z-index: 999;
+  }
+  .nav-hamburger { display: flex; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  section { padding: 4rem 1.2rem; }
+  .hero-stats { flex-direction: column; }
+  .hero-stat { border-right: none !important; border-bottom: 1px solid var(--card-border); }
+}
+@media (max-width: 640px) {
+  .footer-grid { grid-template-columns: 1fr; }
+  .tabs { overflow-x: auto; flex-wrap: nowrap; }
+}
+
+</style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    .page-hero{padding:120px 2rem 3rem;position:relative;}
-    .page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 60% 0%,rgba(255,107,53,0.08) 0%,transparent 55%);pointer-events:none;}
-    .range-row{display:flex;align-items:center;gap:1rem;margin-bottom:0.3rem;}
-    .range-val{font-family:var(--font-head);font-size:1.1rem;font-weight:700;color:var(--teal);min-width:48px;text-align:right;}
-    .risk-meter{position:relative;height:24px;border-radius:12px;overflow:hidden;background:linear-gradient(90deg,#00d282 0%,#00c2b3 20%,#ffc800 45%,#ff6b35 70%,#ff5050 100%);margin:1.5rem 0;}
-    .risk-needle{position:absolute;top:-4px;width:6px;height:32px;background:var(--white);border-radius:3px;transform:translateX(-50%);transition:left 0.8s cubic-bezier(0.4,0,0.2,1);box-shadow:0 0 10px rgba(0,0,0,0.5);}
-    .risk-labels{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--grey);margin-top:0.4rem;letter-spacing:0.02em;}
-    .result-box{border-radius:16px;padding:2rem;text-align:center;border:2px solid;transition:var(--transition);}
-    .risk-low{background:rgba(0,210,130,0.06);border-color:rgba(0,210,130,0.3);}
-    .risk-moderate{background:rgba(255,200,0,0.06);border-color:rgba(255,200,0,0.3);}
-    .risk-elevated{background:rgba(255,107,53,0.06);border-color:rgba(255,107,53,0.3);}
-    .risk-high{background:rgba(255,80,80,0.06);border-color:rgba(255,80,80,0.3);}
-    .risk-score-big{font-family:var(--font-head);font-size:4.5rem;font-weight:800;line-height:1;}
-    .rec-item{display:flex;gap:0.8rem;align-items:flex-start;padding:0.8rem;border-radius:10px;background:rgba(0,194,179,0.04);border:1px solid rgba(0,194,179,0.1);margin-bottom:0.6rem;}
-    .rec-icon{font-size:1.2rem;min-width:26px;}
-    .rec-text{font-size:0.87rem;color:var(--white-dim);line-height:1.55;}
-    .rec-text strong{color:var(--white);}
-    .factor-bar{display:flex;align-items:center;gap:1rem;margin-bottom:0.8rem;}
-    .factor-label{font-size:0.82rem;color:var(--white-dim);min-width:150px;}
-    .factor-track{flex:1;height:8px;background:rgba(0,194,179,0.1);border-radius:4px;overflow:hidden;}
-    .factor-fill{height:100%;border-radius:4px;transition:width 0.6s ease;}
-    .factor-val{font-size:0.78rem;font-weight:600;min-width:32px;text-align:right;}
+    .range-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.3rem; }
+    .range-val { font-family: var(--font-mono); font-size: 1.05rem; font-weight: 600; color: var(--teal); min-width: 52px; text-align: right; }
+    .range-hint { font-family: var(--font-mono); font-size: 0.68rem; color: var(--grey); }
+
+    /* Risk meter */
+    .risk-meter-wrap { margin: 1.5rem 0 0.5rem; }
+    .risk-meter {
+      position: relative; height: 20px; border-radius: 10px; overflow: hidden;
+      background: linear-gradient(90deg, #3dd68c 0%, #0bbfa8 20%, #e8b84b 45%, #e07040 70%, #e06060 100%);
+    }
+    .risk-needle {
+      position: absolute; top: -4px; width: 4px; height: 28px;
+      background: var(--white); border-radius: 2px;
+      transform: translateX(-50%); transition: left 0.9s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 0 0 8px rgba(0,0,0,0.6);
+    }
+    .risk-scale-labels { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.66rem; color: var(--grey); margin-top: 0.4rem; }
+
+    /* Result box */
+    .result-box { border-radius: var(--radius-lg); padding: 2rem; text-align: center; border: 2px solid; }
+    .risk-low      { background: rgba(61,214,140,0.06);  border-color: rgba(61,214,140,0.3);  }
+    .risk-moderate { background: rgba(232,184,75,0.06);  border-color: rgba(232,184,75,0.3);  }
+    .risk-elevated { background: rgba(224,112,64,0.06);  border-color: rgba(224,112,64,0.3);  }
+    .risk-high     { background: rgba(224,96,96,0.06);   border-color: rgba(224,96,96,0.3);   }
+    .risk-score-big { font-family: var(--font-serif); font-size: 5rem; font-weight: 800; line-height: 1; }
+
+    .rec-item { display: flex; gap: 0.9rem; align-items: flex-start; padding: 0.9rem 1.1rem; border-radius: var(--radius); background: rgba(11,191,168,0.04); border: 1px solid rgba(11,191,168,0.1); margin-bottom: 0.6rem; transition: var(--transition); }
+    .rec-item:hover { background: rgba(11,191,168,0.08); border-color: rgba(11,191,168,0.2); }
+    .rec-icon { font-size: 1.2rem; min-width: 26px; }
+    .rec-text { font-size: 0.87rem; color: var(--white-dim); line-height: 1.6; }
+    .rec-text strong { color: var(--white); }
+
+    .factor-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.8rem; }
+    .factor-label { font-size: 0.82rem; color: var(--white-dim); min-width: 160px; }
+    .factor-weight { font-family: var(--font-mono); font-size: 0.68rem; color: var(--grey); }
+    .factor-track { flex: 1; height: 6px; background: rgba(11,191,168,0.1); border-radius: 3px; overflow: hidden; }
+    .factor-fill { height: 100%; border-radius: 3px; transition: width 0.7s ease; }
+    .factor-score { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 600; min-width: 28px; text-align: right; }
+
+    .weight-item { display: flex; align-items: center; gap: 1rem; padding: 0.8rem; background: rgba(11,191,168,0.04); border-radius: var(--radius); margin-bottom: 0.5rem; }
+    .weight-pct { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 800; min-width: 52px; }
+    .weight-desc { font-size: 0.8rem; color: var(--white-dim); line-height: 1.5; }
+    .weight-desc strong { color: var(--white); font-size: 0.85rem; display: block; margin-bottom: 0.15rem; }
   </style>
 </head>
 <body>
+
 <nav>
   <a href="../index.html" class="nav-logo">
-    <svg viewBox="0 0 40 40" fill="none" width="38" height="38"><circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/><path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#00c2b3"/></svg>
-    <span class="nav-logo-text">Neuro<span>Sleep</span></span>
+    <svg class="nav-logo-img" viewBox="0 0 42 42" fill="none">
+      <circle cx="21" cy="21" r="20" stroke="rgba(11,191,168,0.2)" stroke-width="1"/>
+      <path d="M21 10 C15 10 10 14 10 20 C10 24 12 27 15 28.5 C15 30 16 31.5 18 31.5 C19 31.5 20 31 21 30.5" stroke="#0bbfa8" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M12 18 Q14 16 15 19 Q16 22 14 23" stroke="#0bbfa8" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <path d="M21 10 C27 10 32 14 32 20 C32 24 30 27 27 28.5 C27 30 26 31.5 24 31.5 C23 31.5 22 31 21 30.5" stroke="#5de2db" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M30 18 Q28 16 27 19 Q26 22 28 23" stroke="#5de2db" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <line x1="21" y1="10.5" x2="21" y2="30.5" stroke="rgba(11,191,168,0.3)" stroke-width="1" stroke-dasharray="2 2"/>
+      <path d="M32 7 C31 5.5 29.5 5 28 5.2 C30 6 31 7.5 30.5 9.5 C30 11.5 28.5 12.5 27 12.5 C28.5 12.8 30 12 31 10.5 C31.8 9.5 32.3 8.5 32 7Z" fill="#5de2db" opacity="0.85"/>
+      <circle cx="27" cy="6" r="0.8" fill="#a8f0ec"/>
+    </svg>
+    <span class="nav-logo-text">Neuro<em>Sleep</em><span class="nav-logo-sub">Sleep &amp; Cognitive Research</span></span>
   </a>
   <ul class="nav-links">
     <li><a href="../index.html">Home</a></li>
@@ -49,158 +644,169 @@
   <button class="nav-hamburger"><span></span><span></span><span></span></button>
 </nav>
 
-<div class="page-hero">
-  <div class="container" style="position:relative;z-index:1;">
-    <div class="section-label">Behavioral Risk Modeling</div>
-    <h1>Alzheimer's Risk <span class="text-teal">Behavior</span> Calculator</h1>
-    <p class="text-dim mt-1" style="max-width:600px;">Input your behavioral data to receive a personalized cognitive risk behavior score. Based on published sleep and Alzheimer's research. This is not a medical diagnostic tool.</p>
-    <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+<div class="page-hero" style="background:radial-gradient(ellipse 55% 70% at 65% 0%,rgba(232,184,75,0.07) 0%,transparent 60%);">
+  <div class="container page-hero-inner">
+    <div class="section-kicker">Behavioral Risk Modeling</div>
+    <h1>Alzheimer's Risk <span class="text-teal">Calculator</span></h1>
+    <p class="text-dim mt-2" style="max-width:640px;font-size:1.05rem;line-height:1.75;">A weighted behavioral scoring model based on published sleep and Alzheimer's research. Input your behavioral patterns to receive a personalized cognitive risk score and recommendations. This is not a medical diagnostic tool.</p>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.25rem;">
       <span class="badge badge-orange">&#9888; Behavioral Model Only</span>
-      <span class="badge badge-teal">Research-Backed</span>
+      <span class="badge badge-teal">Research-Backed (Lancet 2020)</span>
       <span class="badge badge-purple">Not a Medical Diagnosis</span>
     </div>
   </div>
 </div>
 
-<section style="padding-top:0;">
+<div class="divider"></div>
+
+<section style="padding-top:2.5rem;">
   <div class="container">
     <div class="grid-2" style="gap:2rem;align-items:start;">
 
       <!-- INPUT FORM -->
       <div>
         <div class="card mb-3">
-          <h3 class="mb-3">&#128203; Enter Your Behavioral Data</h3>
+          <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1.5rem;">
+            <div class="card-icon" style="margin:0;">&#128203;</div>
+            <div>
+              <h3 style="margin:0;">Enter Your Behavioral Data</h3>
+              <p class="text-grey" style="font-size:0.78rem;font-family:var(--font-mono);">Reflect on your average patterns over the past 2 to 4 weeks</p>
+            </div>
+          </div>
 
           <div class="form-group">
-            <label>Average Sleep Duration (hours/night): <span class="range-val" id="durVal">7.5</span></label>
+            <label>Average Sleep Duration: <span class="range-val" id="durVal">7.5h</span></label>
             <div class="range-row">
-              <span class="text-dim" style="font-size:0.78rem;">3h</span>
+              <span class="range-hint">3h</span>
               <input type="range" id="durSlider" min="3" max="12" step="0.5" value="7.5"/>
-              <span class="text-dim" style="font-size:0.78rem;">12h</span>
+              <span class="range-hint">12h</span>
             </div>
           </div>
 
           <div class="form-group">
-            <label>Sleep Schedule Variability (minutes between earliest and latest bedtime): <span class="range-val" id="varVal">30</span></label>
+            <label>Bedtime Variability (minutes night-to-night): <span class="range-val" id="varVal">30min</span></label>
             <div class="range-row">
-              <span class="text-dim" style="font-size:0.78rem;">0</span>
+              <span class="range-hint">0</span>
               <input type="range" id="varSlider" min="0" max="180" step="5" value="30"/>
-              <span class="text-dim" style="font-size:0.78rem;">3h</span>
+              <span class="range-hint">3h</span>
             </div>
           </div>
 
           <div class="form-group">
-            <label>Screen Time Before Bed (minutes): <span class="range-val" id="screenVal">45</span></label>
+            <label>Screen Time Before Bed (minutes): <span class="range-val" id="screenVal">30min</span></label>
             <div class="range-row">
-              <span class="text-dim" style="font-size:0.78rem;">0</span>
-              <input type="range" id="screenSlider" min="0" max="180" step="5" value="45"/>
-              <span class="text-dim" style="font-size:0.78rem;">3h</span>
+              <span class="range-hint">0</span>
+              <input type="range" id="screenSlider" min="0" max="180" step="5" value="30"/>
+              <span class="range-hint">3h</span>
             </div>
           </div>
 
           <div class="form-group">
-            <label>Average Nighttime Awakenings: <span class="range-val" id="awkVal">1</span></label>
+            <label>Nighttime Awakenings (per night): <span class="range-val" id="awkVal">1</span></label>
             <div class="range-row">
-              <span class="text-dim" style="font-size:0.78rem;">0</span>
-              <input type="range" id="awkSlider" min="0" max="10" step="1" value="1"/>
-              <span class="text-dim" style="font-size:0.78rem;">10</span>
+              <span class="range-hint">0</span>
+              <input type="range" id="awkSlider" min="0" max="8" step="1" value="1"/>
+              <span class="range-hint">8+</span>
             </div>
           </div>
 
           <div class="form-group">
-            <label>Average Cognitive Test Score (0-100, enter 50 if unknown): <span class="range-val" id="cogVal">70</span></label>
+            <label>Average Cognitive Test Score (0-100): <span class="range-val" id="cogVal">70</span></label>
             <div class="range-row">
-              <span class="text-dim" style="font-size:0.78rem;">0</span>
+              <span class="range-hint">0</span>
               <input type="range" id="cogSlider" min="0" max="100" step="1" value="70"/>
-              <span class="text-dim" style="font-size:0.78rem;">100</span>
+              <span class="range-hint">100</span>
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="ageGroup">Age Group</label>
-            <select id="ageGroup">
-              <option value="teen">13-17 (Adolescent)</option>
-              <option value="young" selected>18-30 (Young Adult)</option>
-              <option value="mid">31-50 (Middle Age)</option>
-              <option value="older">51-65 (Older Adult)</option>
-              <option value="senior">65+ (Senior)</option>
-            </select>
+          <div class="grid-2" style="gap:1rem;">
+            <div class="form-group">
+              <label for="ageGroup">Age Group</label>
+              <select id="ageGroup">
+                <option value="teen">Adolescent (13-17)</option>
+                <option value="young" selected>Young Adult (18-35)</option>
+                <option value="mid">Middle Age (36-55)</option>
+                <option value="older">Older Adult (56-70)</option>
+                <option value="senior">Senior (71+)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="actLevel">Physical Activity Level</label>
+              <select id="actLevel">
+                <option value="none">Sedentary (none)</option>
+                <option value="light">Light (1-2x/week)</option>
+                <option value="moderate" selected>Moderate (3-4x/week)</option>
+                <option value="active">Active (5+x/week)</option>
+              </select>
+            </div>
           </div>
 
-          <div class="form-group">
-            <label>Physical Activity Level</label>
-            <select id="actLevel">
-              <option value="none">Sedentary (little to no exercise)</option>
-              <option value="light">Light (1-2 days/week)</option>
-              <option value="moderate" selected>Moderate (3-4 days/week)</option>
-              <option value="active">Active (5+ days/week)</option>
-            </select>
-          </div>
-
-          <button class="btn btn-primary" id="calcBtn" style="width:100%;margin-top:0.5rem;">&#9654; Calculate Risk Score</button>
-          <p class="text-dim mt-2" style="font-size:0.75rem;text-align:center;">This calculator uses a behavior-based model derived from published sleep research. It is not a clinical diagnostic tool and does not predict Alzheimer's disease. Always consult a healthcare professional for medical concerns.</p>
+          <button class="btn btn-primary" id="calcBtn" style="width:100%;font-size:1rem;padding:0.95rem;">&#129522;&ensp;Calculate Risk Score</button>
         </div>
 
-        <!-- FACTOR BREAKDOWN -->
-        <div class="card" id="factorCard" style="display:none;">
-          <h3 class="mb-3">&#128202; Risk Factor Breakdown</h3>
-          <div id="factorBreakdown"></div>
+        <!-- RESULT -->
+        <div class="card" id="resultCard" style="display:none;">
+          <div id="resultContent"></div>
+          <div id="factorCard" style="display:none;margin-top:1.5rem;">
+            <div style="font-family:var(--font-mono);font-size:0.66rem;color:var(--grey);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1rem;padding-top:1rem;border-top:1px solid var(--card-border);">Factor Breakdown (higher score = higher risk contribution)</div>
+            <div id="factorBreakdown"></div>
+          </div>
         </div>
       </div>
 
-      <!-- RESULT -->
+      <!-- SIDEBAR INFO -->
       <div>
-        <div class="card mb-3" id="resultCard">
-          <h3 class="mb-3">&#128200; Your Risk Score</h3>
-          <div id="resultContent" style="text-align:center;padding:2rem 0;color:var(--grey);">
-            <div style="font-size:3rem;margin-bottom:1rem;">&#129504;</div>
-            <p>Complete the form and click Calculate to see your behavioral risk score.</p>
+        <div class="card mb-3">
+          <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1.25rem;">
+            <div class="card-icon" style="margin:0;">&#128202;</div>
+            <h3 style="margin:0;">Model Weighting</h3>
+          </div>
+          <p class="text-dim" style="font-size:0.82rem;margin-bottom:1.25rem;line-height:1.7;">Each factor is weighted based on its relative impact on glymphatic function and Alzheimer's risk per the Lancet 2020 Commission and subsequent meta-analyses.</p>
+
+          <div class="weight-item">
+            <span class="weight-pct" style="color:var(--teal);">35%</span>
+            <div class="weight-desc"><strong>Sleep Consistency</strong>Irregular schedules disrupt BMAL1/CLOCK gene expression and reduce glymphatic clearance efficiency. SD above 45 min is associated with 27% greater cognitive risk in published studies.</div>
+          </div>
+          <div class="weight-item">
+            <span class="weight-pct" style="color:var(--cyan);">30%</span>
+            <div class="weight-desc"><strong>Sleep Duration</strong>Both insufficient sleep (under 6h) and excessive sleep (over 9h) are linked to elevated amyloid-beta accumulation and accelerated cognitive decline trajectories.</div>
+          </div>
+          <div class="weight-item">
+            <span class="weight-pct" style="color:var(--purple);">20%</span>
+            <div class="weight-desc"><strong>Screen Exposure</strong>Blue light (460-480nm) before bed suppresses melatonin by up to 50%, delays circadian phase, and reduces the slow-wave sleep depth needed for amyloid clearance.</div>
+          </div>
+          <div class="weight-item">
+            <span class="weight-pct" style="color:var(--gold);">15%</span>
+            <div class="weight-desc"><strong>Cognitive Performance</strong>Declining cognitive scores, especially reaction time variability, may reflect early neural changes that precede clinical Alzheimer's symptoms by years or decades.</div>
           </div>
         </div>
 
         <div class="card mb-3">
-          <h3 class="mb-2">&#128218; How The Score Is Calculated</h3>
-          <p class="text-dim mb-3" style="font-size:0.88rem;">The Alzheimer's Risk Behavior Score is a weighted composite model based on four modifiable behavioral domains, each linked to neurological risk in peer-reviewed literature:</p>
-          <div style="display:flex;flex-direction:column;gap:0.7rem;">
-            <div style="padding:0.8rem;background:rgba(0,194,179,0.05);border-radius:8px;display:flex;align-items:center;gap:1rem;">
-              <div style="font-family:var(--font-head);font-size:1.4rem;font-weight:800;color:var(--teal);min-width:40px;">35%</div>
-              <div><strong>Sleep Consistency</strong><p class="text-dim" style="font-size:0.8rem;margin-top:0.1rem;">Irregular schedules disrupt circadian biology and reduce glymphatic clearance. SD above 45 min is associated with 27% greater cognitive risk.</p></div>
+          <h3 class="mb-3">Risk Category Guide</h3>
+          <div style="display:flex;flex-direction:column;gap:0.5rem;">
+            <div style="display:flex;align-items:center;gap:1rem;padding:0.75rem;border-radius:var(--radius);background:rgba(61,214,140,0.05);border:1px solid rgba(61,214,140,0.15);">
+              <span class="badge badge-green" style="min-width:50px;justify-content:center;">0-20</span>
+              <div><strong style="font-size:0.88rem;">Low Risk</strong><p class="text-dim" style="font-size:0.78rem;">Habits strongly aligned with neuroprotective behaviors. Maintain your routine.</p></div>
             </div>
-            <div style="padding:0.8rem;background:rgba(0,194,179,0.05);border-radius:8px;display:flex;align-items:center;gap:1rem;">
-              <div style="font-family:var(--font-head);font-size:1.4rem;font-weight:800;color:var(--cyan);min-width:40px;">30%</div>
-              <div><strong>Sleep Duration</strong><p class="text-dim" style="font-size:0.8rem;margin-top:0.1rem;">Both insufficient sleep (under 6h) and excessive sleep (over 9h) are linked to elevated amyloid-beta accumulation and cognitive decline.</p></div>
+            <div style="display:flex;align-items:center;gap:1rem;padding:0.75rem;border-radius:var(--radius);background:rgba(232,184,75,0.05);border:1px solid rgba(232,184,75,0.15);">
+              <span class="badge badge-yellow" style="min-width:50px;justify-content:center;">21-45</span>
+              <div><strong style="font-size:0.88rem;">Moderate Risk</strong><p class="text-dim" style="font-size:0.78rem;">Some patterns warrant attention. Targeted adjustments can meaningfully reduce risk.</p></div>
             </div>
-            <div style="padding:0.8rem;background:rgba(0,194,179,0.05);border-radius:8px;display:flex;align-items:center;gap:1rem;">
-              <div style="font-family:var(--font-head);font-size:1.4rem;font-weight:800;color:var(--accent-purple);min-width:40px;">20%</div>
-              <div><strong>Screen Exposure</strong><p class="text-dim" style="font-size:0.8rem;margin-top:0.1rem;">Blue light exposure before bed suppresses melatonin, delays circadian phase, and reduces slow-wave sleep depth needed for amyloid clearance.</p></div>
+            <div style="display:flex;align-items:center;gap:1rem;padding:0.75rem;border-radius:var(--radius);background:rgba(224,112,64,0.05);border:1px solid rgba(224,112,64,0.15);">
+              <span class="badge badge-orange" style="min-width:50px;justify-content:center;">46-70</span>
+              <div><strong style="font-size:0.88rem;">Elevated Risk</strong><p class="text-dim" style="font-size:0.78rem;">Several behavioral patterns misaligned with brain-healthy sleep. Changes recommended.</p></div>
             </div>
-            <div style="padding:0.8rem;background:rgba(0,194,179,0.05);border-radius:8px;display:flex;align-items:center;gap:1rem;">
-              <div style="font-family:var(--font-head);font-size:1.4rem;font-weight:800;color:var(--accent-orange);min-width:40px;">15%</div>
-              <div><strong>Cognitive Performance</strong><p class="text-dim" style="font-size:0.8rem;margin-top:0.1rem;">Declining cognitive scores, particularly reaction time variability, may reflect early neural changes that precede clinical symptoms of Alzheimer's disease.</p></div>
+            <div style="display:flex;align-items:center;gap:1rem;padding:0.75rem;border-radius:var(--radius);background:rgba(224,96,96,0.05);border:1px solid rgba(224,96,96,0.15);">
+              <span class="badge badge-red" style="min-width:50px;justify-content:center;">71-100</span>
+              <div><strong style="font-size:0.88rem;">High Risk</strong><p class="text-dim" style="font-size:0.78rem;">Significant behavioral risk factors present. Lifestyle intervention strongly recommended.</p></div>
             </div>
           </div>
         </div>
 
-        <div class="card">
-          <h3 class="mb-2">&#127775; Risk Category Guide</h3>
-          <div style="display:flex;flex-direction:column;gap:0.6rem;">
-            <div style="display:flex;align-items:center;gap:1rem;padding:0.7rem;border-radius:8px;background:rgba(0,210,130,0.05);">
-              <span class="badge badge-green">0-20</span>
-              <div><strong style="font-size:0.88rem;">Low Risk</strong><p class="text-dim" style="font-size:0.8rem;">Habits strongly aligned with neuroprotective behaviors. Maintain your routine.</p></div>
-            </div>
-            <div style="display:flex;align-items:center;gap:1rem;padding:0.7rem;border-radius:8px;background:rgba(255,200,0,0.05);">
-              <span class="badge badge-yellow">21-45</span>
-              <div><strong style="font-size:0.88rem;">Moderate Risk</strong><p class="text-dim" style="font-size:0.8rem;">Some patterns warrant attention. Targeted adjustments can meaningfully reduce risk.</p></div>
-            </div>
-            <div style="display:flex;align-items:center;gap:1rem;padding:0.7rem;border-radius:8px;background:rgba(255,107,53,0.05);">
-              <span class="badge badge-orange">46-70</span>
-              <div><strong style="font-size:0.88rem;">Elevated Risk</strong><p class="text-dim" style="font-size:0.8rem;">Several behavioral patterns are misaligned with brain-healthy sleep. Changes recommended.</p></div>
-            </div>
-            <div style="display:flex;align-items:center;gap:1rem;padding:0.7rem;border-radius:8px;background:rgba(255,80,80,0.05);">
-              <span class="badge badge-red">71-100</span>
-              <div><strong style="font-size:0.88rem;">High Risk</strong><p class="text-dim" style="font-size:0.8rem;">Significant behavioral risk factors present. Lifestyle intervention strongly recommended.</p></div>
-            </div>
-          </div>
+        <div class="card" style="background:rgba(11,191,168,0.04);border-color:rgba(11,191,168,0.15);">
+          <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--grey);letter-spacing:0.1em;margin-bottom:0.8rem;">IMPORTANT DISCLAIMER</div>
+          <p style="font-size:0.82rem;color:var(--white-dim);line-height:1.7;">This calculator models <strong style="color:var(--white);">behavioral risk factors only</strong>. It does not account for genetic risk (APOE e4 genotype), family history, or clinical biomarkers. A score in any range should not be interpreted as a medical diagnosis. Consult a healthcare provider for comprehensive Alzheimer's risk assessment.</p>
+          <div class="citation-box" style="margin-top:1rem;">Based on: Livingston et al. (2020). Dementia prevention, intervention, and care: 2020 report of the Lancet Commission. The Lancet, 396(10248), 413-446.</div>
         </div>
       </div>
     </div>
@@ -209,157 +815,160 @@
 
 <footer>
   <div class="footer-grid">
-    <div class="footer-brand"><a href="../index.html" class="nav-logo"><svg viewBox="0 0 40 40" fill="none" width="32" height="32"><circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/><path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#00c2b3"/></svg><span class="nav-logo-text">Neuro<span>Sleep</span></span></a><p>Research platform for sleep and Alzheimer's prevention. Created by Mithil Gajula.</p></div>
+    <div class="footer-brand">
+      <div class="footer-logo-wrap">
+        <svg viewBox="0 0 42 42" width="32" height="32" fill="none"><circle cx="21" cy="21" r="20" stroke="rgba(11,191,168,0.2)" stroke-width="1"/><path d="M21 10 C15 10 10 14 10 20 C10 24 12 27 15 28.5 C15 30 16 31.5 18 31.5 C19 31.5 20 31 21 30.5" stroke="#0bbfa8" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M21 10 C27 10 32 14 32 20 C32 24 30 27 27 28.5 C27 30 26 31.5 24 31.5 C23 31.5 22 31 21 30.5" stroke="#5de2db" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M32 7 C31 5.5 29.5 5 28 5.2 C30 6 31 7.5 30.5 9.5 C30 11.5 28.5 12.5 27 12.5 C28.5 12.8 30 12 31 10.5 C31.8 9.5 32.3 8.5 32 7Z" fill="#5de2db" opacity="0.85"/></svg>
+        <span style="font-family:var(--font-serif);font-size:1.1rem;font-weight:700;color:var(--white);">Neuro<span style="color:var(--teal);">Sleep</span></span>
+      </div>
+      <p>ISM Research Project by Mithil Gajula. Not a medical diagnostic tool.</p>
+    </div>
     <div class="footer-col"><h4>Platform</h4><ul><li><a href="tracker.html">Sleep Tracker</a></li><li><a href="cognitive.html">Cognitive Tests</a></li><li><a href="dashboard.html">Dashboard</a></li><li><a href="risk.html">Risk Calculator</a></li></ul></div>
-    <div class="footer-col"><h4>Research</h4><ul><li><a href="research.html">Research Library</a></li><li><a href="research.html">Alzheimer's Biology</a></li><li><a href="research.html">Methodology</a></li></ul></div>
-    <div class="footer-col"><h4>Info</h4><ul><li><a href="../index.html">About</a></li><li><a href="research.html">Citations</a></li></ul></div>
+    <div class="footer-col"><h4>Research</h4><ul><li><a href="research.html">Research Library</a></li><li><a href="research.html">Methodology</a></li></ul></div>
+    <div class="footer-col"><h4>About</h4><ul><li><a href="../index.html">Project Overview</a></li><li><a href="research.html">Citations</a></li></ul></div>
   </div>
-  <div class="footer-bottom"><p>&copy; 2025 NeuroSleep. Created by Mithil Gajula. ISM Research Project.</p></div>
+  <div class="footer-bottom"><p>&copy; 2025 NeuroSleep &mdash; Mithil Gajula.</p></div>
 </footer>
 
 <script src="../js/core.js"></script>
 <script>
-// SLIDERS
-function bindSlider(sliderId, displayId, suffix=''){
-  const s=document.getElementById(sliderId), d=document.getElementById(displayId);
-  s.addEventListener('input',()=>{ d.textContent=s.value+suffix; });
+// SLIDER BINDINGS
+function bindSlider(id, displayId, formatter) {
+  const s = document.getElementById(id), d = document.getElementById(displayId);
+  function update() { d.textContent = formatter(parseFloat(s.value)); }
+  s.addEventListener('input', update); update();
 }
-bindSlider('durSlider','durVal','h');
-bindSlider('varSlider','varVal','min');
-bindSlider('screenSlider','screenVal','min');
-bindSlider('awkSlider','awkVal','');
-bindSlider('cogSlider','cogVal','');
+bindSlider('durSlider','durVal', v => v+'h');
+bindSlider('varSlider','varVal', v => v+'min');
+bindSlider('screenSlider','screenVal', v => v+'min');
+bindSlider('awkSlider','awkVal', v => v);
+bindSlider('cogSlider','cogVal', v => v);
 
-// CALCULATE
-document.getElementById('calcBtn').addEventListener('click',()=>{
-  const dur=parseFloat(document.getElementById('durSlider').value);
-  const varMin=parseInt(document.getElementById('varSlider').value);
-  const screen=parseInt(document.getElementById('screenSlider').value);
-  const awk=parseInt(document.getElementById('awkSlider').value);
-  const cog=parseInt(document.getElementById('cogSlider').value);
-  const age=document.getElementById('ageGroup').value;
-  const act=document.getElementById('actLevel').value;
+document.getElementById('calcBtn').addEventListener('click', () => {
+  const dur = parseFloat(document.getElementById('durSlider').value);
+  const varMin = parseInt(document.getElementById('varSlider').value);
+  const screen = parseInt(document.getElementById('screenSlider').value);
+  const awk = parseInt(document.getElementById('awkSlider').value);
+  const cog = parseInt(document.getElementById('cogSlider').value);
+  const age = document.getElementById('ageGroup').value;
+  const act = document.getElementById('actLevel').value;
 
-  // Factor scores (0-100 each, lower = better)
-  let durScore=0;
-  if(dur>=7&&dur<=9) durScore=0;
-  else if(dur>=6&&dur<7) durScore=20;
-  else if(dur>9&&dur<=10) durScore=15;
-  else if(dur>=5&&dur<6) durScore=45;
-  else durScore=75;
+  // Factor scores (0-100, lower = better)
+  let durScore = 0;
+  if (dur >= 7 && dur <= 9) durScore = 0;
+  else if (dur >= 6 && dur < 7) durScore = 20;
+  else if (dur > 9 && dur <= 10) durScore = 15;
+  else if (dur >= 5 && dur < 6) durScore = 45;
+  else durScore = 75;
 
-  let varScore=0;
-  if(varMin<=30) varScore=0;
-  else if(varMin<=60) varScore=20;
-  else if(varMin<=90) varScore=40;
-  else if(varMin<=120) varScore=60;
-  else varScore=85;
+  let varScore = 0;
+  if (varMin <= 30) varScore = 0;
+  else if (varMin <= 60) varScore = 20;
+  else if (varMin <= 90) varScore = 40;
+  else if (varMin <= 120) varScore = 60;
+  else varScore = 85;
 
-  let screenScore=0;
-  if(screen<=15) screenScore=0;
-  else if(screen<=30) screenScore=15;
-  else if(screen<=60) screenScore=35;
-  else if(screen<=90) screenScore=55;
-  else screenScore=75;
+  let screenScore = 0;
+  if (screen <= 15) screenScore = 0;
+  else if (screen <= 30) screenScore = 15;
+  else if (screen <= 60) screenScore = 35;
+  else if (screen <= 90) screenScore = 55;
+  else screenScore = 75;
 
-  let awkScore=0;
-  if(awk===0) awkScore=0;
-  else if(awk===1) awkScore=10;
-  else if(awk<=2) awkScore=25;
-  else if(awk<=4) awkScore=50;
-  else awkScore=75;
+  let awkScore = 0;
+  if (awk === 0) awkScore = 0;
+  else if (awk === 1) awkScore = 10;
+  else if (awk <= 2) awkScore = 25;
+  else if (awk <= 4) awkScore = 50;
+  else awkScore = 75;
 
-  let cogScore=0;
-  if(cog>=80) cogScore=0;
-  else if(cog>=65) cogScore=15;
-  else if(cog>=50) cogScore=30;
-  else if(cog>=35) cogScore=55;
-  else cogScore=80;
+  let cogScore = 0;
+  if (cog >= 80) cogScore = 0;
+  else if (cog >= 65) cogScore = 15;
+  else if (cog >= 50) cogScore = 30;
+  else if (cog >= 35) cogScore = 55;
+  else cogScore = 80;
 
-  // Age modifier
-  const ageMod={teen:0.85,young:1.0,mid:1.1,older:1.2,senior:1.3};
-  // Activity modifier
-  const actMod={none:1.2,light:1.1,moderate:1.0,active:0.85};
+  const ageMod = { teen: 0.85, young: 1.0, mid: 1.1, older: 1.2, senior: 1.3 };
+  const actMod = { none: 1.2, light: 1.1, moderate: 1.0, active: 0.85 };
+  const raw = (durScore * 0.30) + (varScore * 0.35) + (screenScore * 0.20) + (cogScore * 0.15);
+  const adjusted = Math.min(100, Math.round(raw * (ageMod[age] || 1) * (actMod[act] || 1)));
 
-  const raw=(durScore*0.30)+(varScore*0.35)+(screenScore*0.20)+(cogScore*0.15);
-  const adjusted=Math.min(100,Math.round(raw*(ageMod[age]||1)*(actMod[act]||1)));
+  let cat = 'low';
+  if (adjusted > 70) cat = 'high';
+  else if (adjusted > 45) cat = 'elevated';
+  else if (adjusted > 20) cat = 'moderate';
 
-  const colors={low:'#00d282',moderate:'#ffc800',elevated:'#ff6b35',high:'#ff5050'};
-  const labels={low:'Low Risk',moderate:'Moderate Risk',elevated:'Elevated Risk',high:'High Risk'};
-  const descs={
-    low:'Your current behavioral patterns are well-aligned with neuroprotective habits. The research suggests your sleep routine supports healthy glymphatic function and circadian biology. Maintain your schedule and continue monitoring.',
-    moderate:'Some behavioral patterns warrant attention. With targeted adjustments to sleep consistency or screen habits, you can meaningfully reduce your long-term cognitive risk profile.',
-    elevated:'Several behavioral factors are misaligned with brain-healthy sleep patterns. Research indicates these patterns are associated with impaired amyloid clearance and circadian disruption. Focused lifestyle changes are recommended.',
-    high:'Significant behavioral risk factors are present across multiple domains. The scientific evidence strongly supports intervention to reduce amyloid accumulation risk, circadian disruption, and cognitive decline trajectory.'
+  const colors = { low: 'var(--green)', moderate: 'var(--gold)', elevated: '#e07040', high: 'var(--rose)' };
+  const labels = { low: 'Low Risk', moderate: 'Moderate Risk', elevated: 'Elevated Risk', high: 'High Risk' };
+  const badgeCls = { low: 'badge-green', moderate: 'badge-yellow', elevated: 'badge-orange', high: 'badge-red' };
+
+  const descs = {
+    low: 'Your current behavioral patterns are well-aligned with neuroprotective habits. The research suggests your sleep routine supports healthy glymphatic function and circadian biology. Maintain your schedule and continue monitoring over time.',
+    moderate: 'Some behavioral patterns warrant attention. With targeted adjustments to sleep consistency or screen habits, you can meaningfully reduce your long-term cognitive risk profile over the coming weeks.',
+    elevated: 'Several behavioral factors are misaligned with brain-healthy sleep patterns. Research indicates these patterns are associated with impaired amyloid clearance and circadian disruption. Focused lifestyle changes are recommended.',
+    high: 'Significant behavioral risk factors are present across multiple domains. The scientific evidence strongly supports intervention to reduce amyloid accumulation risk, circadian disruption, and cognitive decline trajectory.'
   };
-  const recs={
-    low:[
-      {icon:'&#10004;&#65039;',text:'<strong>Keep your consistent schedule.</strong> Your low variability in sleep timing supports stable circadian rhythms. Aim to maintain this even on weekends.'},
-      {icon:'&#9728;&#65039;',text:'<strong>Add morning bright light.</strong> 10-15 minutes of outdoor light within 30 minutes of waking further anchors your circadian clock.'},
-      {icon:'&#129504;',text:'<strong>Continue cognitive testing.</strong> Regular assessments help detect any emerging trends early, when intervention is most effective.'}
+
+  const recs = {
+    low: [
+      {icon:'&#10004;&#65039;', text:'<strong>Keep your consistent schedule.</strong> Your low variability in sleep timing supports stable circadian rhythms. Aim to maintain this even on weekends.'},
+      {icon:'&#9728;&#65039;', text:'<strong>Add morning bright light.</strong> 10 to 15 minutes of outdoor light within 30 minutes of waking further anchors your circadian clock and promotes earlier, more consistent sleep onset.'},
+      {icon:'&#129504;', text:'<strong>Continue cognitive testing.</strong> Regular assessments help detect any emerging trends early, when behavioral intervention is most effective.'}
     ],
-    moderate:[
-      {icon:'&#128336;',text:'<strong>Stabilize your sleep schedule.</strong> Pick a fixed wake time and hold it 7 days a week. This single change can reduce variability by 40-60% within 2 weeks.'},
-      {icon:'&#128247;',text:'<strong>Reduce screen time before bed.</strong> Aim to stop all screens 60-90 minutes before sleep. Use blue-light blocking glasses or night mode as a minimum.'},
-      {icon:'&#127975;',text:'<strong>Cool your bedroom.</strong> A temperature of 65-68F (18-20C) facilitates the core body temperature drop that triggers and maintains deep slow-wave sleep.'}
+    moderate: [
+      {icon:'&#128336;', text:'<strong>Stabilize your sleep schedule.</strong> Pick a fixed wake time and hold it 7 days a week. This single change can reduce variability by 40 to 60 percent within 2 weeks.'},
+      {icon:'&#128247;', text:'<strong>Reduce screen time before bed.</strong> Aim to stop all screens 60 to 90 minutes before sleep. Use blue-light blocking glasses or night mode as a minimum intervention.'},
+      {icon:'&#127975;', text:'<strong>Cool your bedroom.</strong> A temperature of 65 to 68 degrees F (18 to 20 degrees C) facilitates the core body temperature drop that triggers and maintains deep slow-wave sleep.'}
     ],
-    elevated:[
-      {icon:'&#9888;&#65039;',text:'<strong>Sleep consistency is your top priority.</strong> Your variability level is in the range linked to 27% greater memory impairment in published research. A fixed bedtime is the single highest-impact change.'},
-      {icon:'&#128161;',text:'<strong>Eliminate screens 90 minutes before bed.</strong> Your current screen exposure is suppressing melatonin onset and reducing the slow-wave sleep depth needed for amyloid clearance.'},
-      {icon:'&#127939;',text:'<strong>Add aerobic exercise.</strong> 150 minutes of moderate aerobic activity per week increases BDNF production, promotes deeper sleep, and is associated with 35% reduced dementia risk.'},
-      {icon:'&#129504;',text:'<strong>Take weekly cognitive tests.</strong> Tracking reaction time variability over time provides early warning signals of neurological change, often years before clinical symptoms.'}
+    elevated: [
+      {icon:'&#9888;&#65039;', text:'<strong>Sleep consistency is your top priority.</strong> Your variability is in the range linked to 27% greater memory impairment in published research. A fixed bedtime is the single highest-impact change.'},
+      {icon:'&#128161;', text:'<strong>Eliminate screens 90 minutes before bed.</strong> Your current screen exposure is suppressing melatonin onset and reducing slow-wave sleep depth needed for amyloid clearance.'},
+      {icon:'&#127939;', text:'<strong>Add aerobic exercise.</strong> 150 minutes of moderate aerobic activity per week increases BDNF production, promotes deeper sleep, and is associated with 35% reduced dementia risk.'},
+      {icon:'&#129504;', text:'<strong>Track cognitive performance weekly.</strong> Monitoring reaction time variability over time provides early signals of neurological change, often years before clinical symptoms appear.'}
     ],
-    high:[
-      {icon:'&#128680;',text:'<strong>Prioritize sleep as a health intervention.</strong> Your current behavioral profile has multiple risk factors that compound each other. Begin with one change: a fixed wake time, every day.'},
-      {icon:'&#128247;',text:'<strong>Full screen ban 2 hours before bed.</strong> At your current screen exposure level, melatonin suppression is significant. This change alone can advance sleep onset by 30-45 minutes.'},
-      {icon:'&#127775;',text:'<strong>Consider a sleep study.</strong> High awakening frequency may indicate sleep-disordered breathing (sleep apnea), which independently triples Alzheimer's risk. This is worth clinical evaluation.'},
-      {icon:'&#127939;',text:'<strong>Begin a structured exercise program.</strong> Even walking 30 minutes per day is associated with measurable improvements in sleep architecture and cognitive function within 4 weeks.'},
-      {icon:'&#128140;',text:'<strong>Discuss with a healthcare provider.</strong> This calculator identifies behavioral risk patterns. A physician can assess clinical risk factors, family history, and provide appropriate guidance.'}
+    high: [
+      {icon:'&#128680;', text:'<strong>Prioritize sleep as a health intervention.</strong> Your behavioral profile has multiple compounding risk factors. Begin with one change: a fixed wake time, every single day.'},
+      {icon:'&#128247;', text:'<strong>Full screen ban 2 hours before bed.</strong> At your current exposure level, melatonin suppression is significant. This change alone can advance sleep onset by 30 to 45 minutes.'},
+      {icon:'&#127775;', text:'<strong>Consider a sleep study.</strong> High awakening frequency may indicate sleep-disordered breathing (sleep apnea), which independently triples Alzheimer\'s risk and is a clinical condition.'},
+      {icon:'&#127939;', text:'<strong>Begin a structured exercise program.</strong> Even walking 30 minutes per day is associated with measurable improvements in sleep architecture and cognitive function within 4 weeks.'},
+      {icon:'&#128140;', text:'<strong>Discuss with a healthcare provider.</strong> This calculator identifies behavioral risk patterns. A physician can assess clinical risk factors, family history, and provide appropriate guidance.'}
     ]
   };
 
-  let cat='low';
-  if(adjusted>70) cat='high';
-  else if(adjusted>45) cat='elevated';
-  else if(adjusted>20) cat='moderate';
+  const col = colors[cat];
+  document.getElementById('resultCard').style.display = 'block';
+  document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-  const col=colors[cat];
-  const lbl=labels[cat];
-  const desc=descs[cat];
-  const recList=recs[cat];
-  const needlePct=adjusted;
-
-  document.getElementById('resultContent').innerHTML=`
+  document.getElementById('resultContent').innerHTML = `
     <div class="result-box risk-${cat}" style="margin-bottom:1.5rem;">
       <div class="risk-score-big" style="color:${col};">${adjusted}</div>
-      <div style="font-size:0.85rem;color:var(--grey);margin-top:0.3rem;">out of 100</div>
-      <span class="badge badge-${cat==='low'?'green':cat==='moderate'?'yellow':cat==='elevated'?'orange':'red'}" style="margin-top:1rem;">${lbl}</span>
-      <p style="margin-top:1rem;font-size:0.9rem;color:var(--white-dim);line-height:1.6;">${desc}</p>
+      <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--grey);margin-top:0.2rem;">/ 100 behavioral risk score</div>
+      <span class="badge ${badgeCls[cat]}" style="margin-top:1rem;">${labels[cat]}</span>
+      <p style="margin-top:1.2rem;font-size:0.875rem;color:var(--white-dim);line-height:1.7;text-align:left;">${descs[cat]}</p>
     </div>
-    <div class="risk-meter"><div class="risk-needle" id="riskNeedle" style="left:${needlePct}%;"></div></div>
-    <div class="risk-labels"><span>Low</span><span>Moderate</span><span>Elevated</span><span>High</span></div>
+    <div class="risk-meter-wrap">
+      <div class="risk-meter"><div class="risk-needle" id="riskNeedle" style="left:${adjusted}%;"></div></div>
+      <div class="risk-scale-labels"><span style="color:var(--green);">Low</span><span>Moderate</span><span>Elevated</span><span style="color:var(--rose);">High</span></div>
+    </div>
     <h3 style="margin-top:1.5rem;margin-bottom:1rem;">&#127775; Personalized Recommendations</h3>
-    ${recList.map(r=>`<div class="rec-item"><span class="rec-icon">${r.icon}</span><p class="rec-text">${r.text}</p></div>`).join('')}`;
+    ${recs[cat].map(r=>`<div class="rec-item"><span class="rec-icon">${r.icon}</span><p class="rec-text">${r.text}</p></div>`).join('')}`;
 
-  // Factor breakdown
-  document.getElementById('factorCard').style.display='block';
-  const factors=[
-    {label:'Sleep Consistency',score:varScore,weight:'35%',col:varScore<30?'#00d282':varScore<60?'#ffc800':'#ff5050'},
-    {label:'Sleep Duration',score:durScore,weight:'30%',col:durScore<20?'#00d282':durScore<50?'#ffc800':'#ff5050'},
-    {label:'Screen Exposure',score:screenScore,weight:'20%',col:screenScore<20?'#00d282':screenScore<50?'#ffc800':'#ff5050'},
-    {label:'Cognitive Performance',score:cogScore,weight:'15%',col:cogScore<20?'#00d282':cogScore<50?'#ffc800':'#ff5050'},
+  document.getElementById('factorCard').style.display = 'block';
+  const factors = [
+    {label:'Sleep Consistency',weight:'35%',score:varScore, col: varScore<30?'var(--green)':varScore<60?'var(--gold)':'var(--rose)'},
+    {label:'Sleep Duration',weight:'30%',score:durScore, col: durScore<20?'var(--green)':durScore<50?'var(--gold)':'var(--rose)'},
+    {label:'Screen Exposure',weight:'20%',score:screenScore, col: screenScore<20?'var(--green)':screenScore<50?'var(--gold)':'var(--rose)'},
+    {label:'Cognitive Performance',weight:'15%',score:cogScore, col: cogScore<20?'var(--green)':cogScore<50?'var(--gold)':'var(--rose)'},
   ];
-  document.getElementById('factorBreakdown').innerHTML=factors.map(f=>`
-    <div class="factor-bar">
-      <div class="factor-label">${f.label} <span style="color:var(--grey);font-size:0.75rem;">(${f.weight})</span></div>
+  document.getElementById('factorBreakdown').innerHTML = factors.map(f=>`
+    <div class="factor-row">
+      <div class="factor-label">${f.label} <span class="factor-weight">(${f.weight})</span></div>
       <div class="factor-track"><div class="factor-fill" style="width:${f.score}%;background:${f.col};"></div></div>
-      <div class="factor-val" style="color:${f.col};">${f.score}</div>
+      <div class="factor-score" style="color:${f.col};">${f.score}</div>
     </div>`).join('');
 
-  showNotification('Score Calculated', `Your risk behavior score: ${adjusted}/100 (${lbl})`, '🧠');
-
-  // Save to history
-  NS.push('risk_history',{score:adjusted,category:cat,date:new Date().toISOString().slice(0,10),timestamp:Date.now()});
+  showNotification('Score Calculated', `Behavioral risk score: ${adjusted}/100 (${labels[cat]})`, '&#129522;');
+  NS.push('risk_history', {score:adjusted, category:cat, date:new Date().toISOString().slice(0,10), timestamp:Date.now()});
 });
 </script>
 </body>
