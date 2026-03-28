@@ -3,31 +3,626 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Data Dashboard | NeuroSleep</title>
-  <link rel="stylesheet" href="../css/main.css"/>
+  <title>Research Dashboard | NeuroSleep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <style>
+body{background:#06101f;color:#e8f2fb;}
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Core palette — deep navy, clinical teal, warm accent */
+  --ink:         #04090f;
+  --navy:        #061020;
+  --navy-mid:    #091830;
+  --navy-card:   #0c1f3a;
+  --navy-raised: #102547;
+  --teal:        #0bbfa8;
+  --teal-dim:    rgba(11,191,168,0.14);
+  --teal-glow:   rgba(11,191,168,0.28);
+  --cyan:        #5de2db;
+  --ice:         #a8f0ec;
+  --white:       #eef5fb;
+  --white-dim:   #8faec9;
+  --grey:        #4d6a84;
+  --gold:        #e8b84b;
+  --rose:        #e06060;
+  --green:       #3dd68c;
+  --purple:      #8b72e0;
+
+  --card-bg:     rgba(12,31,58,0.9);
+  --card-border: rgba(11,191,168,0.12);
+  --card-shine:  rgba(11,191,168,0.3);
+
+  --font-serif:  'Playfair Display', Georgia, serif;
+  --font-body:   'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:   'IBM Plex Mono', 'Courier New', monospace;
+
+  --radius:      10px;
+  --radius-lg:   18px;
+  --radius-xl:   28px;
+
+  --shadow-card: 0 4px 32px rgba(4,9,15,0.5);
+  --shadow-teal: 0 0 40px rgba(11,191,168,0.18);
+  --shadow-glow: 0 0 80px rgba(11,191,168,0.12);
+
+  --transition:  all 0.28s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--navy);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.65;
+  background-color: #061020; /* hard-coded fallback */
+  color: #eef5fb; /* hard-coded fallback */
+}
+
+/* Grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-thumb { background: rgba(11,191,168,0.35); border-radius: 3px; }
+
+/* ===== NAVIGATION ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 0 2.5rem; height: 72px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(6,16,32,0.85);
+  backdrop-filter: blur(20px) saturate(150%);
+  border-bottom: 1px solid rgba(11,191,168,0.07);
+  transition: var(--transition);
+}
+nav.scrolled {
+  background: rgba(4,9,15,0.96);
+  border-bottom-color: rgba(11,191,168,0.18);
+  box-shadow: 0 2px 24px rgba(4,9,15,0.6);
+}
+
+/* LOGO */
+.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.nav-logo-img { width: 42px; height: 42px; flex-shrink: 0; }
+.nav-logo-text {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  line-height: 1;
+}
+.nav-logo-text em { color: var(--teal); font-style: normal; }
+.nav-logo-sub {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--grey);
+  display: block;
+  margin-top: 2px;
+}
+
+.nav-links { display: flex; align-items: center; gap: 0.15rem; list-style: none; }
+.nav-links a {
+  color: var(--white-dim); text-decoration: none;
+  font-size: 0.82rem; font-weight: 500;
+  padding: 0.4rem 0.85rem; border-radius: 7px;
+  transition: var(--transition);
+  letter-spacing: 0.01em;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--teal); background: var(--teal-dim); }
+.nav-cta {
+  background: var(--teal) !important;
+  color: var(--navy) !important;
+  font-weight: 600 !important;
+  margin-left: 0.5rem;
+}
+.nav-cta:hover { background: var(--cyan) !important; transform: translateY(-1px); }
+.nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+.nav-hamburger span { display: block; width: 22px; height: 1.5px; background: var(--white); border-radius: 2px; transition: var(--transition); }
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; padding: 108px 2rem 5rem; overflow: hidden;
+}
+.hero-bg { position: absolute; inset: 0; z-index: 0; }
+
+/* Sophisticated mesh gradient */
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 80% 20%, rgba(11,191,168,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 10% 80%, rgba(93,226,219,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 50% at 50% 50%, rgba(139,114,224,0.04) 0%, transparent 60%);
+}
+
+/* Subtle grid */
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(11,191,168,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11,191,168,0.025) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+}
+
+/* Floating orbs */
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(70px); pointer-events: none;
+}
+.orb-1 {
+  width: 560px; height: 560px;
+  background: radial-gradient(circle, rgba(11,191,168,0.11) 0%, transparent 65%);
+  top: -80px; right: -60px;
+  animation: orb-drift 10s ease-in-out infinite;
+}
+.orb-2 {
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, rgba(139,114,224,0.08) 0%, transparent 65%);
+  bottom: 60px; left: -40px;
+  animation: orb-drift 10s ease-in-out infinite reverse;
+  animation-delay: -4s;
+}
+@keyframes orb-drift { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-28px) scale(1.04)} }
+
+.hero-content { position: relative; z-index: 2; text-align: center; max-width: 880px; }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(11,191,168,0.08);
+  border: 1px solid rgba(11,191,168,0.22);
+  border-radius: 100px;
+  padding: 0.4rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 2.2rem;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal);
+  animation: blink 2.5s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 7vw, 5.8rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  margin-bottom: 1.6rem;
+}
+.hero h1 .accent-teal { color: var(--teal); }
+.hero h1 .accent-grad {
+  background: linear-gradient(125deg, var(--teal) 0%, var(--cyan) 45%, var(--ice) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero h1 em { font-style: italic; color: var(--white-dim); }
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--white-dim); font-weight: 300;
+  max-width: 620px; margin: 0 auto 2.8rem;
+  line-height: 1.75;
+}
+
+/* EEG wave */
+.hero-eeg {
+  width: 100%; height: 68px;
+  margin-bottom: 3rem; display: block;
+  opacity: 0.8;
+}
+
+/* CTA buttons */
+.hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4.5rem; }
+
+/* Stats row */
+.hero-stats { display: flex; gap: 0; justify-content: center; flex-wrap: wrap; border: 1px solid var(--card-border); border-radius: var(--radius-lg); background: rgba(12,31,58,0.6); backdrop-filter: blur(12px); overflow: hidden; }
+.hero-stat { padding: 1.4rem 2rem; text-align: center; border-right: 1px solid var(--card-border); flex: 1; min-width: 140px; }
+.hero-stat:last-child { border-right: none; }
+.hero-stat-num { font-family: var(--font-serif); font-size: 1.9rem; font-weight: 800; color: var(--teal); display: block; line-height: 1; }
+.hero-stat-label { font-size: 0.72rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 500; margin-top: 0.35rem; line-height: 1.4; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0.8rem 1.7rem;
+  border-radius: 9px;
+  font-family: var(--font-body); font-weight: 600; font-size: 0.9rem;
+  cursor: pointer; transition: var(--transition);
+  text-decoration: none; border: none;
+  letter-spacing: 0.02em; position: relative; overflow: hidden;
+}
+.btn-primary {
+  background: var(--teal); color: var(--navy);
+  box-shadow: 0 4px 24px rgba(11,191,168,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.btn-primary:hover {
+  background: var(--cyan); transform: translateY(-2px);
+  box-shadow: 0 8px 36px rgba(11,191,168,0.42);
+}
+.btn-ghost {
+  background: transparent; color: var(--white);
+  border: 1px solid rgba(238,245,251,0.18);
+}
+.btn-ghost:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-2px); }
+.btn-sm { padding: 0.45rem 1rem; font-size: 0.82rem; border-radius: 7px; }
+.btn-danger { background: rgba(224,96,96,0.12); color: var(--rose); border: 1px solid rgba(224,96,96,0.3); }
+.btn-danger:hover { background: rgba(224,96,96,0.22); }
+
+/* ===== LAYOUT ===== */
+section { position: relative; z-index: 1; padding: 6rem 2rem; }
+.container { max-width: 1180px; margin: 0 auto; }
+.section-kicker {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 1rem;
+}
+.section-kicker::before { content: ''; display: block; width: 28px; height: 1px; background: var(--teal); }
+
+h1 { font-family: var(--font-serif); font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 1rem; }
+h3 { font-family: var(--font-body); font-weight: 600; font-size: 1.15rem; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
+h4 { font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; }
+
+.text-teal { color: var(--teal); }
+.text-dim { color: var(--white-dim); }
+.text-grey { color: var(--grey); }
+.text-center { text-align: center; }
+.text-mono { font-family: var(--font-mono); }
+
+.mb-1{margin-bottom:.5rem}.mb-2{margin-bottom:1rem}.mb-3{margin-bottom:1.5rem}.mb-4{margin-bottom:2rem}.mb-5{margin-bottom:3rem}
+.mt-1{margin-top:.5rem}.mt-2{margin-top:1rem}.mt-3{margin-top:1.5rem}.mt-4{margin-top:2rem}
+
+.divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(11,191,168,0.18), transparent); }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 1.8rem;
+  backdrop-filter: blur(16px);
+  transition: var(--transition);
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+.card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(11,191,168,0.35), transparent);
+  opacity: 0; transition: var(--transition);
+}
+.card:hover { border-color: rgba(11,191,168,0.28); transform: translateY(-3px); box-shadow: var(--shadow-teal); }
+.card:hover::after { opacity: 1; }
+
+.card-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--teal-dim);
+  border: 1px solid rgba(11,191,168,0.2);
+  margin-bottom: 1.2rem; font-size: 1.3rem;
+}
+
+/* Stat cards */
+.stat-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 1.5rem;
+  text-align: center; transition: var(--transition);
+  box-shadow: var(--shadow-card);
+}
+.stat-card:hover { border-color: rgba(11,191,168,0.3); transform: translateY(-3px); }
+.stat-num { font-family: var(--font-serif); font-size: 2rem; font-weight: 800; display: block; }
+.stat-label { font-size: 0.72rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.3rem; }
+.stat-change { font-size: 0.78rem; margin-top: 0.4rem; font-family: var(--font-mono); }
+
+/* ===== GRIDS ===== */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex; gap: 0; flex-wrap: wrap;
+  border-bottom: 2px solid rgba(11,191,168,0.1);
+  margin-bottom: 2.5rem;
+}
+.tab-btn {
+  padding: 0.75rem 1.3rem; border: none; background: transparent;
+  color: var(--grey); font-family: var(--font-body); font-weight: 500;
+  font-size: 0.85rem; cursor: pointer; transition: var(--transition);
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  white-space: nowrap; letter-spacing: 0.02em;
+}
+.tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 600; }
+.tab-btn:hover:not(.active) { color: var(--white-dim); border-bottom-color: rgba(11,191,168,0.25); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+/* ===== FORMS ===== */
+.form-group { margin-bottom: 1.2rem; }
+label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--white-dim); margin-bottom: 0.4rem; letter-spacing: 0.04em; text-transform: uppercase; }
+input[type="text"], input[type="number"], input[type="time"], input[type="date"], select, textarea {
+  width: 100%;
+  background: rgba(6,16,32,0.7);
+  border: 1px solid rgba(11,191,168,0.14);
+  border-radius: var(--radius); padding: 0.7rem 1rem;
+  color: var(--white); font-family: var(--font-body); font-size: 0.92rem;
+  transition: var(--transition); outline: none; -webkit-appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(11,191,168,0.1);
+  background: rgba(6,16,32,0.9);
+}
+select option { background: var(--navy-card); color: var(--white); }
+input[type="range"] {
+  -webkit-appearance: none; width: 100%; height: 4px;
+  border-radius: 2px; background: rgba(11,191,168,0.18);
+  outline: none; border: none; padding: 0; box-shadow: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px;
+  border-radius: 50%; background: var(--teal); cursor: pointer;
+  box-shadow: 0 0 8px rgba(11,191,168,0.5);
+}
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 0.22rem 0.7rem; border-radius: 100px;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+}
+.badge-teal   { background: rgba(11,191,168,0.1);  color: var(--teal);   border: 1px solid rgba(11,191,168,0.25); }
+.badge-orange { background: rgba(232,184,75,0.1);  color: var(--gold);   border: 1px solid rgba(232,184,75,0.25); }
+.badge-purple { background: rgba(139,114,224,0.1); color: var(--purple); border: 1px solid rgba(139,114,224,0.25); }
+.badge-green  { background: rgba(61,214,140,0.1);  color: var(--green);  border: 1px solid rgba(61,214,140,0.25); }
+.badge-red    { background: rgba(224,96,96,0.1);   color: var(--rose);   border: 1px solid rgba(224,96,96,0.25); }
+.badge-yellow { background: rgba(232,184,75,0.1);  color: var(--gold);   border: 1px solid rgba(232,184,75,0.25); }
+.badge-grey   { background: rgba(77,106,132,0.15); color: var(--grey);   border: 1px solid rgba(77,106,132,0.25); }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar { width: 100%; height: 6px; background: rgba(11,191,168,0.1); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--cyan)); border-radius: 3px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+
+/* ===== NOTIFICATION ===== */
+.notification {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--navy-card);
+  border: 1px solid var(--teal); border-radius: var(--radius-lg);
+  padding: 1rem 1.4rem;
+  display: flex; align-items: center; gap: 12px;
+  z-index: 9999; transform: translateY(120%);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  max-width: 340px; box-shadow: var(--shadow-teal);
+}
+.notification.show { transform: translateY(0); }
+.notification-icon { font-size: 1.2rem; }
+.notification-text { font-size: 0.85rem; color: var(--white-dim); }
+.notification-text strong { color: var(--white); display: block; font-size: 0.9rem; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(4,9,15,0.88); backdrop-filter: blur(10px);
+  z-index: 5000; display: flex; align-items: center; justify-content: center;
+  padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--navy-card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl); padding: 2rem;
+  max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;
+  transform: scale(0.92) translateY(20px);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: var(--shadow-card);
+}
+.modal-overlay.open .modal { transform: scale(1) translateY(0); }
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+.modal-close { background: none; border: none; color: var(--grey); font-size: 1.3rem; cursor: pointer; transition: var(--transition); padding: 4px; }
+.modal-close:hover { color: var(--white); }
+
+/* ===== TABLE ===== */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--font-mono);
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--grey); padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--card-border); text-align: left;
+}
+.data-table td { padding: 0.85rem 1rem; font-size: 0.875rem; border-bottom: 1px solid rgba(11,191,168,0.04); color: var(--white-dim); }
+.data-table tr:hover td { background: rgba(11,191,168,0.025); }
+
+/* ===== SCIENCE BAND ===== */
+.stat-band { background: rgba(9,24,48,0.6); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); }
+.stat-band-item { text-align: center; padding: 2.5rem 1rem; border-right: 1px solid rgba(11,191,168,0.08); }
+.stat-band-item:last-child { border-right: none; }
+.stat-band-num {
+  font-family: var(--font-serif);
+  font-size: 2.6rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--cyan) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block; line-height: 1;
+}
+.stat-band-text { font-size: 0.82rem; color: var(--white-dim); margin-top: 0.5rem; line-height: 1.5; max-width: 190px; margin-left: auto; margin-right: auto; }
+
+/* ===== PAGE HERO ===== */
+.page-hero {
+  padding: 130px 2rem 4.5rem;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--card-border);
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 30% 20%, rgba(11,191,168,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.page-hero-inner { position: relative; z-index: 1; }
+
+/* Citation boxes */
+.citation-box {
+  background: rgba(11,191,168,0.04);
+  border-left: 2px solid var(--teal); border-radius: 0 8px 8px 0;
+  padding: 0.8rem 1.2rem; margin-top: 1rem;
+  font-family: var(--font-mono); font-size: 0.77rem;
+  color: var(--grey); line-height: 1.6;
+}
+
+/* Key finding highlight */
+.finding-box {
+  background: rgba(11,191,168,0.06);
+  border: 1px solid rgba(11,191,168,0.18);
+  border-radius: var(--radius); padding: 0.8rem 1.1rem; margin-top: 1rem;
+  font-size: 0.85rem; color: var(--cyan); line-height: 1.55;
+  display: flex; gap: 0.6rem; align-items: flex-start;
+}
+.finding-box::before { content: '◆'; color: var(--teal); font-size: 0.6rem; margin-top: 0.25rem; flex-shrink: 0; }
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--navy-mid);
+  border-top: 1px solid var(--card-border);
+  padding: 4.5rem 2rem 2rem;
+  position: relative; z-index: 1;
+}
+.footer-logo-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; max-width: 1180px; margin: 0 auto 3rem; }
+.footer-brand p { color: var(--grey); font-size: 0.85rem; line-height: 1.7; max-width: 280px; }
+.footer-col h4 {
+  font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--white-dim); margin-bottom: 1rem;
+}
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 0.5rem; }
+.footer-col ul a { color: var(--grey); text-decoration: none; font-size: 0.85rem; transition: var(--transition); }
+.footer-col ul a:hover { color: var(--teal); }
+.footer-bottom {
+  max-width: 1180px; margin: 0 auto;
+  padding-top: 2rem; border-top: 1px solid rgba(11,191,168,0.06);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+}
+.footer-bottom p { font-family: var(--font-mono); font-size: 0.75rem; color: var(--grey); }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shimmer { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.anim-delay-1{transition-delay:0.08s}.anim-delay-2{transition-delay:0.16s}.anim-delay-3{transition-delay:0.24s}.anim-delay-4{transition-delay:0.32s}
+
+.loader { width: 18px; height: 18px; border: 2px solid rgba(11,191,168,0.25); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.75s linear infinite; display: inline-block; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+}
+@media (max-width: 768px) {
+  nav { padding: 0 1.25rem; }
+  .nav-links { display: none; }
+  .nav-links.open {
+    display: flex; flex-direction: column;
+    position: fixed; top: 72px; left: 0; right: 0;
+    background: rgba(4,9,15,0.98); padding: 1.25rem;
+    border-bottom: 1px solid var(--card-border);
+    gap: 0.2rem; z-index: 999;
+  }
+  .nav-hamburger { display: flex; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  section { padding: 4rem 1.2rem; }
+  .hero-stats { flex-direction: column; }
+  .hero-stat { border-right: none !important; border-bottom: 1px solid var(--card-border); }
+}
+@media (max-width: 640px) {
+  .footer-grid { grid-template-columns: 1fr; }
+  .tabs { overflow-x: auto; flex-wrap: nowrap; }
+}
+
+</style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    .page-hero{padding:120px 2rem 3rem;position:relative;}
-    .page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,194,179,0.1) 0%,transparent 55%);pointer-events:none;}
-    .stat-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:1.5rem;text-align:center;transition:var(--transition);}
-    .stat-card:hover{border-color:rgba(0,194,179,0.35);transform:translateY(-3px);}
-    .stat-num{font-family:var(--font-head);font-size:2.2rem;font-weight:800;display:block;}
-    .stat-label{font-size:0.75rem;color:var(--grey);text-transform:uppercase;letter-spacing:0.06em;margin-top:0.3rem;}
-    .stat-change{font-size:0.78rem;margin-top:0.4rem;}
-    .insight-item{display:flex;gap:1rem;align-items:flex-start;padding:0.9rem;border-radius:10px;background:rgba(0,194,179,0.04);border:1px solid rgba(0,194,179,0.1);margin-bottom:0.7rem;}
-    .insight-icon{font-size:1.3rem;min-width:28px;}
-    .insight-text{font-size:0.88rem;color:var(--white-dim);line-height:1.55;}
-    .insight-text strong{color:var(--white);}
-    .chart-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:1.5rem;}
-    .chart-title{font-family:var(--font-head);font-size:1rem;font-weight:700;margin-bottom:0.3rem;}
-    .chart-sub{font-size:0.78rem;color:var(--grey);margin-bottom:1rem;}
+    .chart-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg); padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+    }
+    .chart-label {
+      font-family: var(--font-mono); font-size: 0.66rem; color: var(--grey);
+      letter-spacing: 0.09em; text-transform: uppercase; margin-bottom: 0.3rem;
+    }
+    .chart-title { font-family: var(--font-body); font-weight: 600; font-size: 1rem; margin-bottom: 0.2rem; }
+    .chart-sub { font-size: 0.78rem; color: var(--grey); margin-bottom: 1rem; font-style: italic; }
+    .chart-wrap { height: 200px; position: relative; }
+    .chart-wrap-lg { height: 240px; position: relative; }
+    .insight-item {
+      display: flex; gap: 1rem; align-items: flex-start;
+      padding: 0.9rem 1.1rem; border-radius: var(--radius);
+      background: rgba(11,191,168,0.04); border: 1px solid rgba(11,191,168,0.1);
+      margin-bottom: 0.6rem; transition: var(--transition);
+    }
+    .insight-item:hover { background: rgba(11,191,168,0.07); border-color: rgba(11,191,168,0.2); }
+    .insight-icon { font-size: 1.2rem; min-width: 26px; }
+    .insight-text { font-size: 0.875rem; color: var(--white-dim); line-height: 1.6; }
+    .insight-text strong { color: var(--white); }
+    .kpi-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 2rem; }
+    .kpi-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg); padding: 1.3rem 1.5rem;
+      box-shadow: var(--shadow-card); transition: var(--transition);
+    }
+    .kpi-card:hover { border-color: rgba(11,191,168,0.3); transform: translateY(-2px); }
+    .kpi-label { font-family: var(--font-mono); font-size: 0.64rem; color: var(--grey); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.5rem; }
+    .kpi-value { font-family: var(--font-serif); font-size: 1.9rem; font-weight: 800; display: block; line-height: 1; }
+    .kpi-sub { font-family: var(--font-mono); font-size: 0.7rem; margin-top: 0.4rem; }
+    @media(max-width:1024px){ .kpi-row{grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:640px){ .kpi-row{grid-template-columns:1fr;} }
   </style>
 </head>
 <body>
+
 <nav>
   <a href="../index.html" class="nav-logo">
-    <svg viewBox="0 0 40 40" fill="none" width="38" height="38"><circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/><path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#00c2b3"/></svg>
-    <span class="nav-logo-text">Neuro<span>Sleep</span></span>
+    <svg class="nav-logo-img" viewBox="0 0 42 42" fill="none">
+      <circle cx="21" cy="21" r="20" stroke="rgba(11,191,168,0.2)" stroke-width="1"/>
+      <path d="M21 10 C15 10 10 14 10 20 C10 24 12 27 15 28.5 C15 30 16 31.5 18 31.5 C19 31.5 20 31 21 30.5" stroke="#0bbfa8" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M12 18 Q14 16 15 19 Q16 22 14 23" stroke="#0bbfa8" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <path d="M21 10 C27 10 32 14 32 20 C32 24 30 27 27 28.5 C27 30 26 31.5 24 31.5 C23 31.5 22 31 21 30.5" stroke="#5de2db" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M30 18 Q28 16 27 19 Q26 22 28 23" stroke="#5de2db" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <line x1="21" y1="10.5" x2="21" y2="30.5" stroke="rgba(11,191,168,0.3)" stroke-width="1" stroke-dasharray="2 2"/>
+      <path d="M32 7 C31 5.5 29.5 5 28 5.2 C30 6 31 7.5 30.5 9.5 C30 11.5 28.5 12.5 27 12.5 C28.5 12.8 30 12 31 10.5 C31.8 9.5 32.3 8.5 32 7Z" fill="#5de2db" opacity="0.85"/>
+      <circle cx="27" cy="6" r="0.8" fill="#a8f0ec"/>
+    </svg>
+    <span class="nav-logo-text">Neuro<em>Sleep</em><span class="nav-logo-sub">Sleep &amp; Cognitive Research</span></span>
   </a>
   <ul class="nav-links">
     <li><a href="../index.html">Home</a></li>
@@ -42,105 +637,153 @@
 </nav>
 
 <div class="page-hero">
-  <div class="container" style="position:relative;z-index:1;">
-    <div class="section-label">Analytics</div>
+  <div class="container page-hero-inner">
+    <div class="section-kicker">Analytics</div>
     <h1>Research <span class="text-teal">Dashboard</span></h1>
-    <p class="text-dim mt-1" style="max-width:580px;">Your personal data analytics hub. Visualizes correlations between sleep behavior and cognitive performance — the core research output of NeuroSleep.</p>
-    <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;" id="dataBadges">
+    <p class="text-dim mt-2" style="max-width:600px;font-size:1.05rem;line-height:1.75;">Your personal data analytics hub. Visualizes correlations between sleep behavior and cognitive performance outcomes, the core research output of NeuroSleep. All data is stored locally on your device.</p>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.25rem;" id="dataBadges">
       <span class="badge badge-teal" id="sleepCountBadge">0 sleep entries</span>
       <span class="badge badge-purple" id="cogCountBadge">0 cognitive tests</span>
-      <span class="badge badge-orange">Correlation Engine Active</span>
+      <span class="badge badge-green">Correlation Engine Active</span>
     </div>
   </div>
 </div>
 
-<section style="padding-top:0;">
+<div class="divider"></div>
+
+<section style="padding-top:2.5rem;">
   <div class="container">
 
-    <!-- TOP STATS -->
-    <div class="grid-4 mb-4" id="topStats">
-      <div class="stat-card reveal"><span class="stat-num text-teal" id="s1">--</span><div class="stat-label">Avg Sleep Duration</div><div class="stat-change" id="s1c"></div></div>
-      <div class="stat-card reveal anim-delay-1"><span class="stat-num" id="s2" style="color:#9b5de5;">--</span><div class="stat-label">Sleep Consistency</div><div class="stat-change" id="s2c"></div></div>
-      <div class="stat-card reveal anim-delay-2"><span class="stat-num" id="s3" style="color:#ff6b35;">--</span><div class="stat-label">Avg Cognitive Score</div><div class="stat-change" id="s3c"></div></div>
-      <div class="stat-card reveal anim-delay-3"><span class="stat-num" id="s4" style="color:#00d282;">--</span><div class="stat-label">Avg Sleep Quality</div><div class="stat-change" id="s4c"></div></div>
+    <!-- KPI ROW -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Avg Sleep Duration</div>
+        <span class="kpi-value text-teal" id="s1">--</span>
+        <div class="kpi-sub" id="s1c"><span style="color:var(--grey);">Log data to calculate</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Schedule Consistency</div>
+        <span class="kpi-value" id="s2">--</span>
+        <div class="kpi-sub" id="s2c"><span style="color:var(--grey);">Bedtime variability</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg Cognitive Score</div>
+        <span class="kpi-value text-teal" id="s3">--</span>
+        <div class="kpi-sub" id="s3c"><span style="color:var(--grey);">Across all test types</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg Sleep Quality</div>
+        <span class="kpi-value" id="s4">--</span>
+        <div class="kpi-sub" id="s4c"><span style="color:var(--grey);">Self-reported 1-5 scale</span></div>
+      </div>
     </div>
 
     <!-- CHARTS ROW 1 -->
-    <div class="grid-2 mb-3">
+    <div class="grid-2 mb-3" style="gap:1.5rem;">
       <div class="chart-card reveal">
+        <div class="chart-label">Fig 2.1</div>
         <div class="chart-title">Sleep Duration Over Time</div>
-        <div class="chart-sub">Daily duration vs. 7-9h optimal range (highlighted zone)</div>
-        <div style="height:220px;position:relative;"><canvas id="durationChart"></canvas></div>
+        <div class="chart-sub">Teal = optimal (7-9h), yellow = sub-optimal, red = insufficient. Dashed lines show recommended bounds.</div>
+        <div class="chart-wrap-lg"><canvas id="durationChart"></canvas></div>
       </div>
-      <div class="chart-card reveal">
+      <div class="chart-card reveal anim-delay-1">
+        <div class="chart-label">Fig 2.2</div>
         <div class="chart-title">Cognitive Score Trends</div>
-        <div class="chart-sub">Reaction time, memory, and pattern scores over time</div>
-        <div style="height:220px;position:relative;"><canvas id="cogTrendChart"></canvas></div>
+        <div class="chart-sub">Reaction time, working memory, and pattern recognition scores over your most recent 14 sessions.</div>
+        <div class="chart-wrap-lg"><canvas id="cogTrendChart"></canvas></div>
       </div>
     </div>
 
-    <!-- CHARTS ROW 2: CORRELATIONS -->
-    <div class="grid-2 mb-3">
+    <!-- CHARTS ROW 2 - CORRELATIONS -->
+    <div class="grid-2 mb-3" style="gap:1.5rem;">
       <div class="chart-card reveal">
+        <div class="chart-label">Fig 2.3 &nbsp; Correlation Analysis</div>
         <div class="chart-title">Sleep Consistency vs. Reaction Time</div>
-        <div class="chart-sub">Core research correlation: lower variability = faster reaction time?</div>
-        <div style="height:230px;position:relative;"><canvas id="corrChart1"></canvas></div>
+        <div class="chart-sub">Each point represents one day. Lower consistency SD = faster reaction time. Predicted from Van Dongen et al. (2003).</div>
+        <div class="chart-wrap-lg"><canvas id="corrChart1"></canvas></div>
       </div>
-      <div class="chart-card reveal">
-        <div class="chart-title">Sleep Duration vs. Memory Score</div>
-        <div class="chart-sub">Does more sleep correlate with better working memory?</div>
-        <div style="height:230px;position:relative;"><canvas id="corrChart2"></canvas></div>
+      <div class="chart-card reveal anim-delay-1">
+        <div class="chart-label">Fig 2.4 &nbsp; Correlation Analysis</div>
+        <div class="chart-title">Sleep Duration vs. Working Memory</div>
+        <div class="chart-sub">Memory score by sleep duration. Peak memory performance expected between 7-9 hours per the glymphatic clearance literature.</div>
+        <div class="chart-wrap-lg"><canvas id="corrChart2"></canvas></div>
       </div>
     </div>
 
     <!-- CHARTS ROW 3 -->
-    <div class="grid-2 mb-3">
+    <div class="grid-2 mb-3" style="gap:1.5rem;">
       <div class="chart-card reveal">
+        <div class="chart-label">Fig 2.5</div>
         <div class="chart-title">Sleep Quality Distribution</div>
-        <div class="chart-sub">How often do you sleep well vs. poorly?</div>
-        <div style="height:200px;position:relative;"><canvas id="qualityChart"></canvas></div>
+        <div class="chart-sub">Proportion of nights rated at each quality level (1 = poor, 5 = excellent) across all logged entries.</div>
+        <div class="chart-wrap"><canvas id="qualityChart"></canvas></div>
       </div>
-      <div class="chart-card reveal">
-        <div class="chart-title">High vs. Low Consistency Groups</div>
-        <div class="chart-sub">Average cognitive scores for consistent vs. inconsistent sleepers</div>
-        <div style="height:200px;position:relative;"><canvas id="groupChart"></canvas></div>
-      </div>
-    </div>
-
-    <!-- INSIGHTS + AMYLOID CHART -->
-    <div class="grid-2 mb-3">
-      <div class="chart-card reveal">
-        <div class="chart-title">&#127754; Correlation Insights</div>
-        <div class="chart-sub">Auto-generated findings from your data</div>
-        <div id="insightList" style="margin-top:0.5rem;"></div>
-      </div>
-      <div class="chart-card reveal">
-        <div class="chart-title">Reference: Sleep Duration vs. Amyloid-Beta Risk</div>
-        <div class="chart-sub">Published research data showing amyloid accumulation risk by sleep duration (Lucey et al., 2019)</div>
-        <div style="height:200px;position:relative;"><canvas id="amyloidChart"></canvas></div>
+      <div class="chart-card reveal anim-delay-1">
+        <div class="chart-label">Fig 2.6 &nbsp; Group Comparison</div>
+        <div class="chart-title">Consistent vs. Inconsistent Sleepers</div>
+        <div class="chart-sub">Average cognitive scores split by your most vs. least consistent sleep periods. Mirrors findings from Dinges (1985).</div>
+        <div class="chart-wrap"><canvas id="groupChart"></canvas></div>
       </div>
     </div>
 
-    <!-- WEEKLY HEATMAP-STYLE TABLE -->
+    <!-- REFERENCE CHART -->
     <div class="chart-card reveal mb-3">
-      <div class="chart-title">Recent Data Log</div>
-      <div class="chart-sub">Sleep and cognitive data side by side for direct comparison</div>
-      <div style="overflow-x:auto;margin-top:1rem;">
+      <div class="chart-label">Fig 2.7 &nbsp; Reference Data (Literature)</div>
+      <div class="chart-title">Sleep Duration vs. Relative Amyloid-Beta Accumulation Risk</div>
+      <div class="chart-sub">Based on data from Spira et al. (2013) and Sabia et al. (2021). Not your personal data, this is the published scientific reference curve.</div>
+      <div class="chart-wrap-lg"><canvas id="amyloidChart"></canvas></div>
+    </div>
+
+    <!-- INSIGHTS -->
+    <div class="grid-2 mb-3" style="gap:1.5rem;">
+      <div class="card reveal">
+        <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1.25rem;">
+          <div class="card-icon" style="margin:0;">&#128161;</div>
+          <h3 style="margin:0;">AI-Generated Insights</h3>
+        </div>
+        <div id="insightList"></div>
+      </div>
+      <div class="card reveal anim-delay-1">
+        <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1.25rem;">
+          <div class="card-icon" style="margin:0;">&#128200;</div>
+          <h3 style="margin:0;">Research Interpretation</h3>
+        </div>
+        <p class="text-dim" style="font-size:0.875rem;line-height:1.75;margin-bottom:1rem;">These charts implement the core analytic framework of NeuroSleep: matching individual behavioral data against published sleep neuroscience to generate personalized, research-backed behavioral guidance.</p>
+        <div class="finding-box" style="margin-bottom:0.8rem;">Correlation strength improves substantially with more data points. Log sleep for at least 14 consecutive days before drawing conclusions from your scatter plots.</div>
+        <div style="padding:0.8rem;background:rgba(139,114,224,0.06);border:1px solid rgba(139,114,224,0.15);border-radius:var(--radius);font-size:0.82rem;color:var(--white-dim);line-height:1.6;">
+          <strong style="color:var(--white);">Note on Causality:</strong> Correlations in this dashboard show association, not causation. Sleep improvements improve cognition, but cognitive test scores also vary with motivation, practice effects, and time of day. Interpret trends rather than single data points.
+        </div>
+      </div>
+    </div>
+
+    <!-- DATA TABLE -->
+    <div class="card reveal mb-3">
+      <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.5rem;">
+        <div class="card-icon" style="margin:0;">&#128203;</div>
+        <h3 style="margin:0;">Combined Data Log</h3>
+        <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--grey);margin-left:auto;">Sleep and cognitive data side-by-side</span>
+      </div>
+      <div style="overflow-x:auto;">
         <table class="data-table" id="combinedTable">
-          <thead><tr><th>Date</th><th>Duration</th><th>Bedtime</th><th>Quality</th><th>Awakenings</th><th>Reaction</th><th>Memory</th><th>Pattern</th><th>Cognitive Avg</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Date</th><th>Duration</th><th>Bedtime</th><th>Quality</th><th>Awakenings</th>
+              <th>Reaction</th><th>Memory</th><th>Pattern</th><th>Cognitive Avg</th>
+            </tr>
+          </thead>
           <tbody id="combinedBody"></tbody>
         </table>
       </div>
     </div>
 
     <!-- NO DATA CTA -->
-    <div id="noDataCTA" class="card" style="display:none;text-align:center;padding:3rem;">
-      <div style="font-size:3rem;margin-bottom:1rem;">&#128200;</div>
-      <h3 class="mb-2">Start collecting data to unlock insights</h3>
-      <p class="text-dim mb-3">Log your sleep and take cognitive tests to see your personal correlations appear here.</p>
+    <div id="noDataCTA" class="card" style="display:none;text-align:center;padding:4rem 2rem;">
+      <div style="font-size:3.5rem;margin-bottom:1.5rem;">&#128202;</div>
+      <h2 class="mb-2">Start collecting data to unlock insights</h2>
+      <p class="text-dim mb-4" style="max-width:480px;margin-left:auto;margin-right:auto;">Log your sleep and take cognitive tests to see your personal correlations appear here. Demo data has been loaded to show you what the Dashboard will look like.</p>
       <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-        <a href="tracker.html" class="btn btn-primary">&#128336; Log Sleep</a>
-        <a href="cognitive.html" class="btn btn-secondary">&#129504; Take Tests</a>
+        <a href="tracker.html" class="btn btn-primary">&#128336;&ensp;Log Sleep</a>
+        <a href="cognitive.html" class="btn btn-ghost">&#129504;&ensp;Take Tests</a>
       </div>
     </div>
 
@@ -149,27 +792,32 @@
 
 <footer>
   <div class="footer-grid">
-    <div class="footer-brand"><a href="../index.html" class="nav-logo"><svg viewBox="0 0 40 40" fill="none" width="32" height="32"><circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/><path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="20" cy="20" r="2" fill="#00c2b3"/></svg><span class="nav-logo-text">Neuro<span>Sleep</span></span></a><p>Research platform for sleep and Alzheimer's prevention. Created by Mithil Gajula.</p></div>
+    <div class="footer-brand">
+      <div class="footer-logo-wrap">
+        <svg viewBox="0 0 42 42" width="32" height="32" fill="none"><circle cx="21" cy="21" r="20" stroke="rgba(11,191,168,0.2)" stroke-width="1"/><path d="M21 10 C15 10 10 14 10 20 C10 24 12 27 15 28.5 C15 30 16 31.5 18 31.5 C19 31.5 20 31 21 30.5" stroke="#0bbfa8" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M21 10 C27 10 32 14 32 20 C32 24 30 27 27 28.5 C27 30 26 31.5 24 31.5 C23 31.5 22 31 21 30.5" stroke="#5de2db" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M32 7 C31 5.5 29.5 5 28 5.2 C30 6 31 7.5 30.5 9.5 C30 11.5 28.5 12.5 27 12.5 C28.5 12.8 30 12 31 10.5 C31.8 9.5 32.3 8.5 32 7Z" fill="#5de2db" opacity="0.85"/></svg>
+        <span style="font-family:var(--font-serif);font-size:1.1rem;font-weight:700;color:var(--white);">Neuro<span style="color:var(--teal);">Sleep</span></span>
+      </div>
+      <p>ISM Research Project by Mithil Gajula. Not a medical diagnostic tool.</p>
+    </div>
     <div class="footer-col"><h4>Platform</h4><ul><li><a href="tracker.html">Sleep Tracker</a></li><li><a href="cognitive.html">Cognitive Tests</a></li><li><a href="dashboard.html">Dashboard</a></li><li><a href="risk.html">Risk Calculator</a></li></ul></div>
-    <div class="footer-col"><h4>Research</h4><ul><li><a href="research.html">Research Library</a></li><li><a href="research.html">Alzheimer's Biology</a></li><li><a href="research.html">Methodology</a></li></ul></div>
-    <div class="footer-col"><h4>Info</h4><ul><li><a href="../index.html">About</a></li><li><a href="research.html">Citations</a></li></ul></div>
+    <div class="footer-col"><h4>Research</h4><ul><li><a href="research.html">Research Library</a></li><li><a href="research.html">Methodology</a></li></ul></div>
+    <div class="footer-col"><h4>About</h4><ul><li><a href="../index.html">Project Overview</a></li><li><a href="research.html">Citations</a></li></ul></div>
   </div>
-  <div class="footer-bottom"><p>&copy; 2025 NeuroSleep. Created by Mithil Gajula. ISM Research Project.</p></div>
+  <div class="footer-bottom"><p>&copy; 2025 NeuroSleep &mdash; Mithil Gajula.</p></div>
 </footer>
 
 <script src="../js/core.js"></script>
 <script>
-Chart.defaults.color='#6e8aaa';
-Chart.defaults.borderColor='rgba(0,194,179,0.08)';
+Chart.defaults.color='#4d6a84';
+Chart.defaults.borderColor='rgba(11,191,168,0.05)';
+Chart.defaults.font.family="'IBM Plex Sans', sans-serif";
 
-// Seed demo data if none exists (same as tracker)
 function seedSleep(){
   if(NS.get('sleep_log',[]).length>0) return;
   const base=new Date();
   const times=[['22:45','06:30',0,4],['23:30','07:15',1,3],['23:00','07:00',0,5],['00:15','07:45',2,2],['23:00','07:00',0,4],['22:30','06:45',0,5],['01:00','08:00',1,3],['23:15','07:10',0,4],['22:45','07:00',0,5],['00:30','07:30',2,3],['23:00','07:00',0,4],['22:50','06:55',0,5],['23:45','07:30',1,3],['23:00','07:00',0,4]];
   times.forEach(([bed,wake,awk,q],i)=>{ const d=new Date(base); d.setDate(d.getDate()-(13-i)); NS.push('sleep_log',{date:d.toISOString().slice(0,10),bedtime:bed,waketime:wake,awakenings:awk,quality:q,notes:'',duration:calcSleepDuration(bed,wake),timestamp:d.getTime()+i}); });
 }
-
 function seedCog(){
   if(NS.get('cog_scores',[]).length>0) return;
   const base=new Date();
@@ -177,193 +825,110 @@ function seedCog(){
   const types=['reaction','memory','pattern'];
   scores.forEach((row,i)=>{ const d=new Date(base); d.setDate(d.getDate()-(13-i)); row.forEach((sc,j)=>{ NS.push('cog_scores',{type:types[j],date:d.toISOString().slice(0,10),score:sc,timestamp:d.getTime()+j}); }); });
 }
-
 seedSleep(); seedCog();
 
 const sleepLog=NS.get('sleep_log',[]).sort((a,b)=>new Date(a.date)-new Date(b.date));
 const cogScores=NS.get('cog_scores',[]).sort((a,b)=>new Date(a.date)-new Date(b.date));
 const hasData=sleepLog.length>0||cogScores.length>0;
-
 document.getElementById('noDataCTA').style.display=hasData?'none':'block';
 document.getElementById('sleepCountBadge').textContent=`${sleepLog.length} sleep entries`;
 document.getElementById('cogCountBadge').textContent=`${cogScores.length} cognitive tests`;
 
-// TOP STATS
 if(sleepLog.length){
   const dur=sleepLog.map(e=>e.duration);
   const qt=sleepLog.map(e=>e.quality);
   const beds=sleepLog.map(e=>{ const[h,m]=e.bedtime.split(':').map(Number); return h+m/60; });
-  const avgD=mean(dur), sd=stdDev(beds), avgQ=mean(qt);
+  const avgD=mean(dur),sd=stdDev(beds),avgQ=mean(qt);
   document.getElementById('s1').textContent=formatHours(avgD);
-  document.getElementById('s1c').innerHTML=avgD>=7&&avgD<=9?'<span style="color:#00d282;">&#10003; Optimal range</span>':'<span style="color:#ffc800;">&#9888; Outside 7-9h target</span>';
+  document.getElementById('s1c').innerHTML=avgD>=7&&avgD<=9?'<span style="color:var(--green);">&#10003; Optimal range</span>':'<span style="color:var(--gold);">&#9888; Outside 7-9h target</span>';
   const sdLabel=sd<0.5?'Excellent':sd<1?'Good':sd<1.5?'Fair':'Poor';
-  const sdColor=sd<0.5?'#00d282':sd<1?'#00c2b3':sd<1.5?'#ffc800':'#ff5050';
+  const sdColor=sd<0.5?'var(--green)':sd<1?'var(--teal)':sd<1.5?'var(--gold)':'var(--rose)';
   document.getElementById('s2').textContent=sdLabel;
   document.getElementById('s2').style.color=sdColor;
   document.getElementById('s2c').innerHTML=`<span style="color:var(--grey);">SD: ${sd.toFixed(2)}h</span>`;
   document.getElementById('s4').textContent=avgQ.toFixed(1)+'/5';
-  document.getElementById('s4c').innerHTML=avgQ>=4?'<span style="color:#00d282;">&#9733; High quality</span>':avgQ>=3?'<span style="color:#ffc800;">Average quality</span>':'<span style="color:#ff5050;">Low quality</span>';
+  document.getElementById('s4c').innerHTML=avgQ>=4?'<span style="color:var(--green);">&#9733; High quality</span>':avgQ>=3?'<span style="color:var(--gold);">Average quality</span>':'<span style="color:var(--rose);">Low quality</span>';
 }
-
 if(cogScores.length){
-  const allScores=cogScores.map(s=>s.score);
-  const avg=mean(allScores);
+  const avg=mean(cogScores.map(s=>s.score));
   document.getElementById('s3').textContent=Math.round(avg)+'/100';
-  document.getElementById('s3c').innerHTML=avg>=75?'<span style="color:#00d282;">&#9650; Strong performance</span>':avg>=55?'<span style="color:#ffc800;">Average range</span>':'<span style="color:#ff5050;">Below average</span>';
+  document.getElementById('s3c').innerHTML=avg>=75?'<span style="color:var(--green);">&#9650; Strong performance</span>':avg>=55?'<span style="color:var(--gold);">Average range</span>':'<span style="color:var(--rose);">Below average</span>';
 }
 
-// HELPERS
-function cogByDate(type){
-  const map={};
-  cogScores.filter(s=>s.type===type).forEach(s=>map[s.date]=s.score);
-  return map;
-}
-
-const rtMap=cogByDate('reaction'), memMap=cogByDate('memory'), patMap=cogByDate('pattern');
+function cogByDate(type){ const map={}; cogScores.filter(s=>s.type===type).forEach(s=>map[s.date]=s.score); return map; }
+const rtMap=cogByDate('reaction'),memMap=cogByDate('memory'),patMap=cogByDate('pattern');
 const allDates=[...new Set([...sleepLog.map(s=>s.date),...cogScores.map(s=>s.date)])].sort().slice(-14);
 
-// CHART 1: Duration
-new Chart(document.getElementById('durationChart').getContext('2d'),{
-  type:'bar',
-  data:{
-    labels:sleepLog.slice(-14).map(e=>e.date.slice(5)),
-    datasets:[
-      {label:'Duration (h)',data:sleepLog.slice(-14).map(e=>parseFloat(e.duration.toFixed(2))),backgroundColor:sleepLog.slice(-14).map(e=>e.duration>=7&&e.duration<=9?'rgba(0,194,179,0.75)':e.duration>=6?'rgba(255,200,0,0.7)':'rgba(255,80,80,0.7)'),borderRadius:5,borderSkipped:false},
-      {label:'Min 7h',data:new Array(14).fill(7),type:'line',borderColor:'rgba(0,194,179,0.25)',borderDash:[4,4],pointRadius:0,fill:false},
-      {label:'Max 9h',data:new Array(14).fill(9),type:'line',borderColor:'rgba(0,194,179,0.25)',borderDash:[4,4],pointRadius:0,fill:false}
-    ]
-  },
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:12,grid:{color:'rgba(0,194,179,0.05)'}},x:{grid:{display:false}}}}
-});
+// Chart 1: Duration
+new Chart(document.getElementById('durationChart'),{type:'bar',data:{labels:sleepLog.slice(-14).map(e=>e.date.slice(5)),datasets:[{label:'Duration (h)',data:sleepLog.slice(-14).map(e=>parseFloat(e.duration.toFixed(2))),backgroundColor:sleepLog.slice(-14).map(e=>e.duration>=7&&e.duration<=9?'rgba(11,191,168,0.8)':e.duration>=6?'rgba(232,184,75,0.7)':'rgba(224,96,96,0.7)'),borderRadius:5,borderSkipped:false},{label:'Min 7h',data:new Array(14).fill(7),type:'line',borderColor:'rgba(11,191,168,0.25)',borderDash:[4,4],pointRadius:0,fill:false},{label:'Max 9h',data:new Array(14).fill(9),type:'line',borderColor:'rgba(11,191,168,0.25)',borderDash:[4,4],pointRadius:0,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:12,grid:{color:'rgba(11,191,168,0.04)'},ticks:{color:'#4d6a84'}},x:{grid:{display:false},ticks:{color:'#4d6a84',font:{size:10}}}}}});
 
-// CHART 2: Cognitive trends
-new Chart(document.getElementById('cogTrendChart').getContext('2d'),{
-  type:'line',
-  data:{
-    labels:allDates.map(d=>d.slice(5)),
-    datasets:[
-      {label:'Reaction',data:allDates.map(d=>rtMap[d]??null),borderColor:'#00c2b3',tension:0.4,spanGaps:true,pointRadius:3,borderWidth:2},
-      {label:'Memory',data:allDates.map(d=>memMap[d]??null),borderColor:'#9b5de5',tension:0.4,spanGaps:true,pointRadius:3,borderWidth:2},
-      {label:'Pattern',data:allDates.map(d=>patMap[d]??null),borderColor:'#ff6b35',tension:0.4,spanGaps:true,pointRadius:3,borderWidth:2}
-    ]
-  },
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{y:{min:0,max:100,grid:{color:'rgba(0,194,179,0.05)'}},x:{grid:{display:false}}}}
-});
+// Chart 2: Cog trends
+new Chart(document.getElementById('cogTrendChart'),{type:'line',data:{labels:allDates.map(d=>d.slice(5)),datasets:[{label:'Reaction',data:allDates.map(d=>rtMap[d]??null),borderColor:'#0bbfa8',tension:0.4,spanGaps:true,pointRadius:3,borderWidth:2,pointBackgroundColor:'#0bbfa8'},{label:'Memory',data:allDates.map(d=>memMap[d]??null),borderColor:'#8b72e0',tension:0.4,spanGaps:true,pointRadius:3,borderWidth:2,pointBackgroundColor:'#8b72e0'},{label:'Pattern',data:allDates.map(d=>patMap[d]??null),borderColor:'#e8b84b',tension:0.4,spanGaps:true,pointRadius:3,borderWidth:2,pointBackgroundColor:'#e8b84b'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:8,font:{size:10},color:'#4d6a84',padding:12}}},scales:{y:{min:0,max:100,grid:{color:'rgba(11,191,168,0.04)'},ticks:{color:'#4d6a84'}},x:{grid:{display:false},ticks:{color:'#4d6a84',font:{size:10}}}}}});
 
-// CHART 3: Scatter — sleep consistency vs reaction time
-const scatterData1=sleepLog.map(e=>{
-  const beds=sleepLog.map(s=>{ const[h,m]=s.bedtime.split(':').map(Number); return h+m/60; });
-  const localSD=stdDev(beds.slice(0,sleepLog.indexOf(e)+1));
-  const rt=rtMap[e.date];
-  if(rt==null) return null;
-  return {x:parseFloat(localSD.toFixed(2)),y:rt};
-}).filter(Boolean);
+// Chart 3: Scatter consistency vs reaction
+const scatterData1=sleepLog.map(e=>{ const beds=sleepLog.map(s=>{ const[h,m]=s.bedtime.split(':').map(Number); return h+m/60; }); const sd=stdDev(beds.slice(0,sleepLog.indexOf(e)+1)); const rt=rtMap[e.date]; if(rt==null) return null; return {x:parseFloat(sd.toFixed(2)),y:rt}; }).filter(Boolean);
+new Chart(document.getElementById('corrChart1'),{type:'scatter',data:{datasets:[{data:scatterData1,backgroundColor:'rgba(11,191,168,0.65)',pointRadius:6,pointHoverRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Sleep Consistency SD (hrs)',color:'#4d6a84',font:{size:10}},grid:{color:'rgba(11,191,168,0.04)'},ticks:{color:'#4d6a84'}},y:{title:{display:true,text:'Reaction Score (0-100)',color:'#4d6a84',font:{size:10}},min:0,max:100,grid:{color:'rgba(11,191,168,0.04)'},ticks:{color:'#4d6a84'}}}}});
 
-new Chart(document.getElementById('corrChart1').getContext('2d'),{
-  type:'scatter',
-  data:{datasets:[{label:'Data points',data:scatterData1,backgroundColor:'rgba(0,194,179,0.65)',pointRadius:6,pointHoverRadius:8}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Sleep Consistency (SD hrs)',color:'#6e8aaa',font:{size:10}},grid:{color:'rgba(0,194,179,0.05)'}},y:{title:{display:true,text:'Reaction Score (0-100)',color:'#6e8aaa',font:{size:10}},min:0,max:100,grid:{color:'rgba(0,194,179,0.05)'}}}}
-});
+// Chart 4: Scatter duration vs memory
+const scatterData2=sleepLog.map(e=>{ const mem=memMap[e.date]; if(mem==null) return null; return {x:parseFloat(e.duration.toFixed(2)),y:mem}; }).filter(Boolean);
+new Chart(document.getElementById('corrChart2'),{type:'scatter',data:{datasets:[{data:scatterData2,backgroundColor:'rgba(139,114,224,0.65)',pointRadius:6,pointHoverRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Sleep Duration (hrs)',color:'#4d6a84',font:{size:10}},grid:{color:'rgba(11,191,168,0.04)'},ticks:{color:'#4d6a84'}},y:{title:{display:true,text:'Memory Score (0-100)',color:'#4d6a84',font:{size:10}},min:0,max:100,grid:{color:'rgba(11,191,168,0.04)'},ticks:{color:'#4d6a84'}}}}});
 
-// CHART 4: Sleep duration vs memory
-const scatterData2=sleepLog.map(e=>{
-  const mem=memMap[e.date];
-  if(mem==null) return null;
-  return {x:parseFloat(e.duration.toFixed(2)),y:mem};
-}).filter(Boolean);
+// Chart 5: Quality donut
+const qualDist=[0,0,0,0,0]; sleepLog.forEach(e=>{ if(e.quality>=1&&e.quality<=5) qualDist[e.quality-1]++; });
+new Chart(document.getElementById('qualityChart'),{type:'doughnut',data:{labels:['Poor (1)','Below Avg (2)','Average (3)','Good (4)','Excellent (5)'],datasets:[{data:qualDist,backgroundColor:['rgba(224,96,96,0.85)','rgba(232,184,75,0.7)','rgba(232,184,75,0.9)','rgba(11,191,168,0.85)','rgba(61,214,140,0.85)'],borderColor:'rgba(6,16,32,0.8)',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'right',labels:{boxWidth:8,font:{size:10},color:'#4d6a84',padding:10}}}}});
 
-new Chart(document.getElementById('corrChart2').getContext('2d'),{
-  type:'scatter',
-  data:{datasets:[{label:'Data points',data:scatterData2,backgroundColor:'rgba(155,93,229,0.65)',pointRadius:6,pointHoverRadius:8}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Sleep Duration (hrs)',color:'#6e8aaa',font:{size:10}},grid:{color:'rgba(0,194,179,0.05)'}},y:{title:{display:true,text:'Memory Score (0-100)',color:'#6e8aaa',font:{size:10}},min:0,max:100,grid:{color:'rgba(0,194,179,0.05)'}}}}
-});
+// Chart 6: Group comparison
+const highCons=sleepLog.filter((_,i)=>i<sleepLog.length/2); const lowCons=sleepLog.filter((_,i)=>i>=sleepLog.length/2);
+function avgCogForGroup(group){ const dates=group.map(e=>e.date); const scores=cogScores.filter(s=>dates.includes(s.date)).map(s=>s.score); return scores.length?Math.round(mean(scores)):0; }
+new Chart(document.getElementById('groupChart'),{type:'bar',data:{labels:['Reaction Time','Memory','Pattern'],datasets:[{label:'More Consistent Period',data:[avgCogForGroup(highCons)||78,avgCogForGroup(highCons)||82,avgCogForGroup(highCons)||80],backgroundColor:'rgba(11,191,168,0.8)',borderRadius:6},{label:'Less Consistent Period',data:[avgCogForGroup(lowCons)||62,avgCogForGroup(lowCons)||58,avgCogForGroup(lowCons)||60],backgroundColor:'rgba(232,184,75,0.6)',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:8,font:{size:10},color:'#4d6a84',padding:12}}},scales:{y:{min:0,max:100,grid:{color:'rgba(11,191,168,0.04)'},ticks:{color:'#4d6a84'}},x:{grid:{display:false},ticks:{color:'#4d6a84',font:{size:10}}}}}});
 
-// CHART 5: Quality distribution
-const qualDist=[0,0,0,0,0];
-sleepLog.forEach(e=>{ if(e.quality>=1&&e.quality<=5) qualDist[e.quality-1]++; });
-new Chart(document.getElementById('qualityChart').getContext('2d'),{
-  type:'doughnut',
-  data:{labels:['Poor (1)','Below Avg (2)','Average (3)','Good (4)','Excellent (5)'],datasets:[{data:qualDist,backgroundColor:['rgba(255,80,80,0.8)','rgba(255,107,53,0.8)','rgba(255,200,0,0.8)','rgba(0,194,179,0.8)','rgba(0,210,130,0.8)'],borderColor:'rgba(7,13,26,0.8)',borderWidth:2}]},
-  options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:10}}}}}
-});
+// Chart 7: Amyloid reference
+new Chart(document.getElementById('amyloidChart'),{type:'line',data:{labels:['<5h','5h','6h','7h','8h','9h','>9h'],datasets:[{label:'Relative Amyloid Risk (%)',data:[100,85,65,30,20,22,35],borderColor:'#e06060',backgroundColor:'rgba(224,96,96,0.08)',tension:0.4,fill:true,pointRadius:5,pointBackgroundColor:'#e06060',borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Relative Amyloid Risk (%)',color:'#4d6a84',font:{size:10}},grid:{color:'rgba(11,191,168,0.04)'},ticks:{color:'#4d6a84'}},x:{title:{display:true,text:'Average Sleep Duration',color:'#4d6a84',font:{size:10}},grid:{display:false},ticks:{color:'#4d6a84'}}}}});
 
-// CHART 6: Group comparison
-const beds=sleepLog.map(e=>{ const[h,m]=e.bedtime.split(':').map(Number); return h+m/60; });
-const sdVal=stdDev(beds);
-const highCons=sleepLog.filter((_,i)=>i<sleepLog.length/2);
-const lowCons=sleepLog.filter((_,i)=>i>=sleepLog.length/2);
-function avgCogForGroup(group){
-  const dates=group.map(e=>e.date);
-  const scores=cogScores.filter(s=>dates.includes(s.date)).map(s=>s.score);
-  return scores.length?Math.round(mean(scores)):0;
-}
-new Chart(document.getElementById('groupChart').getContext('2d'),{
-  type:'bar',
-  data:{
-    labels:['Reaction Time','Memory','Pattern Recognition'],
-    datasets:[
-      {label:'Consistent Sleepers',data:[avgCogForGroup(highCons)||78,avgCogForGroup(highCons)||82,avgCogForGroup(highCons)||80],backgroundColor:'rgba(0,194,179,0.75)',borderRadius:6},
-      {label:'Inconsistent Sleepers',data:[avgCogForGroup(lowCons)||62,avgCogForGroup(lowCons)||58,avgCogForGroup(lowCons)||60],backgroundColor:'rgba(255,107,53,0.6)',borderRadius:6}
-    ]
-  },
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}},scales:{y:{min:0,max:100,grid:{color:'rgba(0,194,179,0.05)'}},x:{grid:{display:false}}}}
-});
-
-// REFERENCE AMYLOID CHART
-new Chart(document.getElementById('amyloidChart').getContext('2d'),{
-  type:'line',
-  data:{
-    labels:['<5h','5h','6h','7h','8h','9h','>9h'],
-    datasets:[{label:'Relative Amyloid Risk',data:[100,85,65,30,20,22,35],borderColor:'#ff5050',backgroundColor:'rgba(255,80,80,0.1)',tension:0.4,fill:true,pointRadius:4,pointBackgroundColor:'#ff5050'}]
-  },
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Relative Risk (%)',color:'#6e8aaa',font:{size:10}},grid:{color:'rgba(0,194,179,0.05)'}},x:{title:{display:true,text:'Sleep Duration',color:'#6e8aaa',font:{size:10}},grid:{display:false}}}}
-});
-
-// INSIGHTS
+// Insights
 function generateInsights(){
   const insights=[];
   if(sleepLog.length>=5){
-    const dur=sleepLog.map(e=>e.duration);
-    const avgD=mean(dur);
-    if(avgD<7) insights.push({icon:'&#9888;&#65039;',text:`<strong>Sleep Duration Alert:</strong> Your average sleep of ${formatHours(avgD)} falls below the 7-9h optimal range linked to healthy amyloid clearance.`});
-    else if(avgD<=9) insights.push({icon:'&#10004;&#65039;',text:`<strong>Good Sleep Duration:</strong> Your average of ${formatHours(avgD)} is within the 7-9h optimal window for glymphatic brain clearance.`});
-    const bedtimeVals=sleepLog.map(e=>{ const[h,m]=e.bedtime.split(':').map(Number); return h+m/60; });
-    const sd=stdDev(bedtimeVals);
-    if(sd>1) insights.push({icon:'&#128336;',text:`<strong>High Sleep Variability:</strong> Bedtime varies by ${(sd*60).toFixed(0)} min (SD). Research links variability above 45 min to a 27% greater memory impairment risk.`});
-    else insights.push({icon:'&#127775;',text:`<strong>Consistent Schedule:</strong> Low bedtime variability (${(sd*60).toFixed(0)} min SD) supports stable circadian rhythm and optimal glymphatic function.`});
+    const avgD=mean(sleepLog.map(e=>e.duration));
+    if(avgD<7) insights.push({icon:'&#9888;&#65039;',text:`<strong>Sleep Duration Alert:</strong> Your average of ${formatHours(avgD)} falls below the 7-9h optimal range. Research links this to impaired amyloid-beta clearance.`});
+    else insights.push({icon:'&#10004;&#65039;',text:`<strong>Optimal Sleep Duration:</strong> Your average of ${formatHours(avgD)} is within the 7-9h window associated with healthy glymphatic clearance.`});
+    const beds=sleepLog.map(e=>{ const[h,m]=e.bedtime.split(':').map(Number); return h+m/60; });
+    const sd=stdDev(beds);
+    if(sd>1) insights.push({icon:'&#128336;',text:`<strong>High Bedtime Variability:</strong> SD of ${(sd*60).toFixed(0)} min. Research links variability above 45 min to 27% greater memory impairment risk.`});
+    else insights.push({icon:'&#127775;',text:`<strong>Consistent Schedule:</strong> Bedtime variability of ${(sd*60).toFixed(0)} min supports stable circadian rhythms and optimal glymphatic function.`});
   }
   if(cogScores.length>=3){
     const rtScores=cogScores.filter(s=>s.type==='reaction').map(s=>s.score);
-    if(rtScores.length>=2){
-      const trend=rtScores[rtScores.length-1]-rtScores[0];
-      if(trend>5) insights.push({icon:'&#9650;',text:`<strong>Improving Reaction Time:</strong> Your reaction score has improved by ${trend.toFixed(0)} points. This may reflect better sleep quality in recent days.`});
-      else if(trend<-5) insights.push({icon:'&#9660;',text:`<strong>Declining Reaction Time:</strong> Reaction scores have dropped by ${Math.abs(trend).toFixed(0)} points. Check whether sleep consistency has changed over this period.`});
+    if(rtScores.length>=2){ const trend=rtScores[rtScores.length-1]-rtScores[0];
+      if(trend>5) insights.push({icon:'&#9650;',text:`<strong>Improving Reaction Time:</strong> Score increased by ${trend.toFixed(0)} points. This may reflect improved sleep quality recently.`});
+      else if(trend<-5) insights.push({icon:'&#9660;',text:`<strong>Declining Reaction Time:</strong> Score dropped by ${Math.abs(trend).toFixed(0)} points. Review whether sleep consistency has changed.`});
     }
   }
-  if(!insights.length) insights.push({icon:'&#128200;',text:'<strong>Keep logging data</strong> to unlock personalized correlations and insights. At least 5 sleep entries and 3 cognitive tests are needed.'});
+  if(!insights.length) insights.push({icon:'&#128200;',text:'<strong>Continue logging data</strong> to unlock personalized correlations. At least 5 sleep entries and 3 cognitive tests are needed for meaningful analysis.'});
   document.getElementById('insightList').innerHTML=insights.map(i=>`<div class="insight-item"><span class="insight-icon">${i.icon}</span><p class="insight-text">${i.text}</p></div>`).join('');
 }
 generateInsights();
 
-// COMBINED TABLE
+// Combined table
 const tbody=document.getElementById('combinedBody');
 const recent=[...new Set([...sleepLog.map(s=>s.date),...cogScores.map(s=>s.date)])].sort().reverse().slice(0,14);
 tbody.innerHTML=recent.map(date=>{
   const sl=sleepLog.find(e=>e.date===date);
-  const rt=rtMap[date], mem=memMap[date], pat=patMap[date];
+  const rt=rtMap[date],mem=memMap[date],pat=patMap[date];
   const scores=[rt,mem,pat].filter(v=>v!=null);
   const avgCog=scores.length?Math.round(mean(scores)):null;
-  const cogColor=avgCog==null?'var(--grey)':avgCog>=75?'#00d282':avgCog>=55?'#ffc800':'#ff5050';
+  const cogColor=avgCog==null?'var(--grey)':avgCog>=75?'var(--green)':avgCog>=55?'var(--gold)':'var(--rose)';
+  const durColor=sl?sl.duration>=7&&sl.duration<=9?'var(--green)':sl.duration>=6?'var(--gold)':'var(--rose)':'var(--grey)';
   return `<tr>
-    <td>${date}</td>
-    <td style="color:${sl?sl.duration>=7&&sl.duration<=9?'#00d282':'#ffc800':'var(--grey)'};">${sl?formatHours(sl.duration):'--'}</td>
-    <td>${sl?sl.bedtime:'--'}</td>
-    <td>${sl?`&#9733; ${sl.quality}/5`:'--'}</td>
-    <td>${sl!=null?sl.awakenings+'x':'--'}</td>
-    <td style="color:${rt>=75?'#00d282':rt>=55?'#ffc800':rt?'#ff5050':'var(--grey)'};">${rt??'--'}</td>
-    <td style="color:${mem>=75?'#00d282':mem>=55?'#ffc800':mem?'#ff5050':'var(--grey)'};">${mem??'--'}</td>
-    <td style="color:${pat>=75?'#00d282':pat>=55?'#ffc800':pat?'#ff5050':'var(--grey)'};">${pat??'--'}</td>
-    <td><strong style="color:${cogColor};">${avgCog??'--'}</strong></td>
+    <td style="font-family:var(--font-mono);font-size:0.8rem;">${date}</td>
+    <td style="color:${durColor};font-family:var(--font-mono);">${sl?formatHours(sl.duration):'--'}</td>
+    <td style="font-family:var(--font-mono);">${sl?sl.bedtime:'--'}</td>
+    <td>${sl?'&#9733; '+sl.quality+'/5':'--'}</td>
+    <td style="font-family:var(--font-mono);">${sl!=null?sl.awakenings+'x':'--'}</td>
+    <td style="color:${rt>=75?'var(--green)':rt>=55?'var(--gold)':rt?'var(--rose)':'var(--grey)'};font-family:var(--font-mono);">${rt??'--'}</td>
+    <td style="color:${mem>=75?'var(--green)':mem>=55?'var(--gold)':mem?'var(--rose)':'var(--grey)'};font-family:var(--font-mono);">${mem??'--'}</td>
+    <td style="color:${pat>=75?'var(--green)':pat>=55?'var(--gold)':pat?'var(--rose)':'var(--grey)'};font-family:var(--font-mono);">${pat??'--'}</td>
+    <td><strong style="color:${cogColor};font-family:var(--font-mono);">${avgCog??'--'}</strong></td>
   </tr>`;
 }).join('');
 </script>
