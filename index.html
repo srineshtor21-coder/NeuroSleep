@@ -1,50 +1,694 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NeuroSleep | Sleep, Cognition & Alzheimer's Research Platform</title>
-  <meta name="description" content="NeuroSleep is a research-driven digital platform exploring the relationship between sleep consistency, cognitive performance, and Alzheimer's disease risk. Created by Mithil Gajula." />
-  <link rel="stylesheet" href="css/main.css" />
+  <meta name="description" content="NeuroSleep is a research-driven platform modeling the relationship between sleep consistency, cognitive performance, and long-term Alzheimer's disease risk. Created by Mithil Gajula."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <style>
+body{background:#06101f;color:#e8f2fb;}
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Core palette — deep navy, clinical teal, warm accent */
+  --ink:         #04090f;
+  --navy:        #061020;
+  --navy-mid:    #091830;
+  --navy-card:   #0c1f3a;
+  --navy-raised: #102547;
+  --teal:        #0bbfa8;
+  --teal-dim:    rgba(11,191,168,0.14);
+  --teal-glow:   rgba(11,191,168,0.28);
+  --cyan:        #5de2db;
+  --ice:         #a8f0ec;
+  --white:       #eef5fb;
+  --white-dim:   #8faec9;
+  --grey:        #4d6a84;
+  --gold:        #e8b84b;
+  --rose:        #e06060;
+  --green:       #3dd68c;
+  --purple:      #8b72e0;
+
+  --card-bg:     rgba(12,31,58,0.9);
+  --card-border: rgba(11,191,168,0.12);
+  --card-shine:  rgba(11,191,168,0.3);
+
+  --font-serif:  'Playfair Display', Georgia, serif;
+  --font-body:   'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-mono:   'IBM Plex Mono', 'Courier New', monospace;
+
+  --radius:      10px;
+  --radius-lg:   18px;
+  --radius-xl:   28px;
+
+  --shadow-card: 0 4px 32px rgba(4,9,15,0.5);
+  --shadow-teal: 0 0 40px rgba(11,191,168,0.18);
+  --shadow-glow: 0 0 80px rgba(11,191,168,0.12);
+
+  --transition:  all 0.28s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  background: var(--navy);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.65;
+  background-color: #061020; /* hard-coded fallback */
+  color: #eef5fb; /* hard-coded fallback */
+}
+
+/* Grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--navy); }
+::-webkit-scrollbar-thumb { background: rgba(11,191,168,0.35); border-radius: 3px; }
+
+/* ===== NAVIGATION ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  padding: 0 2.5rem; height: 72px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(6,16,32,0.85);
+  backdrop-filter: blur(20px) saturate(150%);
+  border-bottom: 1px solid rgba(11,191,168,0.07);
+  transition: var(--transition);
+}
+nav.scrolled {
+  background: rgba(4,9,15,0.96);
+  border-bottom-color: rgba(11,191,168,0.18);
+  box-shadow: 0 2px 24px rgba(4,9,15,0.6);
+}
+
+/* LOGO */
+.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.nav-logo-img { width: 42px; height: 42px; flex-shrink: 0; }
+.nav-logo-text {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  line-height: 1;
+}
+.nav-logo-text em { color: var(--teal); font-style: normal; }
+.nav-logo-sub {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--grey);
+  display: block;
+  margin-top: 2px;
+}
+
+.nav-links { display: flex; align-items: center; gap: 0.15rem; list-style: none; }
+.nav-links a {
+  color: var(--white-dim); text-decoration: none;
+  font-size: 0.82rem; font-weight: 500;
+  padding: 0.4rem 0.85rem; border-radius: 7px;
+  transition: var(--transition);
+  letter-spacing: 0.01em;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--teal); background: var(--teal-dim); }
+.nav-cta {
+  background: var(--teal) !important;
+  color: var(--navy) !important;
+  font-weight: 600 !important;
+  margin-left: 0.5rem;
+}
+.nav-cta:hover { background: var(--cyan) !important; transform: translateY(-1px); }
+.nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+.nav-hamburger span { display: block; width: 22px; height: 1.5px; background: var(--white); border-radius: 2px; transition: var(--transition); }
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; padding: 108px 2rem 5rem; overflow: hidden;
+}
+.hero-bg { position: absolute; inset: 0; z-index: 0; }
+
+/* Sophisticated mesh gradient */
+.hero-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 80% 20%, rgba(11,191,168,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 10% 80%, rgba(93,226,219,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 50% at 50% 50%, rgba(139,114,224,0.04) 0%, transparent 60%);
+}
+
+/* Subtle grid */
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(11,191,168,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(11,191,168,0.025) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+}
+
+/* Floating orbs */
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(70px); pointer-events: none;
+}
+.orb-1 {
+  width: 560px; height: 560px;
+  background: radial-gradient(circle, rgba(11,191,168,0.11) 0%, transparent 65%);
+  top: -80px; right: -60px;
+  animation: orb-drift 10s ease-in-out infinite;
+}
+.orb-2 {
+  width: 380px; height: 380px;
+  background: radial-gradient(circle, rgba(139,114,224,0.08) 0%, transparent 65%);
+  bottom: 60px; left: -40px;
+  animation: orb-drift 10s ease-in-out infinite reverse;
+  animation-delay: -4s;
+}
+@keyframes orb-drift { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-28px) scale(1.04)} }
+
+.hero-content { position: relative; z-index: 2; text-align: center; max-width: 880px; }
+
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(11,191,168,0.08);
+  border: 1px solid rgba(11,191,168,0.22);
+  border-radius: 100px;
+  padding: 0.4rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--teal);
+  margin-bottom: 2.2rem;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal);
+  animation: blink 2.5s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 7vw, 5.8rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.025em;
+  margin-bottom: 1.6rem;
+}
+.hero h1 .accent-teal { color: var(--teal); }
+.hero h1 .accent-grad {
+  background: linear-gradient(125deg, var(--teal) 0%, var(--cyan) 45%, var(--ice) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero h1 em { font-style: italic; color: var(--white-dim); }
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.15rem);
+  color: var(--white-dim); font-weight: 300;
+  max-width: 620px; margin: 0 auto 2.8rem;
+  line-height: 1.75;
+}
+
+/* EEG wave */
+.hero-eeg {
+  width: 100%; height: 68px;
+  margin-bottom: 3rem; display: block;
+  opacity: 0.8;
+}
+
+/* CTA buttons */
+.hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 4.5rem; }
+
+/* Stats row */
+.hero-stats { display: flex; gap: 0; justify-content: center; flex-wrap: wrap; border: 1px solid var(--card-border); border-radius: var(--radius-lg); background: rgba(12,31,58,0.6); backdrop-filter: blur(12px); overflow: hidden; }
+.hero-stat { padding: 1.4rem 2rem; text-align: center; border-right: 1px solid var(--card-border); flex: 1; min-width: 140px; }
+.hero-stat:last-child { border-right: none; }
+.hero-stat-num { font-family: var(--font-serif); font-size: 1.9rem; font-weight: 800; color: var(--teal); display: block; line-height: 1; }
+.hero-stat-label { font-size: 0.72rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.07em; font-weight: 500; margin-top: 0.35rem; line-height: 1.4; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 0.8rem 1.7rem;
+  border-radius: 9px;
+  font-family: var(--font-body); font-weight: 600; font-size: 0.9rem;
+  cursor: pointer; transition: var(--transition);
+  text-decoration: none; border: none;
+  letter-spacing: 0.02em; position: relative; overflow: hidden;
+}
+.btn-primary {
+  background: var(--teal); color: var(--navy);
+  box-shadow: 0 4px 24px rgba(11,191,168,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.btn-primary:hover {
+  background: var(--cyan); transform: translateY(-2px);
+  box-shadow: 0 8px 36px rgba(11,191,168,0.42);
+}
+.btn-ghost {
+  background: transparent; color: var(--white);
+  border: 1px solid rgba(238,245,251,0.18);
+}
+.btn-ghost:hover { border-color: var(--teal); color: var(--teal); transform: translateY(-2px); }
+.btn-sm { padding: 0.45rem 1rem; font-size: 0.82rem; border-radius: 7px; }
+.btn-danger { background: rgba(224,96,96,0.12); color: var(--rose); border: 1px solid rgba(224,96,96,0.3); }
+.btn-danger:hover { background: rgba(224,96,96,0.22); }
+
+/* ===== LAYOUT ===== */
+section { position: relative; z-index: 1; padding: 6rem 2rem; }
+.container { max-width: 1180px; margin: 0 auto; }
+.section-kicker {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--teal); margin-bottom: 1rem;
+}
+.section-kicker::before { content: ''; display: block; width: 28px; height: 1px; background: var(--teal); }
+
+h1 { font-family: var(--font-serif); font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+h2 { font-family: var(--font-serif); font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 1rem; }
+h3 { font-family: var(--font-body); font-weight: 600; font-size: 1.15rem; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
+h4 { font-family: var(--font-body); font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; }
+
+.text-teal { color: var(--teal); }
+.text-dim { color: var(--white-dim); }
+.text-grey { color: var(--grey); }
+.text-center { text-align: center; }
+.text-mono { font-family: var(--font-mono); }
+
+.mb-1{margin-bottom:.5rem}.mb-2{margin-bottom:1rem}.mb-3{margin-bottom:1.5rem}.mb-4{margin-bottom:2rem}.mb-5{margin-bottom:3rem}
+.mt-1{margin-top:.5rem}.mt-2{margin-top:1rem}.mt-3{margin-top:1.5rem}.mt-4{margin-top:2rem}
+
+.divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(11,191,168,0.18), transparent); }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 1.8rem;
+  backdrop-filter: blur(16px);
+  transition: var(--transition);
+  position: relative; overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+.card::after {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(11,191,168,0.35), transparent);
+  opacity: 0; transition: var(--transition);
+}
+.card:hover { border-color: rgba(11,191,168,0.28); transform: translateY(-3px); box-shadow: var(--shadow-teal); }
+.card:hover::after { opacity: 1; }
+
+.card-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--teal-dim);
+  border: 1px solid rgba(11,191,168,0.2);
+  margin-bottom: 1.2rem; font-size: 1.3rem;
+}
+
+/* Stat cards */
+.stat-card {
+  background: var(--card-bg); border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg); padding: 1.5rem;
+  text-align: center; transition: var(--transition);
+  box-shadow: var(--shadow-card);
+}
+.stat-card:hover { border-color: rgba(11,191,168,0.3); transform: translateY(-3px); }
+.stat-num { font-family: var(--font-serif); font-size: 2rem; font-weight: 800; display: block; }
+.stat-label { font-size: 0.72rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.07em; margin-top: 0.3rem; }
+.stat-change { font-size: 0.78rem; margin-top: 0.4rem; font-family: var(--font-mono); }
+
+/* ===== GRIDS ===== */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; }
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex; gap: 0; flex-wrap: wrap;
+  border-bottom: 2px solid rgba(11,191,168,0.1);
+  margin-bottom: 2.5rem;
+}
+.tab-btn {
+  padding: 0.75rem 1.3rem; border: none; background: transparent;
+  color: var(--grey); font-family: var(--font-body); font-weight: 500;
+  font-size: 0.85rem; cursor: pointer; transition: var(--transition);
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  white-space: nowrap; letter-spacing: 0.02em;
+}
+.tab-btn.active { color: var(--teal); border-bottom-color: var(--teal); font-weight: 600; }
+.tab-btn:hover:not(.active) { color: var(--white-dim); border-bottom-color: rgba(11,191,168,0.25); }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+/* ===== FORMS ===== */
+.form-group { margin-bottom: 1.2rem; }
+label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--white-dim); margin-bottom: 0.4rem; letter-spacing: 0.04em; text-transform: uppercase; }
+input[type="text"], input[type="number"], input[type="time"], input[type="date"], select, textarea {
+  width: 100%;
+  background: rgba(6,16,32,0.7);
+  border: 1px solid rgba(11,191,168,0.14);
+  border-radius: var(--radius); padding: 0.7rem 1rem;
+  color: var(--white); font-family: var(--font-body); font-size: 0.92rem;
+  transition: var(--transition); outline: none; -webkit-appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(11,191,168,0.1);
+  background: rgba(6,16,32,0.9);
+}
+select option { background: var(--navy-card); color: var(--white); }
+input[type="range"] {
+  -webkit-appearance: none; width: 100%; height: 4px;
+  border-radius: 2px; background: rgba(11,191,168,0.18);
+  outline: none; border: none; padding: 0; box-shadow: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 16px; height: 16px;
+  border-radius: 50%; background: var(--teal); cursor: pointer;
+  box-shadow: 0 0 8px rgba(11,191,168,0.5);
+}
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 0.22rem 0.7rem; border-radius: 100px;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+}
+.badge-teal   { background: rgba(11,191,168,0.1);  color: var(--teal);   border: 1px solid rgba(11,191,168,0.25); }
+.badge-orange { background: rgba(232,184,75,0.1);  color: var(--gold);   border: 1px solid rgba(232,184,75,0.25); }
+.badge-purple { background: rgba(139,114,224,0.1); color: var(--purple); border: 1px solid rgba(139,114,224,0.25); }
+.badge-green  { background: rgba(61,214,140,0.1);  color: var(--green);  border: 1px solid rgba(61,214,140,0.25); }
+.badge-red    { background: rgba(224,96,96,0.1);   color: var(--rose);   border: 1px solid rgba(224,96,96,0.25); }
+.badge-yellow { background: rgba(232,184,75,0.1);  color: var(--gold);   border: 1px solid rgba(232,184,75,0.25); }
+.badge-grey   { background: rgba(77,106,132,0.15); color: var(--grey);   border: 1px solid rgba(77,106,132,0.25); }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar { width: 100%; height: 6px; background: rgba(11,191,168,0.1); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--cyan)); border-radius: 3px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+
+/* ===== NOTIFICATION ===== */
+.notification {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--navy-card);
+  border: 1px solid var(--teal); border-radius: var(--radius-lg);
+  padding: 1rem 1.4rem;
+  display: flex; align-items: center; gap: 12px;
+  z-index: 9999; transform: translateY(120%);
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  max-width: 340px; box-shadow: var(--shadow-teal);
+}
+.notification.show { transform: translateY(0); }
+.notification-icon { font-size: 1.2rem; }
+.notification-text { font-size: 0.85rem; color: var(--white-dim); }
+.notification-text strong { color: var(--white); display: block; font-size: 0.9rem; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(4,9,15,0.88); backdrop-filter: blur(10px);
+  z-index: 5000; display: flex; align-items: center; justify-content: center;
+  padding: 1rem; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--navy-card); border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl); padding: 2rem;
+  max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto;
+  transform: scale(0.92) translateY(20px);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  box-shadow: var(--shadow-card);
+}
+.modal-overlay.open .modal { transform: scale(1) translateY(0); }
+.modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+.modal-close { background: none; border: none; color: var(--grey); font-size: 1.3rem; cursor: pointer; transition: var(--transition); padding: 4px; }
+.modal-close:hover { color: var(--white); }
+
+/* ===== TABLE ===== */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th {
+  font-family: var(--font-mono);
+  font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--grey); padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--card-border); text-align: left;
+}
+.data-table td { padding: 0.85rem 1rem; font-size: 0.875rem; border-bottom: 1px solid rgba(11,191,168,0.04); color: var(--white-dim); }
+.data-table tr:hover td { background: rgba(11,191,168,0.025); }
+
+/* ===== SCIENCE BAND ===== */
+.stat-band { background: rgba(9,24,48,0.6); border-top: 1px solid var(--card-border); border-bottom: 1px solid var(--card-border); }
+.stat-band-item { text-align: center; padding: 2.5rem 1rem; border-right: 1px solid rgba(11,191,168,0.08); }
+.stat-band-item:last-child { border-right: none; }
+.stat-band-num {
+  font-family: var(--font-serif);
+  font-size: 2.6rem; font-weight: 800;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--cyan) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block; line-height: 1;
+}
+.stat-band-text { font-size: 0.82rem; color: var(--white-dim); margin-top: 0.5rem; line-height: 1.5; max-width: 190px; margin-left: auto; margin-right: auto; }
+
+/* ===== PAGE HERO ===== */
+.page-hero {
+  padding: 130px 2rem 4.5rem;
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--card-border);
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 30% 20%, rgba(11,191,168,0.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.page-hero-inner { position: relative; z-index: 1; }
+
+/* Citation boxes */
+.citation-box {
+  background: rgba(11,191,168,0.04);
+  border-left: 2px solid var(--teal); border-radius: 0 8px 8px 0;
+  padding: 0.8rem 1.2rem; margin-top: 1rem;
+  font-family: var(--font-mono); font-size: 0.77rem;
+  color: var(--grey); line-height: 1.6;
+}
+
+/* Key finding highlight */
+.finding-box {
+  background: rgba(11,191,168,0.06);
+  border: 1px solid rgba(11,191,168,0.18);
+  border-radius: var(--radius); padding: 0.8rem 1.1rem; margin-top: 1rem;
+  font-size: 0.85rem; color: var(--cyan); line-height: 1.55;
+  display: flex; gap: 0.6rem; align-items: flex-start;
+}
+.finding-box::before { content: '◆'; color: var(--teal); font-size: 0.6rem; margin-top: 0.25rem; flex-shrink: 0; }
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--navy-mid);
+  border-top: 1px solid var(--card-border);
+  padding: 4.5rem 2rem 2rem;
+  position: relative; z-index: 1;
+}
+.footer-logo-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; max-width: 1180px; margin: 0 auto 3rem; }
+.footer-brand p { color: var(--grey); font-size: 0.85rem; line-height: 1.7; max-width: 280px; }
+.footer-col h4 {
+  font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--white-dim); margin-bottom: 1rem;
+}
+.footer-col ul { list-style: none; }
+.footer-col ul li { margin-bottom: 0.5rem; }
+.footer-col ul a { color: var(--grey); text-decoration: none; font-size: 0.85rem; transition: var(--transition); }
+.footer-col ul a:hover { color: var(--teal); }
+.footer-bottom {
+  max-width: 1180px; margin: 0 auto;
+  padding-top: 2rem; border-top: 1px solid rgba(11,191,168,0.06);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+}
+.footer-bottom p { font-family: var(--font-mono); font-size: 0.75rem; color: var(--grey); }
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shimmer { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.anim-delay-1{transition-delay:0.08s}.anim-delay-2{transition-delay:0.16s}.anim-delay-3{transition-delay:0.24s}.anim-delay-4{transition-delay:0.32s}
+
+.loader { width: 18px; height: 18px; border: 2px solid rgba(11,191,168,0.25); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.75s linear infinite; display: inline-block; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+}
+@media (max-width: 768px) {
+  nav { padding: 0 1.25rem; }
+  .nav-links { display: none; }
+  .nav-links.open {
+    display: flex; flex-direction: column;
+    position: fixed; top: 72px; left: 0; right: 0;
+    background: rgba(4,9,15,0.98); padding: 1.25rem;
+    border-bottom: 1px solid var(--card-border);
+    gap: 0.2rem; z-index: 999;
+  }
+  .nav-hamburger { display: flex; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  section { padding: 4rem 1.2rem; }
+  .hero-stats { flex-direction: column; }
+  .hero-stat { border-right: none !important; border-bottom: 1px solid var(--card-border); }
+}
+@media (max-width: 640px) {
+  .footer-grid { grid-template-columns: 1fr; }
+  .tabs { overflow-x: auto; flex-wrap: nowrap; }
+}
+
+</style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
-    /* HOME-SPECIFIC */
-    .hero-wave { width: 100%; height: 80px; margin-bottom: 2rem; }
-    .research-card { display: flex; gap: 1.5rem; align-items: flex-start; }
-    .research-num { font-family: var(--font-head); font-size: 3rem; font-weight: 800; color: var(--teal); opacity: 0.25; line-height: 1; min-width: 60px; }
-    .brain-pathway { display: flex; align-items: center; gap: 0; flex-wrap: wrap; justify-content: center; margin: 3rem 0; }
-    .pathway-step { text-align: center; padding: 1.5rem 1rem; flex: 1; min-width: 140px; max-width: 180px; }
-    .pathway-icon { width: 56px; height: 56px; border-radius: 50%; background: var(--teal-glow); border: 2px solid rgba(0,194,179,0.3); display: flex; align-items: center; justify-content: center; margin: 0 auto 0.8rem; font-size: 1.4rem; }
-    .pathway-arrow { color: var(--teal); font-size: 1.5rem; opacity: 0.4; align-self: center; margin-bottom: 2.5rem; }
-    .pathway-step h4 { font-family: var(--font-head); font-size: 0.85rem; font-weight: 700; margin-bottom: 0.3rem; }
-    .pathway-step p { font-size: 0.75rem; color: var(--grey); }
-    .science-stat { text-align: center; padding: 2rem; }
-    .science-stat-num { font-family: var(--font-head); font-size: 2.8rem; font-weight: 800; background: linear-gradient(135deg, var(--teal), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .science-stat-text { font-size: 0.88rem; color: var(--white-dim); margin-top: 0.4rem; line-height: 1.5; max-width: 200px; margin-left: auto; margin-right: auto; }
-    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-    .feature-card { position: relative; }
-    .feature-card .badge { position: absolute; top: 1rem; right: 1rem; }
-    .cta-section { background: linear-gradient(135deg, rgba(0,194,179,0.08) 0%, rgba(155,93,229,0.06) 100%); border: 1px solid rgba(0,194,179,0.15); border-radius: var(--radius-lg); padding: 4rem 2rem; text-align: center; }
-    .team-section { background: var(--navy-mid); }
-    .mini-chart-wrap { height: 200px; position: relative; }
-    @media(max-width:900px){ .feature-grid{grid-template-columns:repeat(2,1fr);} }
-    @media(max-width:640px){ .feature-grid{grid-template-columns:1fr;} .brain-pathway{flex-direction:column;align-items:center;} .pathway-arrow{transform:rotate(90deg);} }
+    /* HOME-SPECIFIC STYLES */
+    .science-pathway { display: flex; align-items: stretch; gap: 0; margin: 3rem 0; flex-wrap: wrap; }
+    .pathway-step {
+      flex: 1; min-width: 160px;
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      padding: 2rem 1.5rem; text-align: center; position: relative;
+      transition: var(--transition);
+    }
+    .pathway-step:first-child { border-radius: var(--radius-lg) 0 0 var(--radius-lg); }
+    .pathway-step:last-child  { border-radius: 0 var(--radius-lg) var(--radius-lg) 0; }
+    .pathway-step:hover { background: var(--navy-raised); border-color: rgba(11,191,168,0.28); }
+    .pathway-step + .pathway-step { border-left: none; }
+    .pathway-arrow {
+      position: absolute; right: -14px; top: 50%; transform: translateY(-50%);
+      z-index: 2; width: 26px; height: 26px;
+      background: var(--teal); color: var(--navy);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(11,191,168,0.4);
+    }
+    .pathway-step:last-child .pathway-arrow { display: none; }
+    .step-num {
+      font-family: var(--font-mono); font-size: 0.6rem;
+      color: var(--teal); letter-spacing: 0.1em;
+      margin-bottom: 0.8rem; display: block;
+    }
+    .step-icon { font-size: 2rem; margin-bottom: 0.8rem; display: block; }
+    .step-title { font-family: var(--font-body); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.4rem; }
+    .step-desc { font-size: 0.78rem; color: var(--grey); line-height: 1.5; }
+
+    /* Feature grid cards */
+    .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+    .feature-card { position: relative; cursor: default; }
+    .feature-card .badge { position: absolute; top: 1.2rem; right: 1.2rem; }
+    .feature-card p { font-size: 0.875rem; color: var(--white-dim); line-height: 1.65; margin-top: 0.5rem; }
+
+    /* Research pillar cards */
+    .pillar-num {
+      font-family: var(--font-serif); font-size: 4.5rem; font-weight: 800;
+      color: var(--teal); opacity: 0.12; position: absolute;
+      top: -0.5rem; right: 1rem; line-height: 1; pointer-events: none;
+    }
+    .pillar-card { position: relative; overflow: hidden; }
+
+    /* About section */
+    .about-section { background: rgba(9,24,48,0.6); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 4rem; align-items: center; }
+    .about-visual {
+      position: relative; display: flex; align-items: center; justify-content: center;
+    }
+    .about-brain-bg {
+      width: 320px; height: 320px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(11,191,168,0.1) 0%, transparent 70%);
+      border: 1px solid rgba(11,191,168,0.12);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .about-badge-float {
+      position: absolute; background: var(--card-bg);
+      border: 1px solid var(--card-border); border-radius: var(--radius);
+      padding: 0.6rem 1rem; font-size: 0.8rem;
+    }
+    .about-badge-float.pos-1 { top: 30px; right: -10px; }
+    .about-badge-float.pos-2 { bottom: 40px; left: -10px; }
+
+    /* CTA section */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(11,191,168,0.07) 0%, rgba(139,114,224,0.05) 100%);
+      border: 1px solid rgba(11,191,168,0.14);
+      border-radius: var(--radius-xl); padding: 5rem 2rem; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+      width: 60%; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(11,191,168,0.5), transparent);
+    }
+
+    /* Chart preview area */
+    .chart-preview { height: 200px; position: relative; }
+
+    @media(max-width:900px) { .feature-grid{grid-template-columns:repeat(2,1fr);} .about-grid{grid-template-columns:1fr;} .about-visual{display:none;} }
+    @media(max-width:640px) { .feature-grid{grid-template-columns:1fr;} .science-pathway{flex-direction:column;} .pathway-step{border-radius:0;border-left:1px solid var(--card-border) !important;} .pathway-step:first-child{border-radius:var(--radius-lg) var(--radius-lg) 0 0 !important;} .pathway-step:last-child{border-radius:0 0 var(--radius-lg) var(--radius-lg) !important;} .pathway-arrow{display:none !important;} }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
+<!-- ===== NAV ===== -->
 <nav>
   <a href="index.html" class="nav-logo">
-    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/>
-      <path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M6 26 Q10 16 18 20 Q26 24 34 14" stroke="#4fd8e4" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7"/>
-      <circle cx="20" cy="20" r="4" fill="#00c2b3" opacity="0.2"/>
-      <circle cx="20" cy="20" r="2" fill="#00c2b3"/>
-      <path d="M20 16 L20 10 M20 16 L24 13 M20 16 L16 13" stroke="#00c2b3" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
+    <!-- NeuroSleep Brain+Moon Logo -->
+    <svg class="nav-logo-img" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Outer ring -->
+      <circle cx="21" cy="21" r="20" stroke="rgba(11,191,168,0.2)" stroke-width="1"/>
+      <!-- Brain left hemisphere -->
+      <path d="M21 10 C15 10 10 14 10 20 C10 24 12 27 15 28.5 C15 30 16 31.5 18 31.5 C19 31.5 20 31 21 30.5" stroke="#0bbfa8" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <!-- Brain left folds -->
+      <path d="M12 18 Q14 16 15 19 Q16 22 14 23" stroke="#0bbfa8" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <path d="M15 25 Q17 23 18 26 Q19 28 17 29" stroke="#0bbfa8" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <!-- Brain right hemisphere -->
+      <path d="M21 10 C27 10 32 14 32 20 C32 24 30 27 27 28.5 C27 30 26 31.5 24 31.5 C23 31.5 22 31 21 30.5" stroke="#5de2db" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <!-- Brain right folds -->
+      <path d="M30 18 Q28 16 27 19 Q26 22 28 23" stroke="#5de2db" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <path d="M27 25 Q25 23 24 26 Q23 28 25 29" stroke="#5de2db" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <!-- Center divide -->
+      <line x1="21" y1="10.5" x2="21" y2="30.5" stroke="rgba(11,191,168,0.3)" stroke-width="1" stroke-dasharray="2 2"/>
+      <!-- Moon crescent (top right) -->
+      <path d="M32 7 C31 5.5 29.5 5 28 5.2 C30 6 31 7.5 30.5 9.5 C30 11.5 28.5 12.5 27 12.5 C28.5 12.8 30 12 31 10.5 C31.8 9.5 32.3 8.5 32 7Z" fill="#5de2db" opacity="0.85"/>
+      <!-- Stars -->
+      <circle cx="27" cy="6" r="0.8" fill="#a8f0ec" opacity="0.9"/>
+      <circle cx="34" cy="10" r="0.6" fill="#a8f0ec" opacity="0.7"/>
+      <circle cx="30" cy="3.5" r="0.5" fill="#5de2db" opacity="0.8"/>
     </svg>
-    <span class="nav-logo-text">Neuro<span>Sleep</span></span>
+    <span class="nav-logo-text">
+      Neuro<em>Sleep</em>
+      <span class="nav-logo-sub">Sleep &amp; Cognitive Research</span>
+    </span>
   </a>
   <ul class="nav-links">
     <li><a href="index.html" class="active">Home</a></li>
@@ -55,127 +699,150 @@
     <li><a href="pages/risk.html">Risk Calculator</a></li>
     <li><a href="pages/risk.html" class="nav-cta">Get Started</a></li>
   </ul>
-  <button class="nav-hamburger" aria-label="Menu">
+  <button class="nav-hamburger" aria-label="Open menu">
     <span></span><span></span><span></span>
   </button>
 </nav>
 
-<!-- HERO -->
+<!-- ===== HERO ===== -->
 <section class="hero">
   <div class="hero-bg">
+    <div class="hero-mesh"></div>
+    <div class="hero-grid"></div>
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="hero-grid-lines"></div>
   </div>
   <div class="hero-content">
-    <div class="hero-badge"><span class="hero-badge-dot"></span> Research Platform &bull; Neuroscience &bull; ISM Project</div>
-    <h1>Sleep is the<br><span class="gradient">Brain's Reset</span><br><span class="teal">Button</span></h1>
-    <p class="hero-sub">NeuroSleep is a research-driven platform modeling the relationship between sleep consistency, cognitive performance, and long-term Alzheimer's disease risk. Track, test, and understand your brain health.</p>
-    <div class="hero-buttons">
-      <a href="pages/tracker.html" class="btn btn-primary">&#9654; Start Tracking Sleep</a>
-      <a href="pages/research.html" class="btn btn-secondary">&#128270; Explore Research</a>
+    <div class="hero-eyebrow">
+      <span class="eyebrow-dot"></span>
+      ISM Research Project &nbsp;|&nbsp; Neuroscience &nbsp;|&nbsp; Mithil Gajula
     </div>
-    <!-- Live EEG-style wave -->
-    <svg class="hero-wave" viewBox="0 0 700 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+
+    <h1>
+      Sleep is the Brain's<br>
+      <span class="accent-grad">Nightly Cleanse</span>
+    </h1>
+
+    <p class="hero-sub">
+      NeuroSleep is a research-driven platform modeling the relationship between sleep consistency,
+      cognitive performance, and long-term Alzheimer's disease risk through behavioral data and
+      validated neuropsychological assessments.
+    </p>
+
+    <!-- Animated EEG wave -->
+    <svg class="hero-eeg" viewBox="0 0 800 68" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
       <defs>
-        <linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" style="stop-color:transparent"/>
-          <stop offset="20%" style="stop-color:#00c2b3;stop-opacity:0.8"/>
-          <stop offset="80%" style="stop-color:#4fd8e4;stop-opacity:0.8"/>
-          <stop offset="100%" style="stop-color:transparent"/>
+        <linearGradient id="eegGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="transparent"/>
+          <stop offset="15%" stop-color="#0bbfa8" stop-opacity="0.9"/>
+          <stop offset="85%" stop-color="#5de2db" stop-opacity="0.9"/>
+          <stop offset="100%" stop-color="transparent"/>
         </linearGradient>
       </defs>
-      <polyline id="eegWave" fill="none" stroke="url(#wg)" stroke-width="2" stroke-linecap="round"/>
+      <polyline id="eegWave" fill="none" stroke="url(#eegGrad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
+
+    <div class="hero-buttons">
+      <a href="pages/tracker.html" class="btn btn-primary">&#9654;&ensp;Start Tracking Sleep</a>
+      <a href="pages/research.html" class="btn btn-ghost">&#128270;&ensp;Explore Research</a>
+    </div>
+
     <div class="hero-stats">
-      <div class="hero-stat"><span class="hero-stat-num" id="sc1">6.1M</span><span class="hero-stat-label">Americans with Alzheimer's</span></div>
-      <div class="hero-stat"><span class="hero-stat-num" id="sc2">40%</span><span class="hero-stat-label">Risk reduction with good sleep</span></div>
-      <div class="hero-stat"><span class="hero-stat-num" id="sc3">7-9h</span><span class="hero-stat-label">Optimal nightly sleep</span></div>
-      <div class="hero-stat"><span class="hero-stat-num" id="sc4">3x</span><span class="hero-stat-label">Higher amyloid clearance during sleep</span></div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">6.1M</span>
+        <span class="hero-stat-label">Americans with Alzheimer's</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">40%</span>
+        <span class="hero-stat-label">Risk reduction with consistent sleep</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">7-9h</span>
+        <span class="hero-stat-label">Optimal nightly sleep duration</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">3x</span>
+        <span class="hero-stat-label">Higher amyloid clearance during sleep</span>
+      </div>
     </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- SCIENCE STATS BAND -->
-<section style="padding: 3rem 2rem; background: rgba(13,27,46,0.5);">
+<!-- ===== STAT BAND ===== -->
+<div class="stat-band">
   <div class="container">
     <div class="grid-4">
-      <div class="science-stat reveal">
-        <div class="science-stat-num">55M+</div>
-        <div class="science-stat-text">People worldwide living with dementia as of 2024</div>
+      <div class="stat-band-item reveal">
+        <span class="stat-band-num">55M+</span>
+        <div class="stat-band-text">People worldwide living with dementia as of 2024</div>
       </div>
-      <div class="science-stat reveal anim-delay-1">
-        <div class="science-stat-num">2050</div>
-        <div class="science-stat-text">Projected year cases will triple without intervention</div>
+      <div class="stat-band-item reveal anim-delay-1">
+        <span class="stat-band-num">2050</span>
+        <div class="stat-band-text">Projected year global cases will triple without intervention</div>
       </div>
-      <div class="science-stat reveal anim-delay-2">
-        <div class="science-stat-num">$345B</div>
-        <div class="science-stat-text">Annual US cost of Alzheimer's care</div>
+      <div class="stat-band-item reveal anim-delay-2">
+        <span class="stat-band-num">$345B</span>
+        <div class="stat-band-text">Annual US economic cost of Alzheimer's care</div>
       </div>
-      <div class="science-stat reveal anim-delay-3">
-        <div class="science-stat-num">1-3</div>
-        <div class="science-stat-text">Hours of deep sleep needed for amyloid-beta clearance nightly</div>
+      <div class="stat-band-item reveal anim-delay-3">
+        <span class="stat-band-num">1-3h</span>
+        <div class="stat-band-text">Deep sleep required nightly for full amyloid-beta clearance</div>
       </div>
     </div>
   </div>
-</section>
+</div>
 
 <div class="divider"></div>
 
-<!-- HOW SLEEP AFFECTS THE BRAIN -->
+<!-- ===== SCIENCE PATHWAY ===== -->
 <section>
   <div class="container">
-    <div class="section-label">The Science</div>
-    <h2>Why Sleep is <span class="text-teal">Critical</span> for Your Brain</h2>
-    <p class="text-dim mb-4" style="max-width:640px;">Emerging research from Johns Hopkins, NIH, and the Alzheimer's Association has established a direct, bidirectional relationship between sleep quality and neurological health.</p>
+    <div class="section-kicker">The Mechanism</div>
+    <h2>How Sleep <span class="text-teal">Protects</span> Your Brain</h2>
+    <p class="text-dim mb-4" style="max-width:640px;">Research from Johns Hopkins, the NIH, and the University of Rochester has established a clear mechanistic pathway connecting nightly sleep to Alzheimer's pathology.</p>
 
-    <div class="brain-pathway reveal">
+    <div class="science-pathway reveal">
       <div class="pathway-step">
-        <div class="pathway-icon">&#128721;</div>
-        <h4>You Sleep</h4>
-        <p>Brain enters NREM and REM cycles</p>
+        <div class="pathway-arrow">&#8594;</div>
+        <span class="step-num">STEP 01</span>
+        <span class="step-icon">&#128721;</span>
+        <div class="step-title">Sleep Onset</div>
+        <div class="step-desc">Brain transitions from wakefulness into NREM slow-wave and REM cycles</div>
       </div>
-      <div class="pathway-arrow">&#8594;</div>
       <div class="pathway-step">
-        <div class="pathway-icon">&#128161;</div>
-        <h4>Glymphatic System Activates</h4>
-        <p>Cerebrospinal fluid flushes the brain</p>
+        <div class="pathway-arrow">&#8594;</div>
+        <span class="step-num">STEP 02</span>
+        <span class="step-icon">&#128425;</span>
+        <div class="step-title">Glymphatic Activation</div>
+        <div class="step-desc">Cerebrospinal fluid surges through perivascular channels, washing the interstitium</div>
       </div>
-      <div class="pathway-arrow">&#8594;</div>
       <div class="pathway-step">
-        <div class="pathway-icon">&#9889;</div>
-        <h4>Amyloid-Beta Cleared</h4>
-        <p>Toxic proteins removed 10x faster than waking</p>
+        <div class="pathway-arrow">&#8594;</div>
+        <span class="step-num">STEP 03</span>
+        <span class="step-icon">&#129520;</span>
+        <div class="step-title">Amyloid-Beta Clearance</div>
+        <div class="step-desc">Metabolic waste proteins including amyloid-beta and tau are flushed from neural tissue</div>
       </div>
-      <div class="pathway-arrow">&#8594;</div>
       <div class="pathway-step">
-        <div class="pathway-icon">&#129504;</div>
-        <h4>Memory Consolidated</h4>
-        <p>Hippocampus replays and stores new memories</p>
+        <div class="pathway-arrow">&#8594;</div>
+        <span class="step-num">STEP 04</span>
+        <span class="step-icon">&#129504;</span>
+        <div class="step-title">Memory Consolidation</div>
+        <div class="step-desc">Hippocampal replay transfers declarative memories to long-term cortical storage</div>
       </div>
-      <div class="pathway-arrow">&#8594;</div>
       <div class="pathway-step">
-        <div class="pathway-icon">&#128170;</div>
-        <h4>Cognitive Resilience</h4>
-        <p>Lower long-term Alzheimer's risk</p>
+        <span class="step-num">STEP 05</span>
+        <span class="step-icon">&#10024;</span>
+        <div class="step-title">Cognitive Recovery</div>
+        <div class="step-desc">Synaptic homeostasis restores cognitive bandwidth for next-day learning and performance</div>
       </div>
     </div>
 
-    <div class="grid-2 mt-4 reveal">
-      <div class="card">
-        <div class="card-icon">&#128293;</div>
-        <h3 class="mb-2">The Amyloid-Beta Connection</h3>
-        <p class="text-dim" style="font-size:0.92rem;line-height:1.7;">Amyloid-beta is a protein fragment produced naturally by the brain. During wakefulness, these fragments accumulate. During sleep, particularly slow-wave (deep) sleep, the glymphatic system activates and cerebrospinal fluid flows through the brain at dramatically increased rates, clearing amyloid-beta and other metabolic waste products. Chronic sleep deprivation disrupts this process, allowing amyloid plaques to build up, which is a hallmark of Alzheimer's disease pathology.</p>
-        <div class="mt-3"><span class="badge badge-teal">Source: Nature Neuroscience, 2019</span></div>
-      </div>
-      <div class="card">
-        <div class="card-icon">&#128336;</div>
-        <h3 class="mb-2">Circadian Rhythm Disruption</h3>
-        <p class="text-dim" style="font-size:0.92rem;line-height:1.7;">The circadian rhythm, your body's internal 24-hour clock, governs hormone release, metabolic activity, and cellular repair. Disruption of this rhythm through irregular sleep schedules, shift work, or chronic late-night screen exposure elevates cortisol, suppresses melatonin production, and impairs the brain's ability to regulate inflammation. Studies show that circadian disruption accelerates tau protein accumulation, another key driver of Alzheimer's neurodegeneration.</p>
-        <div class="mt-3"><span class="badge badge-purple">Source: NIH National Institute on Aging</span></div>
+    <div class="card mt-4 reveal" style="border-color:rgba(11,191,168,0.2);">
+      <div class="finding-box">
+        <strong>Key Finding (Xie et al., 2013, Science):</strong> Sleep increases the interstitial space by 60%, allowing CSF to flow at dramatically higher rates and clear amyloid-beta at nearly twice the rate observed during wakefulness. Chronic sleep deprivation was shown to cause a 30% increase in amyloid-beta plaque deposition in mouse models.
       </div>
     </div>
   </div>
@@ -183,56 +850,55 @@
 
 <div class="divider"></div>
 
-<!-- PLATFORM FEATURES -->
-<section style="background: rgba(13,27,46,0.4);">
+<!-- ===== FEATURES ===== -->
+<section>
   <div class="container">
-    <div class="text-center mb-4">
-      <div class="section-label" style="justify-content:center;">Platform Features</div>
-      <h2>Everything You Need to<br><span class="text-teal">Understand Your Brain Health</span></h2>
-      <p class="text-dim" style="max-width:540px;margin:1rem auto 0;">A complete research-grade toolkit designed to collect, analyze, and visualize the connection between your daily habits and long-term neurological wellbeing.</p>
-    </div>
-    <div class="feature-grid mt-4">
-      <a href="pages/tracker.html" class="card reveal" style="text-decoration:none;color:inherit;">
-        <span class="badge badge-teal" style="position:absolute;top:1rem;right:1rem;">Live</span>
+    <div class="section-kicker">Platform Features</div>
+    <h2>Everything You Need to <span class="text-teal">Understand</span> Your Sleep</h2>
+    <p class="text-dim mb-4" style="max-width:580px;">NeuroSleep integrates sleep tracking, cognitive assessment, data analytics, and risk modeling into one cohesive research tool.</p>
+
+    <div class="feature-grid">
+      <div class="card feature-card reveal">
+        <span class="badge badge-teal">Active</span>
         <div class="card-icon">&#128336;</div>
-        <h3 class="mb-2">Sleep Tracker</h3>
-        <p class="text-dim" style="font-size:0.9rem;">Log bedtime, wake time, interruptions, screen cutoff, and sleep quality. Visualize weekly trends and consistency scores with real-time analysis.</p>
-        <div class="mt-3" style="color:var(--teal);font-size:0.85rem;font-weight:600;">Open Tracker &#8594;</div>
-      </a>
-      <a href="pages/cognitive.html" class="card reveal anim-delay-1" style="text-decoration:none;color:inherit;">
-        <span class="badge badge-purple" style="position:absolute;top:1rem;right:1rem;">3 Tests</span>
-        <div class="card-icon">&#129504;</div>
-        <h3 class="mb-2">Cognitive Tests</h3>
-        <p class="text-dim" style="font-size:0.9rem;">Assess reaction time, working memory, and pattern recognition with validated neuropsychological testing instruments adapted for research use.</p>
-        <div class="mt-3" style="color:var(--teal);font-size:0.85rem;font-weight:600;">Take Tests &#8594;</div>
-      </a>
-      <a href="pages/dashboard.html" class="card reveal anim-delay-2" style="text-decoration:none;color:inherit;">
-        <span class="badge badge-orange" style="position:absolute;top:1rem;right:1rem;">Analytics</span>
-        <div class="card-icon">&#128200;</div>
-        <h3 class="mb-2">Data Dashboard</h3>
-        <p class="text-dim" style="font-size:0.9rem;">Explore correlation graphs, scatter plots, and trend analyses showing how your sleep patterns influence cognitive performance over time.</p>
-        <div class="mt-3" style="color:var(--teal);font-size:0.85rem;font-weight:600;">View Dashboard &#8594;</div>
-      </a>
-      <a href="pages/risk.html" class="card reveal" style="text-decoration:none;color:inherit;">
-        <span class="badge badge-red" style="position:absolute;top:1rem;right:1rem;">Predictive</span>
-        <div class="card-icon">&#9888;</div>
-        <h3 class="mb-2">Risk Calculator</h3>
-        <p class="text-dim" style="font-size:0.9rem;">Input your behavioral data to receive a personalized cognitive risk behavior score with actionable recommendations based on current neuroscience research.</p>
-        <div class="mt-3" style="color:var(--teal);font-size:0.85rem;font-weight:600;">Calculate Risk &#8594;</div>
-      </a>
-      <a href="pages/research.html" class="card reveal anim-delay-1" style="text-decoration:none;color:inherit;">
-        <span class="badge badge-teal" style="position:absolute;top:1rem;right:1rem;">Academic</span>
+        <h3>Sleep Tracker</h3>
+        <p>Log bedtime, wake time, sleep quality, screen exposure, and caffeine data. Build a longitudinal dataset for meaningful statistical analysis over weeks and months.</p>
+        <a href="pages/tracker.html" class="btn btn-ghost btn-sm mt-3">Open Tracker &#8594;</a>
+      </div>
+      <div class="card feature-card reveal anim-delay-1">
+        <span class="badge badge-purple">3 Tests</span>
+        <div class="card-icon">&#9889;</div>
+        <h3>Cognitive Assessments</h3>
+        <p>Validated neuropsychological tests measuring reaction time, spatial working memory, and pattern recognition. Results correlate directly with your sleep data in the Dashboard.</p>
+        <a href="pages/cognitive.html" class="btn btn-ghost btn-sm mt-3">Take Tests &#8594;</a>
+      </div>
+      <div class="card feature-card reveal anim-delay-2">
+        <span class="badge badge-green">Live Data</span>
+        <div class="card-icon">&#128202;</div>
+        <h3>Research Dashboard</h3>
+        <p>Seven interactive correlation charts reveal the relationship between your personal sleep patterns and cognitive performance. Scatter plots, trend lines, and auto-generated insights.</p>
+        <a href="pages/dashboard.html" class="btn btn-ghost btn-sm mt-3">View Dashboard &#8594;</a>
+      </div>
+      <div class="card feature-card reveal">
+        <span class="badge badge-orange">Risk Model</span>
+        <div class="card-icon">&#129522;</div>
+        <h3>Alzheimer's Risk Calculator</h3>
+        <p>A weighted behavioral scoring model based on seven modifiable risk factors identified in Alzheimer's research. Generates personalized recommendations and risk breakdowns.</p>
+        <a href="pages/risk.html" class="btn btn-ghost btn-sm mt-3">Calculate Risk &#8594;</a>
+      </div>
+      <div class="card feature-card reveal anim-delay-1">
+        <span class="badge badge-grey">22 Papers</span>
         <div class="card-icon">&#128218;</div>
-        <h3 class="mb-2">Research Library</h3>
-        <p class="text-dim" style="font-size:0.9rem;">Comprehensive, peer-reviewed research on sleep neuroscience, Alzheimer's pathology, circadian biology, and cognitive assessment methodologies.</p>
-        <div class="mt-3" style="color:var(--teal);font-size:0.85rem;font-weight:600;">Read Research &#8594;</div>
-      </a>
-      <div class="card reveal anim-delay-2">
-        <span class="badge badge-green" style="position:absolute;top:1rem;right:1rem;">AI-Powered</span>
-        <div class="card-icon">&#127754;</div>
-        <h3 class="mb-2">Correlation Engine</h3>
-        <p class="text-dim" style="font-size:0.9rem;">Automatically identifies statistical relationships in your personal data, generating insights like "lower sleep consistency correlates with slower reaction time."</p>
-        <div class="mt-3" style="color:var(--grey);font-size:0.85rem;font-weight:600;">Runs automatically in Dashboard</div>
+        <h3>Research Library</h3>
+        <p>Comprehensive coverage of peer-reviewed neuroscience across five domains: Alzheimer's pathology, sleep neuroscience, circadian biology, cognitive assessment, and methodology.</p>
+        <a href="pages/research.html" class="btn btn-ghost btn-sm mt-3">Browse Research &#8594;</a>
+      </div>
+      <div class="card feature-card reveal anim-delay-2">
+        <span class="badge badge-teal">Persistent</span>
+        <div class="card-icon">&#128190;</div>
+        <h3>Local Data Storage</h3>
+        <p>All data is stored locally in your browser using localStorage. Your sleep logs and cognitive test scores persist across sessions with full privacy and no server accounts required.</p>
+        <div style="margin-top:1rem;font-size:0.78rem;color:var(--grey);font-family:var(--font-mono);">Data stored in: window.localStorage</div>
       </div>
     </div>
   </div>
@@ -240,22 +906,78 @@
 
 <div class="divider"></div>
 
-<!-- SAMPLE CHART PREVIEW -->
+<!-- ===== RESEARCH PILLARS ===== -->
 <section>
   <div class="container">
-    <div class="section-label">Data Preview</div>
-    <h2>Research-Grade <span class="text-teal">Visualizations</span></h2>
-    <p class="text-dim mb-4">NeuroSleep generates publication-quality graphs to reveal how sleep patterns shape cognitive outcomes.</p>
-    <div class="grid-2 reveal">
-      <div class="card">
-        <h3 class="mb-1" style="font-size:1rem;">Sleep Consistency vs. Reaction Time</h3>
-        <p class="text-dim mb-3" style="font-size:0.82rem;">Lower sleep variability correlates with faster cognitive processing speed</p>
-        <div style="height:200px;"><canvas id="previewChart1"></canvas></div>
+    <div class="section-kicker">Research Areas</div>
+    <h2>Grounded in <span class="text-teal">Evidence-Based</span> Neuroscience</h2>
+    <p class="text-dim mb-5" style="max-width:600px;">NeuroSleep draws on published research from leading academic medical institutions. The platform's design reflects the current scientific consensus.</p>
+
+    <div class="grid-3">
+      <div class="card pillar-card reveal">
+        <span class="pillar-num">01</span>
+        <div class="badge badge-teal mb-3">Alzheimer's Disease</div>
+        <h3>Amyloid & Tau Pathology</h3>
+        <p style="font-size:0.875rem;color:var(--white-dim);margin-top:0.5rem;line-height:1.7;">The accumulation of amyloid-beta plaques and tau neurofibrillary tangles is the primary pathological hallmark of Alzheimer's. Both are metabolic waste proteins cleared through the glymphatic system during sleep.</p>
+        <div class="citation-box">Selkoe &amp; Hardy (2016). The amyloid hypothesis of Alzheimer's disease at 25 years. EMBO Molecular Medicine.</div>
       </div>
-      <div class="card">
-        <h3 class="mb-1" style="font-size:1rem;">Sleep Duration vs. Memory Score</h3>
-        <p class="text-dim mb-3" style="font-size:0.82rem;">Participants averaging 7-9h show significantly higher recall accuracy</p>
-        <div style="height:200px;"><canvas id="previewChart2"></canvas></div>
+      <div class="card pillar-card reveal anim-delay-1">
+        <span class="pillar-num">02</span>
+        <div class="badge badge-purple mb-3">Sleep Neuroscience</div>
+        <h3>Glymphatic Clearance System</h3>
+        <p style="font-size:0.875rem;color:var(--white-dim);margin-top:0.5rem;line-height:1.7;">The glymphatic system, first described by Maiken Nedergaard at University of Rochester, is a waste clearance pathway that operates almost exclusively during sleep, removing neurotoxic metabolites from the brain.</p>
+        <div class="citation-box">Xie et al. (2013). Sleep drives metabolite clearance from the adult brain. Science, 342(6156), 373-377.</div>
+      </div>
+      <div class="card pillar-card reveal anim-delay-2">
+        <span class="pillar-num">03</span>
+        <div class="badge badge-orange mb-3">Cognitive Performance</div>
+        <h3>Sleep Deprivation Effects</h3>
+        <p style="font-size:0.875rem;color:var(--white-dim);margin-top:0.5rem;line-height:1.7;">Even mild chronic sleep restriction to 6 hours per night produces cognitive deficits equivalent to 24 hours of total sleep deprivation. Working memory, processing speed, and executive function are most acutely affected.</p>
+        <div class="citation-box">Van Dongen et al. (2003). The cumulative cost of additional wakefulness. Sleep, 26(2), 117-126.</div>
+      </div>
+      <div class="card pillar-card reveal">
+        <span class="pillar-num">04</span>
+        <div class="badge badge-green mb-3">Circadian Biology</div>
+        <h3>Clock Gene Disruption</h3>
+        <p style="font-size:0.875rem;color:var(--white-dim);margin-top:0.5rem;line-height:1.7;">Irregular sleep timing disrupts circadian gene expression, altering BMAL1/CLOCK protein cycles. This chronobiological disruption independently increases Alzheimer's risk beyond sleep duration effects alone.</p>
+        <div class="citation-box">Musiek &amp; Holtzman (2016). Mechanisms linking circadian clocks, sleep, and neurodegeneration. Science, 354(6315), 1004-1008.</div>
+      </div>
+      <div class="card pillar-card reveal anim-delay-1">
+        <span class="pillar-num">05</span>
+        <div class="badge badge-teal mb-3">Risk Factors</div>
+        <h3>Modifiable Behavioral Risk</h3>
+        <p style="font-size:0.875rem;color:var(--white-dim);margin-top:0.5rem;line-height:1.7;">The Lancet Commission identifies 12 modifiable risk factors that together account for approximately 40% of worldwide dementia cases. Sleep quality and duration are among the most impactful and accessible to change.</p>
+        <div class="citation-box">Livingston et al. (2020). Dementia prevention, intervention, and care: 2020 report of the Lancet Commission. The Lancet, 396(10248), 413-446.</div>
+      </div>
+      <div class="card pillar-card reveal anim-delay-2">
+        <span class="pillar-num">06</span>
+        <div class="badge badge-purple mb-3">Assessment</div>
+        <h3>Neuropsychological Measures</h3>
+        <p style="font-size:0.875rem;color:var(--white-dim);margin-top:0.5rem;line-height:1.7;">Reaction time variability, working memory span, and pattern recognition accuracy are validated, sensitive indicators of early cognitive decline. Digital assessment enables longitudinal tracking that clinical settings often cannot provide.</p>
+        <div class="citation-box">Wild et al. (2008). Computer-administered cognitive assessment tools in clinical trials. Nature Reviews Drug Discovery, 7(6), 553-556.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== PREVIEW CHART ===== -->
+<section>
+  <div class="container">
+    <div class="section-kicker">Data Preview</div>
+    <h2>Visualizing the <span class="text-teal">Sleep-Cognition</span> Correlation</h2>
+    <p class="text-dim mb-4" style="max-width:580px;">The Dashboard plots your personal data against these reference distributions, revealing how your sleep behavior maps to cognitive outcomes documented in the literature.</p>
+    <div class="grid-2" style="gap:2rem;">
+      <div class="card reveal">
+        <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--grey);margin-bottom:0.5rem;">FIG 1.1 &nbsp; SLEEP DURATION vs COGNITIVE PERFORMANCE</div>
+        <div class="chart-preview"><canvas id="previewChart1"></canvas></div>
+        <p style="font-size:0.78rem;color:var(--grey);margin-top:0.8rem;font-style:italic;">Simulated reference data. Log your own results for real correlation analysis.</p>
+      </div>
+      <div class="card reveal anim-delay-1">
+        <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--grey);margin-bottom:0.5rem;">FIG 1.2 &nbsp; SLEEP CONSISTENCY vs REACTION TIME</div>
+        <div class="chart-preview"><canvas id="previewChart2"></canvas></div>
+        <p style="font-size:0.78rem;color:var(--grey);margin-top:0.8rem;font-style:italic;">Standard deviation of bedtime in hours. Lower is more consistent.</p>
       </div>
     </div>
     <div class="text-center mt-4">
@@ -266,124 +988,119 @@
 
 <div class="divider"></div>
 
-<!-- RESEARCH PILLARS -->
-<section style="background: rgba(13,27,46,0.4);">
+<!-- ===== ABOUT ===== -->
+<section class="about-section">
   <div class="container">
-    <div class="section-label">Research Foundation</div>
-    <h2>Built on <span class="text-teal">Peer-Reviewed Science</span></h2>
-    <p class="text-dim mb-4" style="max-width:600px;">Every feature of NeuroSleep is grounded in published neuroscience research from leading institutions.</p>
-    <div class="grid-3">
-      <div class="card reveal">
-        <div class="research-card">
-          <div class="research-num">01</div>
-          <div>
-            <h3 class="mb-2">Glymphatic System Research</h3>
-            <p class="text-dim" style="font-size:0.88rem;">Pioneering work by Dr. Maiken Nedergaard at the University of Rochester demonstrated that the brain's waste-clearance system is 10x more active during sleep, removing toxic proteins including amyloid-beta that are central to Alzheimer's progression.</p>
-            <div class="mt-2"><span class="badge badge-teal">Johns Hopkins, 2019</span></div>
-          </div>
+    <div class="about-grid">
+      <div class="about-visual reveal">
+        <div class="about-brain-bg">
+          <svg viewBox="0 0 180 180" width="220" height="220" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Large brain illustration -->
+            <circle cx="90" cy="90" r="88" stroke="rgba(11,191,168,0.12)" stroke-width="1" stroke-dasharray="4 4"/>
+            <!-- Left hemisphere -->
+            <path d="M90 35 C70 35 52 48 47 64 C42 80 46 95 55 104 C55 112 59 120 67 120 C72 120 77 118 82 116 C85 118 87 120 90 120" stroke="#0bbfa8" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <path d="M50 72 Q58 64 60 76 Q62 86 54 90" stroke="#0bbfa8" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <path d="M55 95 Q64 87 66 99 Q68 108 61 112" stroke="#0bbfa8" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <path d="M73 112 Q78 103 82 112 Q85 120 79 124" stroke="#0bbfa8" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <!-- Right hemisphere -->
+            <path d="M90 35 C110 35 128 48 133 64 C138 80 134 95 125 104 C125 112 121 120 113 120 C108 120 103 118 98 116 C95 118 93 120 90 120" stroke="#5de2db" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <path d="M130 72 Q122 64 120 76 Q118 86 126 90" stroke="#5de2db" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <path d="M125 95 Q116 87 114 99 Q112 108 119 112" stroke="#5de2db" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <path d="M107 112 Q102 103 98 112 Q95 120 101 124" stroke="#5de2db" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <!-- Stem -->
+            <path d="M90 120 L90 138" stroke="rgba(11,191,168,0.5)" stroke-width="2" stroke-linecap="round"/>
+            <!-- Divide -->
+            <line x1="90" y1="36" x2="90" y2="120" stroke="rgba(11,191,168,0.18)" stroke-width="1.2" stroke-dasharray="3 3"/>
+            <!-- Moon and stars top right -->
+            <path d="M135 30 C133 26 129 25 126 25.5 C130 27 132 30 131 34 C130 38 127 40 124 40 C127 40.5 130.5 39 132.5 36 C134 34 135 32 135 30Z" fill="#5de2db" opacity="0.8"/>
+            <circle cx="127" cy="23" r="1.8" fill="#a8f0ec" opacity="0.9"/>
+            <circle cx="141" cy="33" r="1.3" fill="#a8f0ec" opacity="0.7"/>
+            <circle cx="138" cy="22" r="1" fill="#5de2db" opacity="0.75"/>
+            <!-- EEG lines below brain -->
+            <path d="M30 155 L50 155 L58 138 L64 170 L70 148 L76 162 L82 155 L150 155" stroke="rgba(11,191,168,0.5)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="about-badge-float pos-1">
+          <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--grey);">GLYMPHATIC CLEARANCE</div>
+          <div style="color:var(--teal);font-weight:600;font-size:0.9rem;">+60% during sleep</div>
+        </div>
+        <div class="about-badge-float pos-2">
+          <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--grey);">AMYLOID-BETA RISK</div>
+          <div style="color:var(--rose);font-weight:600;font-size:0.9rem;">+30% sleep-deprived</div>
         </div>
       </div>
-      <div class="card reveal anim-delay-1">
-        <div class="research-card">
-          <div class="research-num">02</div>
-          <div>
-            <h3 class="mb-2">Sleep Consistency Studies</h3>
-            <p class="text-dim" style="font-size:0.88rem;">Research published in the Journal of Alzheimer's Disease found that irregular sleep timing, not just duration, is independently associated with cognitive decline. Participants with highly variable sleep schedules showed 27% greater memory impairment.</p>
-            <div class="mt-2"><span class="badge badge-purple">Journal of Alzheimer's Disease, 2021</span></div>
+      <div class="reveal">
+        <div class="section-kicker">About the Project</div>
+        <h2>Research by <span class="text-teal">Mithil Gajula</span></h2>
+        <p class="text-dim mb-3" style="line-height:1.8;">NeuroSleep was developed as an ISM (Independent Study Mentorship) research project investigating the intersection of sleep science, cognitive performance, and Alzheimer's disease prevention. The platform bridges academic neuroscience with accessible, self-directed behavioral assessment.</p>
+        <p class="text-dim mb-4" style="line-height:1.8;">The research question at the core of this project: <em style="color:var(--white);">Can longitudinal sleep consistency metrics serve as an early predictor of cognitive decline risk in adolescent and young adult populations?</em></p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;">
+          <div class="card" style="padding:1rem 1.5rem;flex:1;min-width:140px;text-align:center;">
+            <div style="font-family:var(--font-serif);font-size:1.8rem;font-weight:800;color:var(--teal);">22+</div>
+            <div style="font-size:0.75rem;color:var(--grey);text-transform:uppercase;letter-spacing:0.05em;">Research Papers</div>
+          </div>
+          <div class="card" style="padding:1rem 1.5rem;flex:1;min-width:140px;text-align:center;">
+            <div style="font-family:var(--font-serif);font-size:1.8rem;font-weight:800;color:var(--teal);">5</div>
+            <div style="font-size:0.75rem;color:var(--grey);text-transform:uppercase;letter-spacing:0.05em;">Research Domains</div>
+          </div>
+          <div class="card" style="padding:1rem 1.5rem;flex:1;min-width:140px;text-align:center;">
+            <div style="font-family:var(--font-serif);font-size:1.8rem;font-weight:800;color:var(--teal);">3</div>
+            <div style="font-size:0.75rem;color:var(--grey);text-transform:uppercase;letter-spacing:0.05em;">Cognitive Tests</div>
           </div>
         </div>
-      </div>
-      <div class="card reveal anim-delay-2">
-        <div class="research-card">
-          <div class="research-num">03</div>
-          <div>
-            <h3 class="mb-2">Tau Protein &amp; Circadian Rhythm</h3>
-            <p class="text-dim" style="font-size:0.88rem;">NIH-funded studies at Washington University School of Medicine established that circadian rhythm disruption accelerates tau spread in the brain. Even a single night of sleep deprivation resulted in a 50% increase in tau levels in cerebrospinal fluid.</p>
-            <div class="mt-2"><span class="badge badge-orange">NIH, Science 2019</span></div>
-          </div>
+        <div style="padding:1.2rem 1.5rem;background:rgba(11,191,168,0.06);border:1px solid rgba(11,191,168,0.15);border-radius:var(--radius);">
+          <div style="font-family:var(--font-mono);font-size:0.65rem;color:var(--grey);letter-spacing:0.1em;margin-bottom:0.4rem;">RESEARCH DISCLAIMER</div>
+          <p style="font-size:0.82rem;color:var(--white-dim);line-height:1.65;">NeuroSleep is an academic research and educational tool. It is not a medical diagnostic instrument. No data collected by this platform should substitute professional clinical evaluation or medical advice.</p>
         </div>
       </div>
-    </div>
-    <div class="text-center mt-4">
-      <a href="pages/research.html" class="btn btn-secondary">Read Full Research Library &#8594;</a>
     </div>
   </div>
 </section>
 
 <div class="divider"></div>
 
-<!-- CTA -->
+<!-- ===== CTA ===== -->
 <section>
   <div class="container">
     <div class="cta-section reveal">
-      <div class="section-label" style="justify-content:center;">Get Started Today</div>
-      <h2 style="font-size:clamp(1.8rem,4vw,2.8rem);">Your Brain Health Journey<br><span class="text-teal">Starts With One Night's Sleep</span></h2>
-      <p class="text-dim mt-2 mb-4" style="max-width:520px;margin-left:auto;margin-right:auto;">Begin tracking your sleep, take your first cognitive assessment, and discover what the data says about your long-term brain health.</p>
+      <div class="section-kicker" style="justify-content:center;">Begin Your Analysis</div>
+      <h2>Start Building Your <span class="text-teal">Sleep Dataset</span> Today</h2>
+      <p class="text-dim" style="max-width:520px;margin:1rem auto 2.5rem;font-size:1.05rem;">Track sleep for at least 14 days, take the cognitive assessments, and the Dashboard will reveal meaningful correlations in your personal data.</p>
       <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
-        <a href="pages/tracker.html" class="btn btn-primary" style="font-size:1rem;">&#128336; Log Tonight's Sleep</a>
-        <a href="pages/cognitive.html" class="btn btn-secondary" style="font-size:1rem;">&#129504; Take Cognitive Test</a>
+        <a href="pages/tracker.html" class="btn btn-primary" style="font-size:1rem;padding:1rem 2rem;">&#128336;&ensp;Open Sleep Tracker</a>
+        <a href="pages/cognitive.html" class="btn btn-ghost" style="font-size:1rem;padding:1rem 2rem;">&#9889;&ensp;Take Cognitive Tests</a>
       </div>
     </div>
   </div>
 </section>
 
-<div class="divider"></div>
-
-<!-- ABOUT -->
-<section style="background: rgba(13,27,46,0.4);">
-  <div class="container">
-    <div class="grid-2 reveal" style="align-items:center;gap:3rem;">
-      <div>
-        <div class="section-label">About This Project</div>
-        <h2>Created by <span class="text-teal">Mithil Gajula</span></h2>
-        <p class="text-dim mt-2" style="line-height:1.8;">NeuroSleep is an ISM (Independent Study Mentorship) research project exploring the intersection of neuroscience, sleep medicine, and Alzheimer's prevention through data-driven technology.</p>
-        <p class="text-dim mt-2" style="line-height:1.8;">The platform serves as a functional research tool that collects real behavioral data, runs statistical analyses, and generates insights grounded in peer-reviewed science. It demonstrates how modifiable lifestyle factors, particularly sleep consistency, can influence measurable cognitive outcomes and long-term neurological risk.</p>
-        <p class="text-dim mt-2" style="line-height:1.8;">This project is mentored by faculty in neurology and reflects an ongoing commitment to understanding one of the most complex and important challenges in modern medicine.</p>
-      </div>
-      <div>
-        <div class="card" style="padding:2.5rem;">
-          <div style="text-align:center;margin-bottom:2rem;">
-            <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 1rem;">&#129504;</div>
-            <h3>Mithil Gajula</h3>
-            <p class="text-dim" style="font-size:0.88rem;margin-top:0.3rem;">ISM Researcher &bull; Neuroscience</p>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:0.8rem;">
-            <div style="display:flex;align-items:center;gap:0.8rem;"><span style="color:var(--teal);">&#128218;</span><span class="text-dim" style="font-size:0.88rem;">ISM Independent Research Project</span></div>
-            <div style="display:flex;align-items:center;gap:0.8rem;"><span style="color:var(--teal);">&#128200;</span><span class="text-dim" style="font-size:0.88rem;">Sleep &amp; Alzheimer's Correlation Research</span></div>
-            <div style="display:flex;align-items:center;gap:0.8rem;"><span style="color:var(--teal);">&#129516;</span><span class="text-dim" style="font-size:0.88rem;">Mentored by Neurology Faculty</span></div>
-            <div style="display:flex;align-items:center;gap:0.8rem;"><span style="color:var(--teal);">&#127754;</span><span class="text-dim" style="font-size:0.88rem;">Data Analysis &amp; Platform Development</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
+<!-- ===== FOOTER ===== -->
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <a href="index.html" class="nav-logo" style="margin-bottom:0.5rem;">
-        <svg viewBox="0 0 40 40" fill="none" width="32" height="32">
-          <circle cx="20" cy="20" r="19" stroke="#00c2b3" stroke-width="1.5" opacity="0.3"/>
-          <path d="M8 22 Q12 10 20 14 Q28 18 32 10" stroke="#00c2b3" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <circle cx="20" cy="20" r="2" fill="#00c2b3"/>
+      <div class="footer-logo-wrap">
+        <svg viewBox="0 0 42 42" width="36" height="36" fill="none">
+          <circle cx="21" cy="21" r="20" stroke="rgba(11,191,168,0.2)" stroke-width="1"/>
+          <path d="M21 10 C15 10 10 14 10 20 C10 24 12 27 15 28.5 C15 30 16 31.5 18 31.5 C19 31.5 20 31 21 30.5" stroke="#0bbfa8" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <path d="M12 18 Q14 16 15 19 Q16 22 14 23" stroke="#0bbfa8" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+          <path d="M21 10 C27 10 32 14 32 20 C32 24 30 27 27 28.5 C27 30 26 31.5 24 31.5 C23 31.5 22 31 21 30.5" stroke="#5de2db" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+          <path d="M30 18 Q28 16 27 19 Q26 22 28 23" stroke="#5de2db" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+          <line x1="21" y1="10.5" x2="21" y2="30.5" stroke="rgba(11,191,168,0.3)" stroke-width="1" stroke-dasharray="2 2"/>
+          <path d="M32 7 C31 5.5 29.5 5 28 5.2 C30 6 31 7.5 30.5 9.5 C30 11.5 28.5 12.5 27 12.5 C28.5 12.8 30 12 31 10.5 C31.8 9.5 32.3 8.5 32 7Z" fill="#5de2db" opacity="0.85"/>
+          <circle cx="27" cy="6" r="0.8" fill="#a8f0ec"/>
+          <circle cx="34" cy="10" r="0.6" fill="#a8f0ec" opacity="0.7"/>
         </svg>
-        <span class="nav-logo-text">Neuro<span>Sleep</span></span>
-      </a>
-      <p>A research-driven digital platform exploring the relationship between sleep consistency, cognitive performance, and Alzheimer's disease risk. Created by Mithil Gajula as an ISM research project.</p>
-      <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
-        <span class="badge badge-teal">ISM Research</span>
-        <span class="badge badge-purple">Neuroscience</span>
-        <span class="badge badge-orange">Sleep Medicine</span>
+        <span style="font-family:var(--font-serif);font-size:1.2rem;font-weight:700;color:var(--white);">Neuro<span style="color:var(--teal);">Sleep</span></span>
       </div>
+      <p>A research-driven platform exploring the relationship between sleep consistency, cognitive performance, and Alzheimer's disease risk.</p>
+      <p style="margin-top:0.8rem;">Created by <strong style="color:var(--white);">Mithil Gajula</strong> &mdash; ISM Research Project</p>
     </div>
     <div class="footer-col">
       <h4>Platform</h4>
       <ul>
         <li><a href="pages/tracker.html">Sleep Tracker</a></li>
         <li><a href="pages/cognitive.html">Cognitive Tests</a></li>
-        <li><a href="pages/dashboard.html">Data Dashboard</a></li>
+        <li><a href="pages/dashboard.html">Dashboard</a></li>
         <li><a href="pages/risk.html">Risk Calculator</a></li>
       </ul>
     </div>
@@ -391,114 +1108,99 @@
       <h4>Research</h4>
       <ul>
         <li><a href="pages/research.html">Research Library</a></li>
-        <li><a href="pages/research.html#alzheimers">Alzheimer's Biology</a></li>
+        <li><a href="pages/research.html#alzheimers">Alzheimer's Disease</a></li>
         <li><a href="pages/research.html#sleep">Sleep Neuroscience</a></li>
-        <li><a href="pages/research.html#circadian">Circadian Rhythms</a></li>
+        <li><a href="pages/research.html#citations">Full Citations</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Info</h4>
+      <h4>Information</h4>
       <ul>
-        <li><a href="index.html#about">About</a></li>
-        <li><a href="pages/research.html#citations">Citations</a></li>
-        <li><a href="pages/research.html#methodology">Methodology</a></li>
+        <li><a href="index.html#about">About the Project</a></li>
+        <li><a href="pages/research.html">Methodology</a></li>
+        <li><a href="pages/risk.html">Disclaimer</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    <p>&copy; 2025 NeuroSleep. Created by Mithil Gajula. ISM Research Project.</p>
-    <p style="font-size:0.78rem;">This platform is for educational and research purposes only. Not a medical diagnostic tool.</p>
+    <p>&copy; 2025 NeuroSleep &mdash; Mithil Gajula. ISM Research Project. Not a medical diagnostic tool.</p>
+    <p>Built with Chart.js 4.4 &nbsp;|&nbsp; Data stored locally</p>
   </div>
 </footer>
 
 <script src="js/core.js"></script>
 <script>
-// EEG Wave Animation
+// EEG WAVE ANIMATION
 (function() {
-  const wave = document.getElementById('eegWave');
-  if (!wave) return;
+  const canvas = document.getElementById('eegWave');
+  if (!canvas) return;
+  const W = 800, H = 68, MID = H / 2;
   let t = 0;
-  function drawWave() {
-    t += 0.03;
+  function genWave() {
     const pts = [];
-    for (let x = 0; x <= 700; x += 5) {
-      const nx = x / 700;
-      let y = 40;
-      y += Math.sin(nx * 8 + t) * 12;
-      y += Math.sin(nx * 20 + t * 1.5) * 5;
-      y += Math.sin(nx * 3 + t * 0.5) * 8;
-      // Spike at 30%
-      if (nx > 0.28 && nx < 0.32) y -= 25 * Math.sin((nx - 0.28) / 0.04 * Math.PI);
-      // Spike at 65%
-      if (nx > 0.63 && nx < 0.67) y -= 20 * Math.sin((nx - 0.63) / 0.04 * Math.PI);
-      pts.push(`${x},${Math.max(5, Math.min(75, y))}`);
+    for (let x = 0; x <= W; x += 4) {
+      let y = MID;
+      y += Math.sin(x * 0.018 + t) * 8;
+      y += Math.sin(x * 0.06 + t * 1.4) * 5;
+      // EEG spikes
+      const phase = (x + t * 30) % 260;
+      if (phase > 100 && phase < 106) y -= 28;
+      else if (phase > 106 && phase < 110) y += 18;
+      else if (phase > 110 && phase < 114) y -= 10;
+      pts.push(`${x},${y.toFixed(1)}`);
     }
-    wave.setAttribute('points', pts.join(' '));
-    requestAnimationFrame(drawWave);
+    canvas.setAttribute('points', pts.join(' '));
+    t += 0.018;
+    requestAnimationFrame(genWave);
   }
-  drawWave();
+  genWave();
 })();
 
-// Preview Charts
-Chart.defaults.color = '#6e8aaa';
-Chart.defaults.borderColor = 'rgba(0,194,179,0.08)';
+// PREVIEW CHARTS
+window.addEventListener('DOMContentLoaded', () => {
+  const chartDefaults = {
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: 'rgba(11,191,168,0.06)' }, ticks: { color: '#4d6a84', font: { size: 10 } } },
+      y: { grid: { color: 'rgba(11,191,168,0.06)' }, ticks: { color: '#4d6a84', font: { size: 10 } } }
+    }
+  };
 
-const ctx1 = document.getElementById('previewChart1');
-if (ctx1) {
-  new Chart(ctx1, {
+  // Chart 1: Sleep Duration vs Cognitive Score
+  new Chart(document.getElementById('previewChart1'), {
     type: 'scatter',
     data: {
       datasets: [{
-        label: 'Participants',
         data: [
-          {x:0.3,y:180},{x:0.4,y:195},{x:0.5,y:210},{x:0.6,y:225},{x:0.8,y:240},
-          {x:1.0,y:260},{x:1.2,y:275},{x:1.4,y:290},{x:1.6,y:310},{x:1.8,y:330},
-          {x:0.35,y:185},{x:0.7,y:235},{x:0.9,y:250},{x:1.1,y:265},{x:1.3,y:280},
-          {x:1.5,y:300},{x:0.45,y:200},{x:0.65,y:230},{x:1.05,y:260},{x:1.7,y:320}
+          {x:4.5,y:42},{x:5,y:48},{x:5.5,y:55},{x:5.8,y:58},{x:6,y:61},
+          {x:6.2,y:63},{x:6.5,y:67},{x:7,y:74},{x:7.2,y:78},{x:7.5,y:81},
+          {x:7.8,y:83},{x:8,y:86},{x:8.2,y:85},{x:8.5,y:82},{x:9,y:79},{x:9.5,y:71}
         ],
-        backgroundColor: 'rgba(0,194,179,0.6)',
-        borderColor: 'rgba(0,194,179,0.9)',
+        backgroundColor: 'rgba(11,191,168,0.6)',
         pointRadius: 5,
+        pointHoverRadius: 7
       }]
     },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { title: { display: true, text: 'Sleep Consistency (StdDev hrs)', color: '#6e8aaa', font:{size:10} }, grid:{color:'rgba(0,194,179,0.05)'} },
-        y: { title: { display: true, text: 'Reaction Time (ms)', color: '#6e8aaa', font:{size:10} }, grid:{color:'rgba(0,194,179,0.05)'} }
-      }
-    }
+    options: { ...chartDefaults, scales: { ...chartDefaults.scales, x: { ...chartDefaults.scales.x, title: { display: true, text: 'Sleep Duration (h)', color: '#4d6a84', font: { size: 10 } } }, y: { ...chartDefaults.scales.y, title: { display: true, text: 'Cognitive Score', color: '#4d6a84', font: { size: 10 } } } } }
   });
-}
 
-const ctx2 = document.getElementById('previewChart2');
-if (ctx2) {
-  new Chart(ctx2, {
-    type: 'bar',
+  // Chart 2: Consistency vs Reaction Time
+  new Chart(document.getElementById('previewChart2'), {
+    type: 'scatter',
     data: {
-      labels: ['<5h', '5-6h', '6-7h', '7-8h', '8-9h', '>9h'],
       datasets: [{
-        label: 'Memory Score',
-        data: [42, 54, 65, 82, 85, 76],
-        backgroundColor: [
-          'rgba(255,80,80,0.6)','rgba(255,107,53,0.6)','rgba(255,200,0,0.6)',
-          'rgba(0,194,179,0.8)','rgba(79,216,228,0.8)','rgba(155,93,229,0.6)'
+        data: [
+          {x:0.2,y:218},{x:0.3,y:222},{x:0.4,y:228},{x:0.6,y:235},{x:0.8,y:245},
+          {x:1.0,y:258},{x:1.2,y:271},{x:1.4,y:285},{x:1.6,y:298},{x:1.8,y:315},{x:2.1,y:340}
         ],
-        borderRadius: 6,
-        borderSkipped: false,
+        backgroundColor: 'rgba(93,226,219,0.6)',
+        pointRadius: 5,
+        pointHoverRadius: 7
       }]
     },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false } },
-        y: { title: { display: true, text: 'Memory Score (0-100)', color: '#6e8aaa', font:{size:10} }, grid:{color:'rgba(0,194,179,0.05)'}, min: 0, max: 100 }
-      }
-    }
+    options: { ...chartDefaults, scales: { ...chartDefaults.scales, x: { ...chartDefaults.scales.x, title: { display: true, text: 'Bedtime SD (h)', color: '#4d6a84', font: { size: 10 } } }, y: { ...chartDefaults.scales.y, title: { display: true, text: 'Reaction Time (ms)', color: '#4d6a84', font: { size: 10 } } } } }
   });
-}
+});
 </script>
 </body>
 </html>
