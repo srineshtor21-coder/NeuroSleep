@@ -2,7 +2,7 @@
 
 **A Digital Platform for Analyzing Sleep Patterns, Cognitive Performance, and Long-Term Alzheimer's Risk**
 
-Created by **Mithil Gajula** — ISM Research Project
+Created by **Mithil Gajula** : ISM Research Project
 
 ---
 
